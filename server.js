@@ -50,6 +50,13 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+// Logging session creation
+app.use((req, res, next) => {
+  console.log('Session ID:', req.sessionID);
+  console.log('Session Data:', req.session);
+  next();
+});
+
 // Send verification email function
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
@@ -79,6 +86,9 @@ const sendVerificationEmail = async (email, verificationToken) => {
 app.post("/register", async (req, res) => {
   try {
     const { fullName, email, phone, password, username } = req.body;
+
+    // Debugging logs
+    console.log("Received registration data:", { fullName, email, phone, password, username });
 
     if (!username) {
       return res.status(400).json({ message: "Username is required" });
@@ -170,6 +180,7 @@ app.post("/login", async (req, res) => {
 // Get user details endpoint
 app.get("/user-details", async (req, res) => {
   try {
+    console.log("Session Data:", req.session);
     if (!req.session.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -190,6 +201,7 @@ app.get("/user-details", async (req, res) => {
 http.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
 
 
 

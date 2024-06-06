@@ -4,13 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-</head>
-<body>
-  <h1>Welcome to the Dashboard</h1>
-  <div id="user-details">
-    <p>Loading user details...</p>
-  </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -18,7 +11,7 @@
           credentials: 'include'
         });
         if (!response.ok) {
-          throw new Error('Failed to fetch user details');
+          throw new Error(`Failed to fetch user details: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
         const userDetailsDiv = document.getElementById('user-details');
@@ -35,8 +28,14 @@
       }
     });
   </script>
+</head>
+<body>
+  <h1>Welcome to the Dashboard</h1>
+  <div id="user-details">Loading user details...</div>
 </body>
 </html>
+
+
 
 <!--<!DOCTYPE html>
 <html lang="en">
