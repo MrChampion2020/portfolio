@@ -530,7 +530,7 @@ a{
 
 async function fetchUserDetails() {
       try {
-        const response = await fetch("/user-details");
+        const response = await fetch("https://elitearn.onrender.com/user-details");
         const data = await response.json();
 
         if (response.ok) {
