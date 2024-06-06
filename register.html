@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElitEarn</title>
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <!-- Link to Font Awesome CDN for the eye icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body, html, a {
+      width: 80%;
+      margin: auto;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 98%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fafafa;
+      text-decoration: none;
+      color: black;
+    }
+    form{
+      width: 100%;
+      height: 98%;
+    
+      margin: auto;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      height: 98%;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+    }
+    h2 {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .form-group {
+      margin: auto;
+      width: 90%;
+      margin-bottom: 5px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group label a{
+      text-align: left;
+    }
+    .form-group input a{
+      text-align: left;
+    }
+    .form-group input, .form-group select {
+      width: calc(90% - 20px);
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid purple;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group input[type="checkbox"] {
+      width: auto;
+      border: 1px solid purple;
+    }
+    .password-container {
+      position: relative;
+    }
+    .password-container input {
+      width: calc(87% - 40px);
+      padding-right: 40px;
+    }
+    .password-container .eye-icon {
+      position: absolute;
+      top: 18px;
+      right: 40px;
+      cursor: pointer;
+      color: purple;
+    }
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      background-color: purple;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .form-group button:hover {
+      background-color: darkpurple;
+    }
+    .form-group a {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      color: purple;
+      text-decoration: none;
+    }
+    .form-group a:hover {
+      text-decoration: underline;
+    }
+    .alert {
+      display: none;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+   
+
+    <div id="alert" class="alert"></div>
+
+    <form id="registerForm">
+    <h2>Register</h2>
+    <div class="form-group">
+        <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
+    </div>
+    <div class="form-group">
+        <input type="email" id="email" name="email" placeholder="Email" required>
+    </div>
+    <div class="form-group">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+    </div>
+    <div class="form-group password-container">
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <i class="fas fa-eye eye-icon purple" id="togglePassword"></i>
+    </div>
+    <div class="form-group">
+        <input type="tel" id="phone" name="phone" placeholder="Phone" required>
+    </div>
+    <div class="form-group">
+        <input type="text" id="couponCode" name="couponCode" placeholder="Coupon Code">
+      <a href="#">Don't have a coupon code? Get one</a>
+    </div>
+    <div class="form-group">
+        <label for="terms">Choose Package</label>
+        <select id="package" name="package">
+          <option value="basic">$5</option>
+          <option value="standard">#5000</option>
+         
+      </select>
+    </div>
+
+    <div class="form-group">
+        <input type="checkbox" id="terms" name="terms" required>
+        <label for="terms"><a href="">I agree to the terms</a></label>
+    </div>
+    <div class="form-group">
+        <button type="submit">Register</button>
+    </div>
+
+
+    
+    <div class="form-group">
+
+      <a href="login.html">Already have an account? Sign In</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const passwordField = document.getElementById('password');
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const phone = document.getElementById("phone").value;
+      const couponCode = document.getElementById("couponCode").value;
+      const packageOption = document.getElementById("package").value;
+      const terms = document.getElementById("terms").checked;
+
+      if (!terms) {
+        alert('You must agree to the terms.');
+        return;
+      }
+
+
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+          body: JSON.stringify({ fullName, email, username, password, phone, couponCode, package: packageOption })
+      });
+
+
+
+
+        const data = await response.json();
+
+        const alert = document.getElementById("alert");
+      if (response.ok) {
+          alert.style.display = "block";
+          alert.style.backgroundColor = "whaite";
+          alert.style.color = "black";
+          alert.style.borderColor = "purple";
+          alert.innerText = data.message;
+          document.getElementById("registerForm").reset();
+      } else {
+          alert.style.display = "block";
+          alert.style.backgroundColor = "white";
+          alert.style.color = "black";
+          alert.style.borderColor = "purple";
+          alert.innerText = data.message || "Registration failed";
+        }
+      } catch (error) {
+        const alert = document.getElementById("alert");
+        alert.style.display = "block";
+        alert.style.backgroundColor = "white";
+        alert.style.color = "blacke";
+        alert.style.borderColor = "purple";
+        alert.innerText = "An error occurred while registering. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
+
+

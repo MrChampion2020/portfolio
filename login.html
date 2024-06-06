@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+      body {
+        width: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0 auto;
+        
+        }
+        form{
+          height: 50%;
+            width: 40%;
+            margin: 0 auto;
+            box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+        }
+    .form-group {
+      width: 100%;
+      margin-bottom: 15px;
+      margin: 0 10%;
+    }
+    h2{
+      text-align: center;
+      padding: 10px;
+    }
+    label {
+      display: block;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid purple;
+      box-shadow: 2px rgb(231, 208, 231);
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: purple;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      width: 80%;
+      margin: 10px auto;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .alert {
+      display: none;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+  
+    
+       
+    
+  </style>
+</head>
+<body>
+  
+
+  <form id="loginForm">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div class="form-group">
+      <button type="submit">Login</button>
+    </div>
+    <div id="alert" class="alert"></div>
+  </form>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        const alert = document.getElementById("alert");
+        if (response.ok) {
+          window.location.href = "dashboard.html";
+        } else {
+          alert.style.display = "block";
+          alert.style.backgroundColor = "white";
+          alert.style.color = "black";
+          alert.style.borderColor = "purple";
+          alert.innerText = data.message || "Login failed";
+        }
+      } catch (error) {
+        const alert = document.getElementById("alert");
+        alert.style.display = "block";
+        alert.style.backgroundColor = "white";
+        alert.style.color = "black";
+        alert.style.borderColor = "purple";
+        alert.innerText = "An error occurred while logging in. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
