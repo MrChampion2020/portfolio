@@ -20,7 +20,7 @@ a{
   text-decoration: none;
 }
     header {
-      height: 15%;
+      height: 10%;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -41,8 +41,9 @@ a{
     }
 
     .menu-icon {
-      font-size: 1.5em;
+      font-size: 40px;
       cursor: pointer;
+      padding: 10px;
     }
 
     #dropdown-menu {
@@ -57,7 +58,7 @@ a{
     }
 
     .dropdown-header {
-     height: 8%;
+     height: 15%;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -66,9 +67,10 @@ a{
     }
 
     .close-icon {
-      font-size: 1.5em;
       cursor: pointer;
       color: white;
+      font-size: 40px;
+      padding: 10px;
     }
 
     nav ul {
@@ -218,8 +220,8 @@ a{
     .about-msg h1{
       margin: auto;
       color: purple;
-      border-bottom: 2px dotted purple;
-      width: 38%;
+      border: 2px dotted purple;
+      width: 45%;
       height: 10%;
       padding: 5px;
       margin-bottom: 20px;
@@ -353,16 +355,16 @@ a{
      <div class="bills">
       <h1  class="fa-solid fa-lightbulb purple" id="img-logo"></h1>
       <h1>Bills Payment</h1>
-      <p>We Offer bells payments ranging from airtime, data, tv payments and much more</p>
+      <p>We Offer bills payments ranging from airtime, data, tv payments and much more</p>
      </div>
 
 
 
      <div class="trade">
 
-      <h1  class="fa-brands fa-bitcoin purple" id="img-logo" ></h1>
+      <h1  class="fa-solid fa-registered purple" id="img-logo" ></h1>
       <h1>Trades</h1>
-      <p>We Offer the best trading options from crypto currency to Forex and much more</p>
+      <p>We Offer the best local and international trade rates and much more</p>
      </div>
      
 
@@ -370,7 +372,7 @@ a{
 
       <h1  class="fa-solid fa-rectangle-ad purple" id="img-logo" ></h1>
       <h1>Ads Center</h1>
-      <p>We Offer bells payments ranging from airtime, data, tv payments and much more</p>
+      <p>We offer the best rate for advertisement on all digital platforms and much more</p>
      </div>
 
 
@@ -378,14 +380,14 @@ a{
 
       <h1  class="fa-solid fa-universal-access purple" id="img-logo" > </h1>
       <h1>Invite and Earn Referral Bonuses</h1>
-      <p>We Offer bells payments ranging from airtime, data, tv payments and much more</p>
+      <p>We Refer Elite Earn to friends and family and more and get referral bonuses</p>
      </div>
 
      <div class="Skills">
 
       <h1  class="fa-solid fa-graduation-cap purple" id="img-logo" ></h1>
       <h1>Skills Aquisition</h1>
-      <p>We Offer bells payments ranging from airtime, data, tv payments and much more</p>
+      <p>We We have created a platform for you to learn varying skills ranging from tech to social skills and much more</p>
      </div>
     </section>
     <section class="about">
@@ -426,6 +428,14 @@ a{
     <div class="back-to-top" id="back-to-top"><i class="fas fa-arrow-up"></i></div>
   </footer>
   <script>
+    // Get the button element
+        const signInBtn = document.getElementById('sign-in-btn');
+
+        // Add click event listener
+        signInBtn.addEventListener('click', () => {
+            // Redirect to register.html
+            window.location.href = 'register.html';
+        });
     document.getElementById('menu-icon').addEventListener('click', function() {
       document.getElementById('dropdown-menu').style.left = '0';
     });
