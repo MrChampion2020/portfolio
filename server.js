@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const MongoStore = require('connect-mongo');
 const session = require("express-session");
 const cors = require("cors");
 const path = require("path");
@@ -147,7 +148,18 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Create a session
+    // Session configuration
+app.use(session({
+  secret: secretKey, // Replace with your own secret key
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+  })
+}));
+
+    /* Create a session
     req.session.user = {
       userId: user._id,
       name: user.name,
@@ -155,7 +167,7 @@ app.post("/login", async (req, res) => {
       username: user.username,
       phone: user.phone,
       wallet: user.wallet,
-    };
+    };*/
 
     res.status(200).json({ message: "Login successful" });
   } catch (error) {
