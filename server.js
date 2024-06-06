@@ -139,7 +139,7 @@ app.get("/verify/:token", async (req, res) => {
 
 
 // Login endpoint
-app.post("https://elitearn.onrender.com/login", async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -176,7 +176,7 @@ app.use(session({
 });
 
 // Get user details endpoint
-app.get("https://elitearn.onrender.com/user-details", async (req, res) => {
+app.get("/user-details", async (req, res) => {
   try {
     if (!req.session.user) {
       return res.status(401).json({ message: "Unauthorized" });
