@@ -24,13 +24,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, './')));
 
-//session
-app.use(session({
-  secret: 'yourSecretKey',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
+// Generate a secret key for JWT and session
+const generateSecretKey = () => crypto.randomBytes(32).toString("hex");
+const secretKey = process.env.SECRET_KEY || generateSecretKey();
 
 // MongoDB connection
 mongoose
@@ -42,9 +38,17 @@ mongoose
     console.log("Error connecting to MongoDB:", error);
   });
 
-// Generate a secret key for JWT
-const generateSecretKey = () => crypto.randomBytes(32).toString("hex");
-const secretKey = generateSecretKey();
+// Session configuration
+app.use(session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI, // Ensure you are using MONGO_URI here
+    ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+  }),
+  cookie: { secure: false }
+}));
 
 // Send verification email function
 const sendVerificationEmail = async (email, verificationToken) => {
@@ -136,8 +140,6 @@ app.get("/verify/:token", async (req, res) => {
   }
 });
 
-
-
 // Login endpoint
 app.post("/login", async (req, res) => {
   try {
@@ -148,29 +150,22 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Session configuration
-app.use(session({
-  secret: secretKey, // Replace with your own secret key
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-      ttl: 14 * 24 * 60 * 60 // = 14 days. Default
-  })
-}));
+    // Create a JWT token
+    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
 
-    /* Create a session
+    // Store user information in session
     req.session.user = {
       userId: user._id,
-      name: user.name,
+      fullName: user.fullName,
       email: user.email,
       username: user.username,
       phone: user.phone,
       wallet: user.wallet,
-    };*/
+    };
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
+    console.log("Error logging in user:", error);
     res.status(500).json({ message: "Login failed", error });
   }
 });
@@ -187,12 +182,12 @@ app.get("/user-details", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ user: { name: user.name, email: user.email, username: user.username, phone: user.phone, wallet: user.wallet } });
+    res.status(200).json({ user: { fullName: user.fullName, email: user.email, username: user.username, phone: user.phone, wallet: user.wallet } });
   } catch (error) {
+    console.log("Error fetching user details:", error);
     res.status(500).json({ message: "Error fetching user details", error });
   }
 });
-
 
 // Listening to the server
 http.listen(port, () => {
