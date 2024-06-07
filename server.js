@@ -160,16 +160,6 @@ app.post("/login", async (req, res) => {
     // Create a JWT token
     const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
 
-    // Store user information in session
-    req.session.user = {
-      userId: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      username: user.username,
-      phone: user.phone,
-      wallet: user.wallet,
-    };
-
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.log("Error logging in user:", error);
@@ -177,15 +167,24 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Get user details endpoint
-app.get("/user-details", async (req, res) => {
-  try {
-    console.log("Session Data:", req.session);
-    if (!req.session.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+// Middleware to authenticate JWT tokens
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-    const user = await User.findById(req.session.user.userId);
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+// Get user details endpoint
+app.get("/user-details", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -201,7 +200,6 @@ app.get("/user-details", async (req, res) => {
 http.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
 
 
 
