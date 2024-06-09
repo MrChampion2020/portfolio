@@ -167,6 +167,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
+
 // Middleware to authenticate JWT tokens
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
