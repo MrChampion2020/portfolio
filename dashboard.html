@@ -1,52 +1,9 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-    <title>User Dashboard</title>
-</head>
-<body>
-    <h2>Dashboard</h2>
-    <div id="user-data"></div>
-
-    <script>
-        const API_URL = 'http://localhost:5000';
-
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                document.getElementById('user-data').textContent = "Please login to view user details.";
-                return;
-            }
-
-            const response = await fetch(`${API_URL}/user-details`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('user-data').textContent = `Username: ${data.user.username}, Wallet: ${data.user.wallet}`;
-            } else {
-                alert('Failed to fetch user data');
-            }
-        };
-
-        // Fetch user data when the page loads
-        window.onload = fetchUserData;
-    </script>
-</body>
-</html>
--->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Dashboard</title>
+  <title></title>
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -119,30 +76,120 @@
     }
     nav {
       height: 5%;
-      background: lightgray;
+      background: rgb(255, 255, 255);
     }
     main {
-      height: 75%;
+      margin: auto;
+      height: 65%;
+      width: 90%;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
     }
-    .sidebar {
-      height: 100%;
-      width: 20%;
-      background-color: purple;
-      color: #fff;
-      text-align: center;
+    
+    .profile-top{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
+     width: 95%;
+     margin: auto;
+     height: 50%;
+     border: none;
+     padding: 10px;
     }
-    .content {
-      height: 100%;
-      width: 80%;
-      padding: 20px;
+    .profile-top h1{
+    text-align: center;
+    color: purple;
+    grid-column: 1 / -1; /* Make the heading span all columns */
     }
+    .profile-top div {
+    /*box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);*/
+    padding: 20px;
+    background-color: #fff;
+  }
+    .wallet{
+  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+    }
+    .wallet h1{
+     color: purple;
+    }
+
+    .Referals {
+  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+}
+    .withdrawal{
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+    }
+    .profile-down{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
+     width: 95%;
+     margin: auto;
+     height: 80%;
+     border: none;
+     padding: 10px;
+    }
+    .profile-down h1{
+    text-align: center;
+    color: purple;
+    grid-column: 1 / -1; /* Make the heading span all columns */
+    }
+    .profile-down div {
+    /*box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);*/
+    padding: 20px;
+    background-color: #fff;
+  }
+    .skills{
+  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+    }
+    .skills h1{
+     color: purple;
+    }
+
+    .Referals {
+  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+}
+    .withdrawal{
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+  width: 90%;
+  height: 80%;
+  margin-bottom: 2%;
+  overflow: hidden; /* Ensure any overflow is hidden */
+  position: relative;
+    }
+
     footer {
-      height: 5%;
-      background: purple;
+      height: 10%;
+      background: rgb(255, 255, 255);
+      border-top: 2px solid purple;
       text-align: center;
-      color: #fff;
+      color: purple;
     }
     /* Add your custom styles here */
   </style>
@@ -153,7 +200,7 @@
       <img src="logo.jpg" alt="logo">
     </div>
     <div class="profile">
-      <img src="logo.jpg" alt="profile">
+      <img src="profile0.png" alt="profile">
       <b><span id="username"></span></b>
     </div>
     <div class="notify">
@@ -164,21 +211,59 @@
     </div>
   </header>
   <nav>
-    <!- Navigation bar content ->
+    <!-- Navigation bar content -->
   </nav>
   <main>
     <div class="sidebar">
-      <!- Sidebar content ->
+      <!-- Sidebar content -->
     </div>
-    <div class="content">
-      <h2>Welcome, <span id="fullName"></span></h2>
-      <p>Email: <span id="email"></span></p>
-      <p>Phone: <span id="phone"></span></p>
-      <p> <span id="wallet"></span></p>
-    </div>
+
+
+    <section class="profile-top">
+      <div class="wallet">
+       <h1>Account Balance</h1>
+       <h3>Balance: <b id="wallet"></b></h3>
+       <p></p>
+      </div>
+  
+  
+  
+      <div class="Referals">
+       <h1>Referrals</h1>
+       <p></p>
+      </div>
+      
+  
+      <div class="withdrawal">
+       <h1>Withrawal</h1>
+       <p></p>
+      </div>
+     </section>
+
+     <section class="profile-down">
+      <div class="wallet">
+       <h1>Account Balance</h1>
+       <h3>Balance: <b id="wallet"></b></h3>
+       <p></p>
+      </div>
+  
+  
+  
+      <div class="skills">
+       <h1>Referrals</h1>
+       <p></p>
+      </div>
+      
+  
+      <div class="withdrawal">
+       <h1>Withrawal</h1>
+       <p></p>
+      </div>
+     </section>
+
   </main>
   <footer>
-    &copy; 2024 Elitearn. All rights reserved.
+    <p> &copy; 2024 <a href="#">Elitearn</a>. All rights reserved.</p>
   </footer>
 
   <script>
@@ -202,8 +287,8 @@
 
             if (response.ok) {
                 const data = await response.json();
-                document.getElementById('username').textContent = `Username: ${data.user.username}`; 
-                document.getElementById('wallet').textContent = `Wallet: ${data.user.wallet}`;
+                document.getElementById('username').textContent = `${data.user.username}`; 
+                document.getElementById('wallet').textContent = `${data.user.wallet}`;
             } else {
                 alert('Failed to fetch user data');
             }
