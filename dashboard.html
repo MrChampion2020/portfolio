@@ -1,3 +1,46 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+</head>
+<body>
+    <h2>Dashboard</h2>
+    <div id="user-data"></div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                document.getElementById('user-data').textContent = "Please login to view user details.";
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/user-details`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('user-data').textContent = `Username: ${data.user.username}, Wallet: ${data.user.wallet}`;
+            } else {
+                alert('Failed to fetch user data');
+            }
+        };
+
+        // Fetch user data when the page loads
+        window.onload = fetchUserData;
+    </script>
+</body>
+</html>
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +48,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
   <link rel="icon" href="logo.jpg" type="image/jpg">
-  <!--Link to Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body, html {
@@ -105,7 +147,7 @@
     /* Add your custom styles here */
   </style>
 </head>
-<body>
+<body id="dashboard">
   <header>
     <div class="logo">
       <img src="logo.jpg" alt="logo">
@@ -122,17 +164,17 @@
     </div>
   </header>
   <nav>
-    <!-- Navigation bar content -->
+    <!- Navigation bar content ->
   </nav>
   <main>
     <div class="sidebar">
-      <!-- Sidebar content -->
+      <!- Sidebar content ->
     </div>
     <div class="content">
       <h2>Welcome, <span id="fullName"></span></h2>
       <p>Email: <span id="email"></span></p>
       <p>Phone: <span id="phone"></span></p>
-      <p>Wallet: <span id="wallet"></span></p>
+      <p> <span id="wallet"></span></p>
     </div>
   </main>
   <footer>
@@ -140,45 +182,48 @@
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Fetch the token from localStorage
-      const token = localStorage.getItem("jwtToken");
-      if (!token) {
-        alert("No token found. Please log in first.");
-        window.location.href = "login.html"; // Redirect to login page
-        return;
-      }
+    
+    require('dotenv').config();
+    const API_URL = process.env.API_URL;
 
-      // Fetch user details
-      fetch("https://elitearn.onrender.com/user-details", {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.user) {
-            document.getElementById("username").textContent = data.user.username;
-            document.getElementById("fullName").textContent = data.user.fullName;
-            document.getElementById("email").textContent = data.user.email;
-            document.getElementById("phone").textContent = data.user.phone;
-            document.getElementById("wallet").textContent = data.user.wallet;
-          } else {
-            alert("Failed to fetch user details. Please log in again.");
-            localStorage.removeItem("jwtToken");
-            window.location.href = "login.html"; // Redirect to login page
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching user details:", error);
-          alert("An error occurred while fetching user details. Please try again.");
-          localStorage.removeItem("jwtToken");
-          window.location.href = "login.html"; // Redirect to login page
-        });
-    });
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                document.getElementById('dashboard').textContent = "Please login to view user details.";
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/user-details`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('username').textContent = `Username: ${data.user.username}`; 
+                document.getElementById('wallet').textContent = `Wallet: ${data.user.wallet}`;
+            } else {
+                alert('Failed to fetch user data');
+            }
+        };
+
+        // Fetch user data when the page loads
+        window.onload = fetchUserData;
+
+
+
+
   </script>
 </body>
 </html>
+
+
+
+
+
 
 
 
@@ -190,7 +235,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Landing Page</title>
   <link rel="icon" href="logo.jpg" type="image/jpg">
-  <!--Link to Font Awesome CDN -->
+  <!-Link to Font Awesome CDN ->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body, html {
