@@ -583,8 +583,8 @@ a{
       display: flex;
       flex-direction: column;
       padding: 2%;
-      margin-top: 10%;
-      margin-bottom: 10%;
+      margin-top: 2%;
+      margin-bottom: 2%;
       border: none;
     }
     .notes h1 {
@@ -704,7 +704,7 @@ a{
 
     }
 .about .about-msg{
-  width: 50%;
+  width: 80%;
   height: 90%;
   margin: auto;
 }
@@ -721,7 +721,7 @@ a{
 
 }
 .video{
-  width: 50%;
+  width: 80%;
   height: 98%;
   border-radius: 10px;
   margin: auto;
@@ -742,23 +742,25 @@ a{
   margin: 10% auto;
 
 }
-.start-ups h1{
+.start-ups .start-header{
   text-align: center;
-  font-size: 20px;
+  font-size: 40px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 600;
 }
 /* Styles for How it Works section */
 .start-ups p{
       text-align: center;
-      margin: 40px 0;
+      
     }
 
     .start-ups h1, .start-ups p {
-      margin-bottom: 20px;
+      margin-bottom: 5px;
     }
 
     .start-up {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr;
       align-items: center;
       width: 100%;
       height: 90%;
@@ -769,18 +771,25 @@ a{
       flex-direction: column;
       align-items: center;
       margin: 20px 0;
-      width: 45%;
-      height: 100%;
+      width: 80%;
+      height: 80%;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
       padding: 10px;
     }
 
-    .individuals img, .Vendor img {
+    .individuals .photo, .Vendor .photo {
       width: 80%;
+      height: 50%;
+      object-fit: cover;
+      margin: auto;
+    }
+
+    .individuals img, .Vendor img {
+      width: 100%;
       max-width: 500px; /* Max width for the images */
       object-fit: cover;
       height: 100%;
-      margin: 0 10%;
+      margin: 0 auto;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
     .individuals .number, .Vendor .number{
@@ -790,16 +799,17 @@ a{
       height: 20%;
       margin-top: -50px;
       margin-bottom: 5px;
+      background-color: purple;
+      text-align: center;
     }
     .individuals .number h1, .Vendor .number h1{
       border-radius: 50%;
-      width: 80%;
+      width: 100%;
       height: 100%;
       font-size: 25px;
       font-weight: 600;
       object-fit: cover;
       color: white;
-      color: purple;
     }
   
 
@@ -890,6 +900,11 @@ a{
         height: 40%;
 
       }
+      .video {
+      grid-template-columns: 1fr 1fr; /* Hide dropdown menu */
+        
+
+      }
       nav ul {
         flex-direction: row; /* Display menu items in a row */
         justify-content: center;
@@ -909,7 +924,7 @@ a{
       }
 
       .start-up {
-        flex-direction: row; /* Display individual and vendor sections in a row */
+        grid-template-columns: 1fr 1fr; /* Display individual and vendor sections in a row */
         justify-content: space-around;
         align-items: flex-start;
       }
@@ -1018,7 +1033,7 @@ a{
     </section>
      
     <section class="start-ups">
-      <h1>How it Works</h1>
+      <h1 class="start-header">How it Works</h1>
       <p>Get latest update about our services</p>
 
       <div class="start-up">
@@ -1027,7 +1042,7 @@ a{
           <div class="photo"><img src="individual.jpg" alt=""></div>
           <div><h1>Join Our community</h1></div>
           <div>Make money, enjoy endless rewards and lots more today</div>
-          <div><button id="sign-in-btn" action="register.html">Join Now</button></div>
+          <div><button id="sign-in-btn" action="register.html">Join Today</button></div>
         </div>
 
         <div class="Vendor">
@@ -1035,7 +1050,7 @@ a{
           <div class="photo"><img src="vendor.jpg" alt=""></div>
           <div><h1>Vendor</h1></div>
           <div>Become a registered Vendor, enjoy endless trade rewards and lots more today</div>
-          <div><button id="sign-in-btn" action="register.html">Join Now</button></div>
+          <div><button id="sign-in-btn" action="register.html">Start Now</button></div>
         </div>
       </div>
     </section>
