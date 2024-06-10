@@ -106,6 +106,7 @@
      padding: 10px;
     }
     .profile-top h1{
+      font-size: 16;
     text-align: center;
     color: purple;
     grid-column: 1 / -1; /* Make the heading span all columns */
@@ -179,7 +180,7 @@
      color: purple;
     }
 
-    .Referals {
+    .referralLink {
   box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
   width: 70%;
   height: 80%;
@@ -187,15 +188,24 @@
   overflow: hidden; /* Ensure any overflow is hidden */
   position: relative;
   border-radius: 10px;
-}
-    .withdrawal{
+  text-align: center;
+   }
+   .referralLink h6{
+    font-size: 14px;
+   }
+    .social{
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-  width: 70%;
-  height: 80%;
-  margin-bottom: 2%;
-  overflow: hidden; /* Ensure any overflow is hidden */
-  position: relative;
-  border-radius: 10px;
+      width: 70%;
+      height: 80%;
+      margin-bottom: 2%;
+      overflow: hidden; /* Ensure any overflow is hidden */
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .social h1{
+      padding: 0 10px;
     }
 
     footer {
@@ -212,6 +222,43 @@
     
     }
     /* Add your custom styles here */
+
+
+
+
+
+    /* media screen for phones*/
+
+    @media (max-width: 768px){
+
+      .logo{
+        width: 60%;
+        height: 100%;
+      }
+      .profile img{
+        height: 25%;
+        width: 30%;
+      }
+      .notify{
+        font-size: 30px;
+      }
+      main h1,  h3{
+        font-size: 14px;
+        font-weight: 100;
+      }
+      .profile-top{
+        height: 30%;
+      }
+      .profile-top div{
+        width: 50%;
+      }
+      .profile-down{
+        height: 30%;
+      }
+      .profile-down div{
+        width: 50%;
+      }
+    }
   </style>
 </head>
 <body id="dashboard">
@@ -224,7 +271,7 @@
     <div class="user-header">
 
     <div class="profile">
-      <img src="profile0.png" alt="profile">
+      <img src="profile0.png" alt="profile" id="profile">
     </div>
 
     <div class="notify">
@@ -235,9 +282,6 @@
 
   </header>
 
-  <nav>
-    <!-- Navigation bar content -->
-  </nav>
   <main>
     <div class="user-welcome">
       <b>Welcome:  <span id="username"></span></b>
@@ -275,15 +319,18 @@
   
   
   
-      <div class="skills">
-       <h1 id="referralLink">Referrals</h1>
-       <p id="referralLink"></p>
+      <div class="referralLink">
+       <h1>Referrals</h1>
+       <h6>Referral Link: <a id="referralLink" href="#">Loading...</a></h6>
       </div>
       
   
-      <div class="withdrawal">
-       <h1>Withrawal</h1>
+      <div class="social">
+       <h1>Social activity</h1>
        <p></p>
+       <h1 class="fa-brands fa-facebook purple"> </h1>
+      <h1 class="fa-brands fa-instagram purple"></h1>
+      <h1 class="fa-brands fa-tiktok purple"></h1>
       </div>
      </section>
 
@@ -293,111 +340,48 @@
   </footer>
 
   <script>
+
+
 const API_URL = `https://elitearn.onrender.com`;
 
-document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
+const fetchUserData = async () => {
+    const token = localStorage.getItem('token');
 
-            if (!token) {
-                window.location.href = "/login.html";
-                return;
-            }
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
 
-            fetch("/user-details", {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem("token");
-                    window.location.href = "/login.html";
-                } else {
-                    return response.json();
-                }
-            })
-            .then(data => {
-                if (data) {
-                    document.getElementById("username").textContent = `Username: ${data.user.username}`;
-                    document.getElementById("wallet").textContent = `Wallet: ${data.user.wallet}`;
-                    document.getElementById("referralBonus").textContent = `Referral Bonus: ${data.user.referralWallet}`;
-                    document.getElementById("referralLink").textContent = `Referral Link: /register?ref=${data.user.username}`;
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching user details:", error);
-                localStorage.removeItem("token");
-                window.location.href = "/login.html";
-            });
+    try {
+        const response = await fetch(`${API_URL}/user-details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('username').textContent = data.user.username;
+            document.getElementById('wallet').textContent = data.user.wallet;
+            document.getElementById('referralWallet').textContent = data.user.referralWallet;
+            document.getElementById('referralLink').textContent = data.user.referralLink;
+            document.getElementById('referralLink').href = data.user.referralLink;
+        } else {
+            alert('Failed to fetch user data');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        alert('An error occurred while fetching user data');
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+};
+
+// Fetch user data when the page loads
+window.onload = fetchUserData;
   
-  
-  
-  
-  /*
-
-    const API_URL = `https://elitearn.onrender.com`;
-
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                document.getElementById('dashboard').textContent = "Please login to view user details.";
-                return;
-            }
-
-            const response = await fetch(`${API_URL}/user-details`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('username').textContent = `${data.user.username}`; 
-                document.getElementById('wallet').textContent = `${data.user.wallet}`;
-            } else {
-                alert('Failed to fetch user data');
-            }
-        };
-
-        // Fetch user data when the page loads
-        window.onload = fetchUserData;
-
-
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/user-details`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('dashboard').innerText = 
-                        `Welcome, ${data.user.fullName}. Wallet: ${data.user.wallet}. Referral Wallet: ${data.user.referralWallet}`;
-                    document.getElementById('referrals').innerText = 
-                        `Share this link to refer: ${data.user.referralLink}`;
-                } else {
-                    const errorData = await response.json();
-                    alert('Failed to load user details: ' + errorData.message);
-                }
-            } catch (error) {
-                console.error('Error fetching user details:', error);
-                alert('Failed to load user details');
-            }
-        });
-*/
   </script>
 </body>
 </html>
