@@ -55,10 +55,26 @@ const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 
+// Function to distribute referral bonus up to the second level
+const distributeReferralBonus = async (userId, level) => {
+  if (level > 1) {
+    const user = await User.findById(userId);
+    if (user && user.referredBy) {
+      const referrer = await User.findById(user.referredBy);
+      if (referrer) {
+        referrer.wallet += 100;  // or 0.1 dollars
+        referrer.referralWallet += 100;
+        await referrer.save();
+        await distributeReferralBonus(referrer._id, level - 1);
+      }
+    }
+  }
+};
+
 // Registration endpoint
 app.post("/register", async (req, res) => {
   try {
-    const { fullName, email, phone, password, username } = req.body;
+    const { fullName, email, phone, password, username, ref } = req.body;
 
     if (!username) {
       return res.status(400).json({ message: "Username is required" });
@@ -84,12 +100,29 @@ app.post("/register", async (req, res) => {
       verificationToken: crypto.randomBytes(20).toString("hex"),
     });
 
+    if (ref) {
+      const referrer = await User.findOne({ username: ref });
+      if (referrer) {
+        newUser.referredBy = referrer._id;
+        referrer.referrals.push(newUser._id);
+        referrer.wallet += 4000;  // or 4 dollars
+        referrer.referralWallet += 4000;
+        await referrer.save();
+
+        // Handle second level referral
+        await distributeReferralBonus(referrer._id, 2);
+      }
+    }
+
     await newUser.save();
     await sendVerificationEmail(newUser.email, newUser.verificationToken);
 
     res.status(200).json({ message: "User registered successfully", userId: newUser._id });
   } catch (error) {
     console.log("Error registering user:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate key error", error: error.message });
+    }
     res.status(500).json({ message: "Registration failed" });
   }
 });
@@ -103,7 +136,7 @@ app.get("/verify/:token", async (req, res) => {
       return res.status(404).json({ message: "Invalid verification token" });
     }
 
-    user.verified = true;
+    user.isVerified = true;
     user.verificationToken = undefined;
     await user.save();
 
@@ -156,7 +189,17 @@ app.get("/user-details", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ user: { username: user.username, wallet: user.wallet } });
+    res.status(200).json({
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        wallet: user.wallet,
+        referralWallet: user.referralWallet,
+        referrals: user.referrals,
+      }
+    });
   } catch (error) {
     console.log("Error fetching user details:", error);
     res.status(500).json({ message: "Error fetching user details", error });
@@ -167,6 +210,8 @@ app.get("/user-details", authenticateToken, async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+
 
 
 

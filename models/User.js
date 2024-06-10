@@ -11,8 +11,20 @@ const UserSchema = new mongoose.Schema({
     couponCode: String,
     packageOption: String,
     verificationCode: String,
-    isVerified: { type: Boolean, default: false }
+    isVerified: { type: Boolean, default: false },
+    referralWallet: { type: Number, default: 0 },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    referralLink: { type: String, unique: true },
+    referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
   
 });
+
+UserSchema.pre('save', function(next) {
+  if (!this.referralLink) {
+    this.referralLink = `https://elitearn.com/register?ref=${this.username}`;
+  }
+  next();
+});
+
 
 module.exports = mongoose.model('User', UserSchema);
