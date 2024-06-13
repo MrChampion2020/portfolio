@@ -219,13 +219,14 @@ app.listen(port, () => {
 
 
 const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
-const mongoose = require("mongoose");
 require('dotenv').config();
 
 const app = express();
