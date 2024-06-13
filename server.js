@@ -14,7 +14,7 @@ const port = process.env.PORT || 5000;
 
 const User = require("./models/User");
 
-const Coupon = require(".../models/Coupon");
+const Coupon = require("./models/Coupon");
 
 app.use(express.json());
 app.use(cors());
