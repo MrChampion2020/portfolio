@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <form id="register-vendor-form">
+    <h2>Register Vendor</h2>
+    <input type="text" id="vendorName" placeholder="Vendor Name" required>
+    <input type="email" id="vendorEmail" placeholder="Vendor Email" required>
+    <input type="password" id="vendorPassword" placeholder="Vendor Password" required>
+    <button type="submit">Register</button>
+  </form>
+
+  <button id="generate-coupon-btn">Generate Coupon</button>
+
+  <script>
+
+
+    const API_URL = `https://elitearn.onrender.com`;
+
+    document.getElementById('register-vendor-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const vendorName = document.getElementById('vendorName').value;
+      const vendorEmail = document.getElementById('vendorEmail').value;
+      const vendorPassword = document.getElementById('vendorPassword').value;
+
+      // Register vendor logic here...
+    });
+
+    document.getElementById('generate-coupon-btn').addEventListener('click', async () => {
+      const response = await fetch(`${API_URL}/generate-coupon`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: '<USER_ID>', currency: 'Naira' })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(`Coupon generated: ${data.coupon.code}`);
+      } else {
+        alert('Failed to generate coupon');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -15,8 +15,8 @@ const UserSchema = new mongoose.Schema({
     referralWallet: { type: Number, default: 0 },
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     referralLink: { type: String, unique: true },
-    referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
-  
+    referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'user' }
 });
 
 UserSchema.pre('save', function(next) {
