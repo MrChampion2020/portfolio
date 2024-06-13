@@ -13,7 +13,6 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const User = require("./models/User");
-
 const Coupon = require("./models/Coupon");
 
 app.use(express.json());
@@ -22,11 +21,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, './')));
 
+const generateSecretKey = () => crypto.randomBytes(32).toString("hex");
+const secretKey = process.env.SECRET_KEY || generateSecretKey();
+
+mongoose.connect(process.env.MONGO_URI, {})
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((error) => console.log("Error connecting to MongoDB:", error));
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
 
 // Function to generate coupon code
 const generateCouponCode = () => crypto.randomBytes(8).toString('hex');
-
-
 
 // Generate coupon endpoint
 app.post('/generate-coupon', authenticateToken, async (req, res) => {
@@ -48,15 +64,6 @@ app.post('/generate-coupon', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to generate coupon' });
   }
 });
-
-
-
-const generateSecretKey = () => crypto.randomBytes(32).toString("hex");
-const secretKey = process.env.SECRET_KEY || generateSecretKey();
-
-mongoose.connect(process.env.MONGO_URI, {})
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((error) => console.log("Error connecting to MongoDB:", error));
 
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
@@ -127,8 +134,8 @@ app.post("/register", async (req, res) => {
     // Generate referral link
     newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
 
-    if (ref) {
-      const referrer = await User.findOne({ username: ref });
+    if (referralLink) {
+      const referrer = await User.findOne({ username: referralLink });
       if (referrer) {
         newUser.referredBy = referrer._id;
         referrer.referrals.push(newUser._id);
@@ -190,19 +197,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
-
 app.get("/user-details", authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -228,8 +222,6 @@ app.get("/user-details", authenticateToken, async (req, res) => {
   }
 });
 
-
-
 const authenticateAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.sendStatus(403);
@@ -252,7 +244,6 @@ app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
 app.get('/vendor', authenticateToken, authenticateVendor, (req, res) => {
   res.sendFile(path.join(__dirname, 'vendor.html'));
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
