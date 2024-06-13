@@ -133,15 +133,14 @@ a{
     #sign-in-btn {
       color: white;
       background-color: purple;
-      width: 20%;
-      height: 20%;
+      width: 200px;
+      height: 50px;
       border: none;
       border-radius: 50px;
       font-size: 20px;
       font-family: 'Times New Roman', Times, serif;
-      font-weight: 500;
+      font-weight: 600;
       margin-top: 5%;
-      padding: 10px;
     }
 
     .image-area{
@@ -249,10 +248,7 @@ a{
   font-weight: 400;
   font-family: 'Times New Roman', Times, serif;
   margin-bottom: 20px;
-}
-.about .about-msg h1 a{
-  color: gray;
-  font-size: 20px;
+
 }
 .video{
   width: 80%;
@@ -272,7 +268,7 @@ a{
 
 .start-ups{
   width: 80%;
-  height: 90%;
+  height: 40%;
   margin: 10% auto;
 
 }
@@ -281,13 +277,15 @@ a{
   font-size: 40px;
   font-family: 'Times New Roman', Times, serif;
   font-weight: 600;
-  padding: 10px;
 }
+/* Styles for How it Works section */
+.start-ups p{
+      text-align: center;
+      
+    }
 
     .start-ups h1, .start-ups p {
-      padding: 5px;
-      text-align: center;
-      color: purple;
+      margin-bottom: 5px;
     }
 
     .start-up {
@@ -295,55 +293,61 @@ a{
       grid-template-columns: 1fr;
       align-items: center;
       width: 100%;
-      height: auto;
+      height: 90%;
     }
 
     .individuals, .Vendor {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 90%;
-      height: auto;
+      width: 80%;
+      height: 80%;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      padding: 10px;
-      margin-top: 5%;
-      border-radius: 10px;
+      padding: 20px;
     }
 
+    .individuals .photo, .Vendor .photo {
+      width: 80%;
+      height: 50%;
+      object-fit: cover;
+      margin: auto;
+      padding: 10px;
+    }
 
-    .individuals  img, .Vendor img {
-      width: 90%;
-      max-width: 60%; /* Max width for the images */
+    .individuals .photo img, .Vendor .photo img {
+      width: 100%;
+      max-width: 500px; /* Max width for the images */
       object-fit: cover;
       height: 100%;
       margin: 0 auto;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
-    .individuals h1, .Vendor h1{
+    .individuals .number, .Vendor .number{
+      border-radius: 50%;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 20%;
+      height: 20%;
+      margin-top: -50px;
+      background-color: purple;
+      text-align: center;
+    }
+    .individuals .number h1, .Vendor .number h1{
       border-radius: 50%;
       width: 100%;
       height: 100%;
       font-size: 25px;
       font-weight: 600;
       object-fit: cover;
-      color: purple;
+      color: white;
     }
-    .individuals p, .Vendor p{
-      color: black;
-    }
+  
 
-    .individuals a, .Vendor a{
-     width: 80%;
-     height: 10%;
-     margin: auto;
-    }
     #img-logo{
       font-size: 60px;
       margin-top: 0%;
       margin: auto;
       width: 100%;
       height: 30%;
-      color: purple;
     }
 
     .social{
@@ -352,7 +356,6 @@ a{
       padding: 10px;
       width: 80%;
       margin: 0 auto;
-      color: purple;
     }
 
     .social h1{
@@ -369,7 +372,7 @@ a{
     .links ul {
       list-style: none;
       padding: 0;
-      margin: auto;
+      margin: 0;
     }
 
     .links ul li {
@@ -377,7 +380,7 @@ a{
       cursor: pointer;
       padding: 10px;
     }
-    .links a{
+    .links ul li  a{
       color: purple;
     }
     .links ul li a #icon{
@@ -449,11 +452,7 @@ a{
         position: relative;
       }
 
-      .start-up {
-        grid-template-columns: 1fr 1fr; /* Display individual and vendor sections in a row */
-        justify-content: space-around;
-        align-items: flex-start;
-      }
+     
     }
 
     /* Responsive layout for larger screens */
@@ -481,109 +480,51 @@ a{
       <div class="close-icon" id="close-icon"><i class="fas fa-times"></i></div>
     </div>
     <ul>
-      <li> Home </li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="register.html">Get Started</a></li>
-      <li>Buy Coupons</li>
-      <li>Coupon Checker</li>
-      <li>Top Earners</li>
+      <li><a href="vendor.html">Buy Coupons</a></li>
+      <li><a href="coupons.html">Coupon Checker</a></li>
+      <li><a href="earners.html">Top Earners</a></li>
       <li><a href="terms.html">Terms</a></li>
     </ul>
   </nav>
   <main>
-    <section class="notes">
-     <h1>Elevate Your Earnings</h1>
-      <p>EliteEarn is an online platform that connects individuals 
-       with various opportunities to earn money online. 
+    
+   <section class="notes">
+    <h1>Terms of Service</h1>
+     <p>
+       Elitearn offers earning opportunities through various services for a membership fee.
+       It is important to note that this membership fee does not constitute an investment 
+       with guaranteed high profits or ROI. Instead, it grants you access to the earning 
+       opportunities provided by Elitearn. The membership fee is utilized for the platform's operations, 
+       maintenance, server management, funding of data partner wallets for data earning credits,
+        rewarding referral bonuses, and processing cash equivalents upon request. Therefore,
+         no refunds are available after payment and registration.
        </p>
-      <button id="sign-in-btn" action="login.html">Sign In</button>
-    </section>
-    <section class="image-area">
-     <h1>What will I enjoy being a member</h1>
 
+       <p>Elitearn reserves the right to modify its operations, including earning rates, data withdrawal,
+        and payout processes, at any time. These changes may be implemented to benefit members and ensure the 
+        sustainability of the platform, preventing any disruption in benefit sharing as planned. </p>
+       
+       <p>Please note that Elitearn's earning opportunities are independently funded and managed, 
+       separate from the financial platforms used for pay-in and payout purposes. Elitearn solely
+        utilizes their services to facilitate its business operations and earning opportunities. 
+        As such, these financial platforms cannot be held responsible for the success or failure of Elitearn,
+         and no liability can be attributed to them based on users' outcomes, whether they benefit from the
+          opportunity or not.</p>
+       
+       <p>The Board of Creatives, team members, and coupon code vendors associated with Elitearn are also 
+       not liable for users' success or failure concerning any business risks.</p>
+       
+       <p>For a comprehensive understanding of Elitearn's earning disclaimer and complete Terms of Service, 
+         we advise reading the footer link on this website. By registering or using Elitearn's services, you agree to abide by these terms and conditions. 
+      </p>
+     <button id="sign-in-btn" action="register.html">Sign In</button>
+   </section>
+   
 
-     <div class="bills">
-      <h1  class="fa-solid fa-lightbulb purple" id="img-logo"></h1>
-      <h1>Bills Payment</h1>
-      <p>We Offer bills payments ranging from airtime, data, tv payments and much more</p>
-     </div>
-
-
-
-     <div class="trade">
-
-      <h1  class="fa-solid fa-registered purple" id="img-logo" ></h1>
-      <h1>Trades</h1>
-      <p>We Offer the best local and international trade rates and much more</p>
-     </div>
-     
-
-     <div class="Ads">
-
-      <h1  class="fa-solid fa-rectangle-ad purple" id="img-logo" ></h1>
-      <h1>Ads Center</h1>
-      <p>We offer the best rate for advertisement on all digital platforms and much more</p>
-     </div>
-
-
-     <div class="Referrals">
-
-      <h1  class="fa-solid fa-universal-access purple" id="img-logo" > </h1>
-      <h1>Invite and Earn Referral Bonuses</h1>
-      <p>We Refer Elite Earn to friends and family and more and get referral bonuses</p>
-     </div>
-
-     <div class="Skills">
-
-      <h1  class="fa-solid fa-graduation-cap purple" id="img-logo" ></h1>
-      <h1>Skills Aquisition</h1>
-      <p>We We have created a platform for you to learn varying skills ranging from tech to social skills and much more</p>
-     </div>
-    </section>
-
-
-    <section class="about">
-        
-      <div class="about-msg">
-        <h1>About Us</h1>
-
-       <p>At ElitEarn, we are out to empower, build and make financially capable persons
-        in every industry and art.
-      We aim to establish and as well train human capacity to the highest possible.
-       Your journey with us will be your best decision yet. </p>
-
-       <h1><a href="about.html">more</a></h1>
-
-      </div>
-      <div class="video">
-        <video src="video.mp4" autoplay controls muted></video>
-    </div>
-    </section>
-     
-    <section class="start-ups">
-      <h1 class="start-header">How it Works</h1>
-      <p>Get latest update about our services</p>
-
-      <div class="start-up">
-        <div class="individuals">
-          <h1>1</h1>
-          <img src="individual.jpg" alt="">
-          <h1>Join Our community</h1>
-          <p>Make money, enjoy endless rewards and lots more today</p>
-          <a href="register.html" id="sign-in-btn">Join Today</a>
-        </div>
-
-        <div class="Vendor">
-          <h1>2</h1>
-          <img src="vendor.jpg" alt="">
-          <h1>Vendor</h1>
-          <p>Become a registered Vendor, enjoy endless trade rewards and lots more today</p>
-          <a href="register.html" id="sign-in-btn">Start Now</a>
-        </div>
-      </div>
-    </section>
-
-
+   
 
     <section class="social">
       <h2>follow Us:</h2>
@@ -595,10 +536,10 @@ a{
     <section class="links">
       <h1>Links</h1>
       <ul>
-        <li><a href="index.html">Home  <i class="fa-solid fa-house purple" id="icon"></i></a></li>
+        <li><a href="#">Home  <i class="fa-solid fa-house purple" id="icon"></i></a></li>
         <li><a href="terms.html">Terms  <i class="fa-solid fa-circle-info purple" id="icon"></i></a></li>
-        <li><a href="privacy.html">Privacy  <i class="fa-solid fa-gear purple" id="icon"></i></a></li>
-        <li><a href="contact">Contact  <i class="fa-solid fa-envelope purple" id="icon"></i></a></li>
+        <li><a href="#">Privacy  <i class="fa-solid fa-gear purple" id="icon"></i></a></li>
+        <li><a href="#">Contact  <i class="fa-solid fa-envelope purple" id="icon"></i></a></li>
 
       </ul>
     </section>
@@ -614,7 +555,7 @@ a{
         // Add click event listener
         signInBtn.addEventListener('click', () => {
             // Redirect to register.html
-            window.location.href = 'login.html';
+            window.location.href = 'register.html';
         });
     document.getElementById('menu-icon').addEventListener('click', function() {
       document.getElementById('dropdown-menu').style.left = '0';

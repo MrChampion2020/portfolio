@@ -92,7 +92,7 @@
       border-radius: 4px;
     }
     .form-group button:hover {
-      background-color: darkpurple;
+      background-color: rgb(43, 3, 43);
     }
     .form-group a {
       display: block;
@@ -102,7 +102,8 @@
       text-decoration: none;
     }
     .form-group a:hover {
-      text-decoration: underline;
+      text-decoration: none;
+      color: rgb(48, 1, 48);
     }
     .alert {
       display: none;
@@ -119,8 +120,15 @@
       }
       form{
         width: 90%;
+        height: auto;
         margin: auto;
       }
+      .form-group input, .form-group select {
+      width: calc(90% -20px);
+      padding: 10px;
+      margin: 5px;
+    
+    }
 }
   </style>
 </head>

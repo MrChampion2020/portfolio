@@ -202,10 +202,22 @@
       position: relative;
       border-radius: 10px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
     }
+
 
     .social h1{
       padding: 0 10px;
+      height: 40%;
+    }
+    .social-logo{
+      display: flex;
+      flex-direction: row;
+      height: 50%;
+      width: 80%;
+      margin: auto;
+
     }
 
     footer {
@@ -247,17 +259,34 @@
         font-weight: 100;
       }
       .profile-top{
-        height: 30%;
+        height: 20%;
       }
       .profile-top div{
         width: 60%;
       }
       .profile-down{
-        height: 30%;
+        height: 20%;
       }
       .profile-down div{
         width: 60%;
-      }
+      }.social{
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 60%;
+      height: 80%;
+      margin: auto;
+    }
+    .social h1{
+      height: 30%;
+      width: 90%;
+    }
+      .social-logo{
+      display: flex;
+      flex-direction: row;
+      height: 70%;
+      width: 80%;
+      margin: auto;
+
+    }
     }
   </style>
 </head>
@@ -327,10 +356,11 @@
   
       <div class="social">
        <h1>Social activity</h1>
-       <p></p>
+       <div class="social-logo">
        <h1 class="fa-brands fa-facebook purple"> </h1>
-      <h1 class="fa-brands fa-instagram purple"></h1>
-      <h1 class="fa-brands fa-tiktok purple"></h1>
+       <h1 class="fa-brands fa-instagram purple"></h1>
+       <h1 class="fa-brands fa-tiktok purple"></h1>
+      </div>
       </div>
      </section>
 
