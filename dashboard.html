@@ -370,8 +370,6 @@
   </footer>
 
   <script>
-
-
 const API_URL = `https://elitearn.onrender.com`;
 
 const fetchUserData = async () => {
@@ -411,6 +409,50 @@ const fetchUserData = async () => {
 
 // Fetch user data when the page loads
 window.onload = fetchUserData;
+
+
+
+
+/*
+const API_URL = `https://elitearn.onrender.com`;
+
+const fetchUserData = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user-details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('username').textContent = data.user.username;
+            document.getElementById('wallet').textContent = data.user.wallet;
+            document.getElementById('referralWallet').textContent = data.user.referralWallet;
+            document.getElementById('referralLink').textContent = data.user.referralLink;
+            document.getElementById('referralLink').href = data.user.referralLink;
+        } else {
+            alert('Failed to fetch user data');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        alert('An error occurred while fetching user data');
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+};
+
+// Fetch user data when the page loads
+window.onload = fetchUserData;*/
   
   </script>
 </body>

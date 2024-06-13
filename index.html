@@ -47,6 +47,7 @@ a{
       cursor: pointer;
       padding: 10px;
     }
+    .menu{display: none;}
 
     #dropdown-menu {
       position: fixed;
@@ -369,7 +370,6 @@ a{
     .links ul {
       list-style: none;
       padding: 0;
-      margin: auto;
     }
 
     .links ul li {
@@ -420,39 +420,41 @@ a{
       .menu-icon {
         display: none; /* Hide menu icon */
       }
-      #dropdown-menu {
+      .menu {
         display: flex; /* Hide dropdown menu */
         width: 100%;
         height: 40%;
-
       }
-      .video {
-      grid-template-columns: 1fr 1fr; /* Hide dropdown menu */
-        
-
-      }
-      nav ul {
+      
+      .menu ul {
+          display: flex;
         flex-direction: row; /* Display menu items in a row */
         justify-content: center;
         align-items: center;
         margin: auto;
         margin-top: 0%;
-        width: 80%;
+        width: 100%;
         margin-left: 140%;
         color: white;
-      
+        border: 1px solid red;
       }
-      nav ul li {
+      .menu ul li a {
        padding: 0px 20px;
         width: 15%;
         font-size: 16px;
         position: relative;
+        color: white;
       }
 
       .start-up {
         grid-template-columns: 1fr 1fr; /* Display individual and vendor sections in a row */
         justify-content: space-around;
         align-items: flex-start;
+      }
+      .video {
+      grid-template-columns: 1fr 1fr; /* Hide dropdown menu */
+        
+
       }
     }
 
@@ -474,6 +476,19 @@ a{
   <header class="header">
     <div class="logo"><img src="logo.jpg" alt="Logo"></div>
     <div class="menu-icon" id="menu-icon"><i class="fas fa-bars"></i></div>
+
+    <div class="menu">
+      <ul>
+      <li> Home </li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="register.html">Get Started</a></li>
+      <li>Buy Coupons</li>
+      <li>Coupon Checker</li>
+      <li>Top Earners</li>
+      <li><a href="terms.html">Terms</a></li>
+    </ul>
+  </div>
+
   </header>
   <nav id="dropdown-menu">
     <div class="dropdown-header">

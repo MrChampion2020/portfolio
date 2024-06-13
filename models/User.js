@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     phone: String,
     couponCode: String,
     packageOption: String,
-    verificationCode: String,
+    verificationToken: { type: String },
     isVerified: { type: Boolean, default: false },
     referralWallet: { type: Number, default: 0 },
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
