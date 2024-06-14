@@ -42,27 +42,7 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
-/*
-// Vendor schema
-const vendorSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  password: String,
-  isApproved: { type: Boolean, default: false },
-});
 
-const Vendor = mongoose.model("Vendor", vendorSchema);
-
-// Admin schema
-const adminSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  password: String,
-});
-
-const Admin = mongoose.model("Admin", adminSchema);*/
 
 // Generate coupon endpoint
 app.post('/generate-coupon', authenticateToken, async (req, res) => {
@@ -216,6 +196,14 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
+
+
+const authenticateAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.sendStatus(403);
+  }
+  next();
+};
 
 app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, res) => {
   try {
