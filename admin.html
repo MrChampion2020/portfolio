@@ -8,12 +8,20 @@
         /* Add some basic styles */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .container {
             margin: 20px;
         }
         input, select, button {
             margin: 5px;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        #vendorsUsersList, #couponsList {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -45,17 +53,19 @@
 
         <h2>Coupons</h2>
         <div id="couponsList"></div>
+
+        <button onclick="fetchCoupons()">Fetch Coupons</button>
     </div>
 
     <script>
-        const apiUrl = 'http://your-backend-api-url'; // Replace with your backend API URL
+        const API_URL = `https://elitearn.onrender.com`;
 
         async function createVendor() {
             const name = document.getElementById('vendorName').value;
             const email = document.getElementById('vendorEmail').value;
             const password = document.getElementById('vendorPassword').value;
 
-            const response = await fetch(`${apiUrl}/create-vendor`, {
+            const response = await fetch(`${API_URL}/create-vendor`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
@@ -75,7 +85,7 @@
             const value = document.getElementById('couponValue').value;
             const currency = document.getElementById('couponCurrency').value;
 
-            const response = await fetch(`${apiUrl}/send-coupon`, {
+            const response = await fetch(`${API_URL}/send-coupon`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ vendorId, value, currency })
@@ -91,7 +101,7 @@
         }
 
         async function fetchVendorsUsers() {
-            const response = await fetch(`${apiUrl}/vendors-users`);
+            const response = await fetch(`${API_URL}/vendors-users`);
             const data = await response.json();
 
             if (response.ok) {
@@ -120,7 +130,7 @@
         }
 
         async function fetchCoupons() {
-            const response = await fetch(`${apiUrl}/coupons`);
+            const response = await fetch(`${API_URL}/coupons`);
             const data = await response.json();
 
             if (response.ok) {
@@ -140,4 +150,5 @@
     </script>
 </body>
 </html>
+
 

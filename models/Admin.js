@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema({
-  username: String,
-  password: String,
+  username: {type: String, default: admin},
+  password: {type: String, default: Admin}
   // Other admin-specific fields
 });
 

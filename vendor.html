@@ -23,11 +23,11 @@
     </div>
 
     <script>
-        const apiUrl = 'http://your-backend-api-url'; // Replace with your backend API URL
+        const API_URL = `https://elitearn.onrender.com`;
         const vendorId = 'your-vendor-id'; // Replace with the actual vendor ID
 
         async function fetchCoupons() {
-            const response = await fetch(`${apiUrl}/coupons/${vendorId}`);
+            const response = await fetch(`${API_URL}/coupons/${vendorId}`);
             const data = await response.json();
 
             if (response.ok) {
