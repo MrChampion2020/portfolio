@@ -11,7 +11,7 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-
+const { ObjectId } = mongoose.Types;
 const User = require("./models/User");
 const Coupon = require("./models/Coupon");
 
@@ -44,26 +44,33 @@ const authenticateToken = (req, res, next) => {
 // Function to generate coupon code
 const generateCouponCode = () => crypto.randomBytes(8).toString('hex');
 
-// Generate coupon endpoint
-app.post('/generate-coupon', authenticateToken, async (req, res) => {
+// Assuming you have an Express route for generating coupons
+app.post('/generate-coupon', async (req, res) => {
   try {
-    const { userId, currency } = req.body;
-    const value = currency === 'Naira' ? 5000 : 5;
+    const { userId, couponValue, accountType } = req.body;
 
+    // Convert the userId to a Mongoose ObjectId
+    const userObjectId = ObjectId(userId);
+
+    // Create a new coupon
     const newCoupon = new Coupon({
-      code: generateCouponCode(),
-      value,
-      currency,
-      userId
+      userId: userObjectId,
+      couponValue,
+      accountType,
+      createdAt: new Date(),
     });
 
+    // Save the coupon to the database
     await newCoupon.save();
-    res.status(200).json({ message: 'Coupon generated successfully', coupon: newCoupon });
+
+    res.status(201).json({ message: 'Coupon generated successfully', coupon: newCoupon });
   } catch (error) {
-    console.log('Error generating coupon:', error);
-    res.status(500).json({ message: 'Failed to generate coupon' });
+    console.error('Error generating coupon:', error);
+    res.status(500).json({ error: 'Error generating coupon' });
   }
 });
+
+
 
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
