@@ -41,8 +41,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Function to generate coupon code
-const generateCouponCode = () => crypto.randomBytes(8).toString('hex');
+
 
 // Assuming you have an Express route for generating coupons
 app.post('/generate-coupon', async (req, res) => {
@@ -50,7 +49,7 @@ app.post('/generate-coupon', async (req, res) => {
     const { userId, couponValue, accountType } = req.body;
 
     // Convert the userId to a Mongoose ObjectId
-    const userObjectId = ObjectId(userId);
+    const userObjectId = new ObjectId(userId);
 
     // Create a new coupon
     const newCoupon = new Coupon({
@@ -69,7 +68,6 @@ app.post('/generate-coupon', async (req, res) => {
     res.status(500).json({ error: 'Error generating coupon' });
   }
 });
-
 
 
 const sendVerificationEmail = async (email, verificationToken) => {
