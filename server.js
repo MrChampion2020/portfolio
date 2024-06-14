@@ -43,31 +43,28 @@ const authenticateToken = (req, res, next) => {
 
 
 
-// Assuming you have an Express route for generating coupons
-app.post('/generate-coupon', async (req, res) => {
+
+// Generate coupon endpoint
+app.post('/generate-coupon', authenticateToken, async (req, res) => {
   try {
-    const { userId, couponValue, accountType } = req.body;
+    const { userId, currency } = req.body;
+    const value = currency === 'Naira' ? 5000 : 5;
 
-    // Convert the userId to a Mongoose ObjectId
-    const userObjectId = new ObjectId(userId);
-
-    // Create a new coupon
     const newCoupon = new Coupon({
-      userId: userObjectId,
-      couponValue,
-      accountType,
-      createdAt: new Date(),
+      code: generateCouponCode(),
+      value,
+      currency,
+      userId: mongoose.Types.ObjectId(userId) // Convert userId to ObjectId
     });
 
-    // Save the coupon to the database
     await newCoupon.save();
-
-    res.status(201).json({ message: 'Coupon generated successfully', coupon: newCoupon });
+    res.status(200).json({ message: 'Coupon generated successfully', coupon: newCoupon });
   } catch (error) {
-    console.error('Error generating coupon:', error);
-    res.status(500).json({ error: 'Error generating coupon' });
+    console.log('Error generating coupon:', error);
+    res.status(500).json({ message: 'Failed to generate coupon' });
   }
 });
+
 
 
 const sendVerificationEmail = async (email, verificationToken) => {
