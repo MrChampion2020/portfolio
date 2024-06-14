@@ -32,9 +32,9 @@ a{
     }
 
     .logo {
-     width: 30%;
+     width: 40%;
      height: 100%;
-      font-size: 1.2em;
+      font-size: 60px;
     }
     .logo img {
      width: 100%;
@@ -53,10 +53,10 @@ a{
       position: fixed;
       top: 0;
       left: -100%;
-      width: 85%;
+      width: 100%;
       height: 100%;
-      background: white;
-      color: purple;
+      background: purple;
+      color: white;
       transition: left 0.3s ease;
     }
 
@@ -67,6 +67,7 @@ a{
       align-items: center;
       padding: 10px;
       background: purple;
+      border-bottom: 2px solid white;
     }
 
     .close-icon {
@@ -83,15 +84,35 @@ a{
       display: flex;
       flex-direction: column;
       align-items: left;
+      margin: auto;
     }
 
     nav ul li {
-      margin: 20px 0;
+      margin: 20px auto;
       cursor: pointer;
       font-size: 20px;
       font-family: 'Times New Roman', Times, serif;
       text-decoration: none;
       font-weight: 600;
+      color: white;
+    } 
+    nav ul .register{
+      background-color: #fff;
+      width: 30%;
+      height: 40%;
+      border-radius: 10px;
+      margin: auto;
+      justify-content: center;
+      text-align: center;
+    }
+    nav ul .register a{
+      width: 100%;
+      color: purple;
+      text-align: center;
+      margin: auto;
+    }
+    nav ul li a{
+      color: white;
     }
 
     main {
@@ -481,11 +502,11 @@ a{
       <ul>
       <li> Home </li>
       <li><a href="about.html">About</a></li>
-      <li><a href="register.html">Get Started</a></li>
       <li>Buy Coupons</li>
       <li>Coupon Checker</li>
       <li>Top Earners</li>
       <li><a href="terms.html">Terms</a></li>
+      <li><a href="register.html">Get Started</a></li>
     </ul>
   </div>
 
@@ -498,11 +519,11 @@ a{
     <ul>
       <li> Home </li>
       <li><a href="about.html">About</a></li>
-      <li><a href="register.html">Get Started</a></li>
       <li>Buy Coupons</li>
       <li>Coupon Checker</li>
       <li>Top Earners</li>
       <li><a href="terms.html">Terms</a></li>
+      <li class="register"><a href="register.html">Get Started</a></li>
     </ul>
   </nav>
   <main>
@@ -521,15 +542,6 @@ a{
       <h1  class="fa-solid fa-lightbulb purple" id="img-logo"></h1>
       <h1>Bills Payment</h1>
       <p>We Offer bills payments ranging from airtime, data, tv payments and much more</p>
-     </div>
-
-
-
-     <div class="trade">
-
-      <h1  class="fa-solid fa-registered purple" id="img-logo" ></h1>
-      <h1>Trades</h1>
-      <p>We Offer the best local and international trade rates and much more</p>
      </div>
      
 

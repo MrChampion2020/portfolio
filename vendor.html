@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Vendor Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard</title>
+    <style>
+        /* Add some basic styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Vendor Dashboard</h1>
-  <!-- Vendor-specific functionalities here -->
+    <div class="container">
+        <h1>Vendor Dashboard</h1>
+        
+        <h2>Coupons</h2>
+        <div id="couponsList"></div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://your-backend-api-url'; // Replace with your backend API URL
+        const vendorId = 'your-vendor-id'; // Replace with the actual vendor ID
+
+        async function fetchCoupons() {
+            const response = await fetch(`${apiUrl}/coupons/${vendorId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                const couponsList = document.getElementById('couponsList');
+                couponsList.innerHTML = '';
+                data.coupons.forEach(coupon => {
+                    couponsList.innerHTML += `<p>${coupon.code} - ${coupon.status}</p>`;
+                });
+            } else {
+                alert('Failed to fetch coupons: ' + data.error);
+            }
+        }
+
+        // Initialize the dashboard
+        fetchCoupons();
+    </script>
 </body>
 </html>

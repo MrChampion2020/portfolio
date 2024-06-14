@@ -13,11 +13,12 @@ const UserSchema = new mongoose.Schema({
     verificationToken: { type: String },
     isVerified: { type: Boolean, default: false },
     referralWallet: { type: Number, default: 0 },
-    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     referralLink: { type: String, unique: true },
     referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'user' }
-});
+    role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'user' },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User',  timestamps: true }
+  });
+
 
 UserSchema.pre('save', function(next) {
   if (!this.referralLink) {

@@ -1,52 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Add some basic styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 20px;
+        }
+        input, select, button {
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Admin Dashboard</h1>
-  <form id="register-vendor-form">
-    <h2>Register Vendor</h2>
-    <input type="text" id="vendorName" placeholder="Vendor Name" required>
-    <input type="email" id="vendorEmail" placeholder="Vendor Email" required>
-    <input type="password" id="vendorPassword" placeholder="Vendor Password" required>
-    <button type="submit">Register</button>
-  </form>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        
+        <h2>Create Vendor</h2>
+        <div>
+            <input type="text" id="vendorName" placeholder="Name">
+            <input type="email" id="vendorEmail" placeholder="Email">
+            <input type="password" id="vendorPassword" placeholder="Password">
+            <button onclick="createVendor()">Create Vendor</button>
+        </div>
 
-  <button id="generate-coupon-btn">Generate Coupon</button>
+        <h2>Send Coupon</h2>
+        <div>
+            <select id="vendorList"></select>
+            <input type="number" id="couponValue" placeholder="Value">
+            <select id="couponCurrency">
+                <option value="Naira">Naira</option>
+                <option value="Dollar">Dollar</option>
+            </select>
+            <button onclick="sendCoupon()">Send Coupon</button>
+        </div>
 
-  <script>
+        <h2>Vendors and Users</h2>
+        <div id="vendorsUsersList"></div>
 
+        <h2>Coupons</h2>
+        <div id="couponsList"></div>
+    </div>
 
-    const API_URL = `https://elitearn.onrender.com`;
+    <script>
+        const apiUrl = 'http://your-backend-api-url'; // Replace with your backend API URL
 
-    document.getElementById('register-vendor-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const vendorName = document.getElementById('vendorName').value;
-      const vendorEmail = document.getElementById('vendorEmail').value;
-      const vendorPassword = document.getElementById('vendorPassword').value;
+        async function createVendor() {
+            const name = document.getElementById('vendorName').value;
+            const email = document.getElementById('vendorEmail').value;
+            const password = document.getElementById('vendorPassword').value;
 
-      // Register vendor logic here...
-    });
+            const response = await fetch(`${apiUrl}/create-vendor`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
 
-    document.getElementById('generate-coupon-btn').addEventListener('click', async () => {
-      const response = await fetch(`${API_URL}/generate-coupon`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId: '<USER_ID>', currency: 'Naira' })
-      });
+            const data = await response.json();
+            if (response.ok) {
+                alert('Vendor created successfully');
+                fetchVendorsUsers();
+            } else {
+                alert('Failed to create vendor: ' + data.error);
+            }
+        }
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(`Coupon generated: ${data.coupon.code}`);
-      } else {
-        alert('Failed to generate coupon');
-      }
-    });
-  </script>
+        async function sendCoupon() {
+            const vendorId = document.getElementById('vendorList').value;
+            const value = document.getElementById('couponValue').value;
+            const currency = document.getElementById('couponCurrency').value;
+
+            const response = await fetch(`${apiUrl}/send-coupon`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vendorId, value, currency })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Coupon sent successfully');
+                fetchCoupons();
+            } else {
+                alert('Failed to send coupon: ' + data.error);
+            }
+        }
+
+        async function fetchVendorsUsers() {
+            const response = await fetch(`${apiUrl}/vendors-users`);
+            const data = await response.json();
+
+            if (response.ok) {
+                const vendorList = document.getElementById('vendorList');
+                vendorList.innerHTML = '';
+                data.vendors.forEach(vendor => {
+                    const option = document.createElement('option');
+                    option.value = vendor._id;
+                    option.textContent = vendor.name;
+                    vendorList.appendChild(option);
+                });
+
+                const vendorsUsersList = document.getElementById('vendorsUsersList');
+                vendorsUsersList.innerHTML = '<h3>Active Vendors</h3>';
+                data.vendors.forEach(vendor => {
+                    vendorsUsersList.innerHTML += `<p>${vendor.name} (${vendor.email})</p>`;
+                });
+
+                vendorsUsersList.innerHTML += '<h3>Active Users</h3>';
+                data.users.forEach(user => {
+                    vendorsUsersList.innerHTML += `<p>${user.name} (${user.email})</p>`;
+                });
+            } else {
+                alert('Failed to fetch vendors and users: ' + data.error);
+            }
+        }
+
+        async function fetchCoupons() {
+            const response = await fetch(`${apiUrl}/coupons`);
+            const data = await response.json();
+
+            if (response.ok) {
+                const couponsList = document.getElementById('couponsList');
+                couponsList.innerHTML = '';
+                data.coupons.forEach(coupon => {
+                    couponsList.innerHTML += `<p>${coupon.code} - ${coupon.status}</p>`;
+                });
+            } else {
+                alert('Failed to fetch coupons: ' + data.error);
+            }
+        }
+
+        // Initialize the dashboard
+        fetchVendorsUsers();
+        fetchCoupons();
+    </script>
 </body>
 </html>
+
