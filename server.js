@@ -42,7 +42,7 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
-
+/*
 // Vendor schema
 const vendorSchema = new mongoose.Schema({
   name: String,
@@ -62,7 +62,7 @@ const adminSchema = new mongoose.Schema({
   password: String,
 });
 
-const Admin = mongoose.model("Admin", adminSchema);
+const Admin = mongoose.model("Admin", adminSchema);*/
 
 // Generate coupon endpoint
 app.post('/generate-coupon', authenticateToken, async (req, res) => {
