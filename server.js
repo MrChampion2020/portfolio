@@ -23,6 +23,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, './')));
 
+// Serve registration page
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, './', 'register.html'));
+});
+
 const generateSecretKey = () => crypto.randomBytes(32).toString("hex");
 const secretKey = process.env.SECRET_KEY || generateSecretKey();
 
@@ -191,7 +196,7 @@ app.post("/register", async (req, res) => {
     });
 
     // Generate referral link
-    newUser.referralLink = `${API_URL}/register?ref=${username}`;
+    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
 
     if (referralLink) {
       const referrer = await User.findOne({ username: referralLink });
@@ -228,7 +233,8 @@ app.post("/register", async (req, res) => {
   }
 });
 
-
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, './')));
 
 /*
 app.post("/register", async (req, res) => {
@@ -250,7 +256,7 @@ app.post("/register", async (req, res) => {
     }
 
     const coupon = await Coupon.findOne({ code: couponCode });
-    if (!coupon || !coupon.isActive) {
+    if (!coupon || !coupon.isActive || coupon.isUsed) {
       return res.status(400).json({ message: "Invalid or inactive coupon code" });
     }
 
@@ -265,18 +271,21 @@ app.post("/register", async (req, res) => {
     });
 
     // Generate referral link
-    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+    newUser.referralLink = `${API_URL}/register?ref=${username}`;
 
     if (referralLink) {
       const referrer = await User.findOne({ username: referralLink });
-      if (referrer) {
+      if (referrer && referrer.referralLinkActive) {
         newUser.referredBy = referrer._id;
         referrer.referrals.push(newUser._id);
-        referrer.wallet += 4000;
-        referrer.referralWallet += 4000;
-        await referrer.save();
 
-        await distributeReferralBonus(referrer._id, 2);
+        // Credit referrer's wallet
+        const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
+        referrer.wallet += amountToCredit;
+        referrer.referralWallet += amountToCredit;
+        await referrer.save();
+      } else {
+        return res.status(400).json({ message: "Invalid or inactive referral link" });
       }
     }
 
@@ -286,67 +295,8 @@ app.post("/register", async (req, res) => {
     // Mark coupon as used
     coupon.isUsed = true;
     coupon.isActive = false;
+    coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
     await coupon.save();
-
-    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
-  } catch (error) {
-    console.log("Error registering user:", error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "Duplicate key error", error: error.message });
-    }
-    res.status(500).json({ message: "Registration failed" });
-  }
-});
-
-*/
-
-/*
-app.post("/register", async (req, res) => {
-  try {
-    const { fullName, email, phone, password, username, referralLink } = req.body;
-
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ message: "Username already taken" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      fullName,
-      email,
-      phone,
-      password: hashedPassword,
-      username,
-      verificationToken: crypto.randomBytes(20).toString("hex"),
-    });
-
-    // Generate referral link
-    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
-
-    if (referralLink) {
-      const referrer = await User.findOne({ username: referralLink });
-      if (referrer) {
-        newUser.referredBy = referrer._id;
-        referrer.referrals.push(newUser._id);
-        referrer.wallet += 4000;
-        referrer.referralWallet += 4000;
-        await referrer.save();
-
-        await distributeReferralBonus(referrer._id, 2);
-      }
-    }
-
-    await newUser.save();
-    await sendVerificationEmail(newUser.email, newUser.verificationToken);
 
     res.status(200).json({ message: "User registered successfully", userId: newUser._id });
   } catch (error) {
@@ -503,5 +453,3 @@ app.post("/login/admin", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-
