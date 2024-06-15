@@ -1,4 +1,4 @@
-const express = require("express");
+/*const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
@@ -197,6 +197,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.get("/user-details", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        wallet: user.wallet,
+        referralWallet: user.referralWallet,
+        referrals: user.referrals,
+        referralLink: user.referralLink,
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching user details:", error);
+    res.status(500).json({ message: "Error fetching user details", error });
+  }
+});
+
+
 
 const authenticateAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
@@ -298,9 +324,14 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
+*/
 
 
-/*const express = require("express");
+
+
+
+
+const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
@@ -316,6 +347,8 @@ const port = process.env.PORT || 5000;
 const { ObjectId } = mongoose.Types;
 const User = require("./models/User");
 const Coupon = require("./models/Coupon");
+const Vendor = require("./models/Vendor");
+const Admin = require("./models/Admin");
 
 app.use(express.json());
 app.use(cors());
@@ -345,7 +378,58 @@ const authenticateToken = (req, res, next) => {
 
 
 
+const generateCouponCode = () => crypto.randomBytes(4).toString("hex");
 
+app.post('/generate-coupon', async (req, res) => {
+  try {
+    const { value, currency } = req.body;
+    const newCoupon = new Coupon({
+      code: generateCouponCode(),
+      value,
+      currency,
+    });
+
+    await newCoupon.save();
+    res.status(200).json({ message: 'Coupon generated successfully', coupon: newCoupon });
+  } catch (error) {
+    console.error('Error generating coupon:', error);
+    res.status(500).json({ message: 'Failed to generate coupon' });
+  }
+});
+
+app.post('/mark-coupon-used', async (req, res) => {
+  try {
+    const { code } = req.body;
+    const coupon = await Coupon.findOne({ code });
+    if (!coupon || !coupon.isActive) {
+      return res.status(400).json({ message: 'Invalid or inactive coupon code' });
+    }
+    
+    coupon.isUsed = true;
+    coupon.isActive = false;
+    await coupon.save();
+    res.status(200).json({ message: 'Coupon marked as used' });
+  } catch (error) {
+    console.error('Error marking coupon as used:', error);
+    res.status(500).json({ message: 'Failed to mark coupon as used' });
+  }
+});
+
+
+
+
+app.get('/coupons', async (req, res) => {
+  try {
+    const coupons = await Coupon.find();
+    res.status(200).json(coupons);
+  } catch (error) {
+    console.error('Error fetching coupons:', error);
+    res.status(500).json({ message: 'Failed to fetch coupons' });
+  }
+});
+
+
+/*
 // Generate coupon endpoint
 app.post('/generate-coupon', authenticateToken, async (req, res) => {
   try {
@@ -365,8 +449,7 @@ app.post('/generate-coupon', authenticateToken, async (req, res) => {
     console.log('Error generating coupon:', error);
     res.status(500).json({ message: 'Failed to generate coupon' });
   }
-});
-
+});*/
 
 
 const sendVerificationEmail = async (email, verificationToken) => {
@@ -407,6 +490,76 @@ const distributeReferralBonus = async (userId, level) => {
   }
 };
 
+app.post("/register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon || !coupon.isActive) {
+      return res.status(400).json({ message: "Invalid or inactive coupon code" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      verificationToken: crypto.randomBytes(20).toString("hex"),
+    });
+
+    // Generate referral link
+    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+
+    if (referralLink) {
+      const referrer = await User.findOne({ username: referralLink });
+      if (referrer) {
+        newUser.referredBy = referrer._id;
+        referrer.referrals.push(newUser._id);
+        referrer.wallet += 4000;
+        referrer.referralWallet += 4000;
+        await referrer.save();
+
+        await distributeReferralBonus(referrer._id, 2);
+      }
+    }
+
+    await newUser.save();
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+
+    // Mark coupon as used
+    coupon.isUsed = true;
+    coupon.isActive = false;
+    await coupon.save();
+
+    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
+  } catch (error) {
+    console.log("Error registering user:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate key error", error: error.message });
+    }
+    res.status(500).json({ message: "Registration failed" });
+  }
+});
+
+
+
+/*
 app.post("/register", async (req, res) => {
   try {
     const { fullName, email, phone, password, username, referralLink } = req.body;
@@ -463,6 +616,9 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ message: "Registration failed" });
   }
 });
+*/
+
+
 
 app.get("/verify/:token", async (req, res) => {
   try {
@@ -533,23 +689,77 @@ const authenticateAdmin = (req, res, next) => {
   next();
 };
 
-const authenticateVendor = (req, res, next) => {
-  if (req.user.role !== 'vendor') {
-    return res.sendStatus(403);
-  }
-  next();
-};
+app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, res) => {
+  try {
+    const { name, email, phone, password } = req.body;
 
-// Admin and vendor routes
-app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+    const existingVendor = await Vendor.findOne({ email });
+    if (existingVendor) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newVendor = new Vendor({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+    });
+
+    await newVendor.save();
+
+    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
+  } catch (error) {
+    console.log("Error registering vendor:", error);
+    res.status(500).json({ message: "Vendor registration failed" });
+  }
 });
 
-app.get('/vendor', authenticateToken, authenticateVendor, (req, res) => {
-  res.sendFile(path.join(__dirname, 'vendor.html'));
+app.post("/register/admin", async (req, res) => {
+  try {
+    const { name, email, phone, password } = req.body;
+
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new Admin({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+    });
+
+    await newAdmin.save();
+
+    res.status(200).json({ message: "Admin registered successfully", adminId: newAdmin._id });
+  } catch (error) {
+    console.log("Error registering admin:", error);
+    res.status(500).json({ message: "Admin registration failed" });
+  }
+});
+
+app.post("/login/admin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email });
+
+    if (!admin || !await bcrypt.compare(password, admin.password)) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ adminId: admin._id, role: 'admin' }, secretKey, { expiresIn: '1h' });
+
+    res.status(200).json({ message: "Admin login successful", token });
+  } catch (error) {
+    console.log("Error logging in admin:", error);
+    res.status(500).json({ message: "Admin login failed" });
+  }
 });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-*/
+
