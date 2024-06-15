@@ -197,6 +197,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.get("/user-details", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        wallet: user.wallet,
+        referralWallet: user.referralWallet,
+        referrals: user.referrals,
+        referralLink: user.referralLink,
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching user details:", error);
+    res.status(500).json({ message: "Error fetching user details", error });
+  }
+});
+
+
 
 const authenticateAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
