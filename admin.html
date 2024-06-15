@@ -44,9 +44,13 @@
   </table>
   
   <script>
+
+const API_URL = `https://elitearn.onrender.com`;
+
+
     document.getElementById('generateCouponButton').addEventListener('click', async () => {
       try {
-        const response = await fetch('/generate-coupon', {
+        const response = await fetch(`${API_URL}/generate-coupon`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -81,7 +85,7 @@
     // Fetch and display existing coupons
     const fetchCoupons = async () => {
       try {
-        const response = await fetch('/coupons');
+        const response = await fetch(`${API_URL}/coupons`);
         const coupons = await response.json();
         coupons.forEach(addCouponToTable);
       } catch (error) {
@@ -93,7 +97,6 @@
   </script>
 </body>
 </html>
-
 
 
 
