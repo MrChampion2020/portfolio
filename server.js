@@ -43,9 +43,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-
-
-
 // Generate coupon endpoint
 app.post('/generate-coupon', authenticateToken, async (req, res) => {
   try {
@@ -66,8 +63,6 @@ app.post('/generate-coupon', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to generate coupon' });
   }
 });
-
-
 
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
@@ -226,7 +221,6 @@ app.get("/user-details", authenticateToken, async (req, res) => {
   }
 });
 
-
 const authenticateAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.sendStatus(403);
@@ -260,25 +254,29 @@ app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, r
   }
 });
 
-app.post("/login/vendor", async (req, res) => {
+app.post("/register/admin", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const vendor = await Vendor.findOne({ email });
+    const { name, email, phone, password } = req.body;
 
-    if (!vendor || !await bcrypt.compare(password, vendor.password)) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Email already registered" });
     }
 
-    if (!vendor.isApproved) {
-      return res.status(403).json({ message: "Vendor not approved" });
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new Admin({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+    });
 
-    const token = jwt.sign({ vendorId: vendor._id, role: "vendor" }, secretKey, { expiresIn: '1h' });
+    await newAdmin.save();
 
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({ message: "Admin registered successfully", adminId: newAdmin._id });
   } catch (error) {
-    console.log("Error logging in vendor:", error);
-    res.status(500).json({ message: "Login failed" });
+    console.log("Error registering admin:", error);
+    res.status(500).json({ message: "Admin registration failed" });
   }
 });
 
@@ -291,66 +289,17 @@ app.post("/login/admin", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ adminId: admin._id, role: "admin" }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ adminId: admin._id, role: 'admin' }, secretKey, { expiresIn: '1h' });
 
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({ message: "Admin login successful", token });
   } catch (error) {
     console.log("Error logging in admin:", error);
-    res.status(500).json({ message: "Login failed" });
+    res.status(500).json({ message: "Admin login failed" });
   }
 });
-
-app.get("/admin", authenticateToken, (req, res) => {
-  if (req.user.role !== "admin") {
-    return res.sendStatus(403);
-  }
-  res.sendFile(path.join(__dirname, "admin_dashboard.html"));
-});
-
-app.get("/vendor", authenticateToken, (req, res) => {
-  if (req.user.role !== "vendor") {
-    return res.sendStatus(403);
-  }
-  res.sendFile(path.join(__dirname, "vendor_dashboard.html"));
-});
-
-const generateCouponCode = () => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < 8; i++) {
-    code += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return code;
-};
-
-
-
-/*
-const authenticateAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.sendStatus(403);
-  }
-  next();
-};
-
-const authenticateVendor = (req, res, next) => {
-  if (req.user.role !== 'vendor') {
-    return res.sendStatus(403);
-  }
-  next();
-};
-
-// Admin and vendor routes
-app.get('/admin', authenticateToken, authenticateAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/vendor', authenticateToken, authenticateVendor, (req, res) => {
-  res.sendFile(path.join(__dirname, 'vendor.html'));
-});*/
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 
