@@ -1,21 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
+  <title>Admin Panel</title>
   <style>
-    table {
+    body, html {
       width: 100%;
-      border-collapse: collapse;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f4f4;
+      height: 100vh;
     }
-    table, th, td {
-      border: 1px solid black;
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 1200px;
+      width: 90%;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
-    th, td {
+    .login-container {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .dashboard-container {
+      display: none;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
       padding: 10px;
-      text-align: left;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
     button {
       padding: 10px 20px;
@@ -23,30 +49,145 @@
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <h1>Admin Dashboard</h1>
-  <button id="generateCouponButton">Generate Coupon</button>
-  <h2>Generated Coupons</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Code</th>
-        <th>Value</th>
-        <th>Currency</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="couponTableBody">
-    </tbody>
-  </table>
-  
+  <div class="container login-container" id="loginContainer">
+    <h1>Admin Login</h1>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="container dashboard-container" id="dashboardContainer">
+    <div class="display-area" id="userDisplayArea">
+      <h2>Number of Users: <span id="userCount">0</span></h2>
+      <button onclick="viewUsers()">View Full List of Users</button>
+    </div>
+
+    <div class="display-area" id="vendorDisplayArea">
+      <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
+      <button onclick="viewVendors()">View Full List of Vendors</button>
+    </div>
+
+    <div class="table-container">
+      <h2>Active Coupons</h2>
+      <button onclick="generateCoupon()">Generate Coupon</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Value</th>
+            <th>Currency</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="couponTableBody">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-container">
+      <h2>New Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="newUserTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <script>
-    document.getElementById('generateCouponButton').addEventListener('click', async () => {
+    const API_URL = `https://elitearn.onrender.com`;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const isAuthenticated = localStorage.getItem('isAuthenticated');
+      const loginContainer = document.getElementById('loginContainer');
+      const dashboardContainer = document.getElementById('dashboardContainer');
+
+      if (isAuthenticated) {
+        loginContainer.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        fetchCounts();
+        fetchCoupons();
+        fetchNewUsers();
+      } else {
+        loginContainer.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
+      }
+    });
+
+    const login = () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username === 'Admin' && password === 'admin.1234') {
+        localStorage.setItem('isAuthenticated', 'true');
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboardContainer').style.display = 'block';
+        fetchCounts();
+        fetchCoupons();
+        fetchNewUsers();
+      } else {
+        document.getElementById('error').innerText = 'Invalid username or password';
+      }
+    };
+
+    const fetchCounts = async () => {
       try {
-        const response = await fetch('/generate-coupon', {
+        const userResponse = await fetch(`${API_URL}/users/count`);
+        const userCount = await userResponse.json();
+        document.getElementById('userCount').innerText = userCount;
+
+        const vendorResponse = await fetch(`${API_URL}/vendors/count`);
+        const vendorCount = await vendorResponse.json();
+        document.getElementById('vendorCount').innerText = vendorCount;
+      } catch (error) {
+        console.error('Error fetching counts:', error);
+      }
+    };
+
+    const viewUsers = () => {
+      window.location.href = '/users.html';
+    };
+
+    const viewVendors = () => {
+      window.location.href = '/vendors.html';
+    };
+
+    const generateCoupon = async () => {
+      try {
+        const response = await fetch(`${API_URL}/generate-coupon`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -64,7 +205,7 @@
         console.error('Error generating coupon:', error);
         alert('Failed to generate coupon');
       }
-    });
+    };
 
     const addCouponToTable = (coupon) => {
       const tableBody = document.getElementById('couponTableBody');
@@ -78,10 +219,9 @@
       tableBody.appendChild(row);
     };
 
-    // Fetch and display existing coupons
     const fetchCoupons = async () => {
       try {
-        const response = await fetch('/coupons');
+        const response = await fetch(`${API_URL}/coupons`);
         const coupons = await response.json();
         coupons.forEach(addCouponToTable);
       } catch (error) {
@@ -89,7 +229,26 @@
       }
     };
 
-    fetchCoupons();
+    const addUserToTable = (user) => {
+      const tableBody = document.getElementById('newUserTableBody');
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.username}</td>
+        <td>${user.email}</td>
+        <td>${new Date(user.createdAt).toLocaleString()}</td>
+      `;
+      tableBody.appendChild(row);
+    };
+
+    const fetchNewUsers = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const users = await response.json();
+        users.forEach(addUserToTable);
+      } catch (error) {
+        console.error('Error fetching new users:', error);
+      }
+    };
   </script>
 </body>
 </html>
@@ -97,175 +256,217 @@
 
 
 
-<!--
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <style>
-        /* Add some basic styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            margin: 20px;
-        }
-        input, select, button {
-            margin: 5px;
-        }
-        h2 {
-            margin-top: 20px;
-        }
-        #vendorsUsersList, #couponsList {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body, html {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 1200px;
+      width: 90%;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .display-area {
+      margin-bottom: 20px;
+    }
+    .display-area h2 {
+      margin-bottom: 10px;
+    }
+    .display-area button {
+      margin-top: 10px;
+    }
+    .table-container {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    @media (max-width: 768px) {
+      .container {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Dashboard</h1>
-        
-        <h2>Create Vendor</h2>
-        <div>
-            <input type="text" id="vendorName" placeholder="Name">
-            <input type="email" id="vendorEmail" placeholder="Email">
-            <input type="password" id="vendorPassword" placeholder="Password">
-            <button onclick="createVendor()">Create Vendor</button>
-        </div>
-
-        <h2>Send Coupon</h2>
-        <div>
-            <select id="vendorList"></select>
-            <input type="number" id="couponValue" placeholder="Value">
-            <select id="couponCurrency">
-                <option value="Naira">Naira</option>
-                <option value="Dollar">Dollar</option>
-            </select>
-           
-
-
-            <table>
-                <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Value</th>
-                    <th>Currency</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="couponTableBody">
-                </tbody>
-              </table>
-
-              <button onclick="sendCoupon()" id="generateCouponButton">Send Coupon</button>
-        </div>
-
-        <h2>Vendors and Users</h2>
-        <div id="vendorsUsersList"></div>
-
-        <h2>Coupons</h2>
-        <div id="couponsList"></div>
-
-        <button onclick="fetchCoupons()">Fetch Coupons</button>
+  <div class="container">
+  
+    <div class="display-area" id="userDisplayArea">
+      <h2>Number of Users: <span id="userCount">0</span></h2>
+      <button onclick="viewUsers()">View Full List of Users</button>
     </div>
 
-    <script>
-        const API_URL = `https://elitearn.onrender.com`;
+    <div class="display-area" id="vendorDisplayArea">
+      <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
+      <button onclick="viewVendors()">View Full List of Vendors</button>
+    </div>
 
-        async function createVendor() {
-            const name = document.getElementById('vendorName').value;
-            const email = document.getElementById('vendorEmail').value;
-            const password = document.getElementById('vendorPassword').value;
+    <div class="table-container">
+      <h2>Active Coupons</h2>
+      <button onclick="generateCoupon()">Generate Coupon</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Value</th>
+            <th>Currency</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="couponTableBody">
+        </tbody>
+      </table>
+    </div>
 
-            const response = await fetch(`${API_URL}/create-vendor`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
-            });
+    <div class="table-container">
+      <h2>New Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="newUserTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-            const data = await response.json();
-            if (response.ok) {
-                alert('Vendor created successfully');
-                fetchVendorsUsers();
-            } else {
-                alert('Failed to create vendor: ' + data.error);
-            }
+  <script>
+    const API_URL = `https://elitearn.onrender.com`;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchCounts();
+      fetchCoupons();
+      fetchNewUsers();
+    });
+
+    const fetchCounts = async () => {
+      try {
+        const userResponse = await fetch(`${API_URL}/users/count`);
+        const userCount = await userResponse.json();
+        document.getElementById('userCount').innerText = userCount;
+
+        const vendorResponse = await fetch(`${API_URL}/vendors/count`);
+        const vendorCount = await vendorResponse.json();
+        document.getElementById('vendorCount').innerText = vendorCount;
+      } catch (error) {
+        console.error('Error fetching counts:', error);
+      }
+    };
+
+    const viewUsers = () => {
+      window.location.href = '/users.html';
+    };
+
+    const viewVendors = () => {
+      window.location.href = '/vendors.html';
+    };
+
+    const generateCoupon = async () => {
+      try {
+        const response = await fetch(`${API_URL}/generate-coupon`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ value: 5000, currency: 'Naira' }),
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+          addCouponToTable(data.coupon);
+        } else {
+          alert(data.message);
         }
+      } catch (error) {
+        console.error('Error generating coupon:', error);
+        alert('Failed to generate coupon');
+      }
+    };
 
-        async function sendCoupon() {
-            const vendorId = document.getElementById('vendorList').value;
-            const value = document.getElementById('couponValue').value;
-            const currency = document.getElementById('couponCurrency').value;
+    const addCouponToTable = (coupon) => {
+      const tableBody = document.getElementById('couponTableBody');
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${coupon.code}</td>
+        <td>${coupon.value}</td>
+        <td>${coupon.currency}</td>
+        <td>${coupon.isActive ? 'Active' : 'Used'}</td>
+      `;
+      tableBody.appendChild(row);
+    };
 
-            const response = await fetch(`${API_URL}/send-coupon`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vendorId, value, currency })
-            });
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch(`${API_URL}/coupons`);
+        const coupons = await response.json();
+        coupons.forEach(addCouponToTable);
+      } catch (error) {
+        console.error('Error fetching coupons:', error);
+      }
+    };
 
-            const data = await response.json();
-            if (response.ok) {
-                alert('Coupon sent successfully');
-                fetchCoupons();
-            } else {
-                alert('Failed to send coupon: ' + data.error);
-            }
-        }
+    const addUserToTable = (user) => {
+      const tableBody = document.getElementById('newUserTableBody');
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.username}</td>
+        <td>${user.email}</td>
+        <td>${new Date(user.createdAt).toLocaleString()}</td>
+      `;
+      tableBody.appendChild(row);
+    };
 
-        async function fetchVendorsUsers() {
-            const response = await fetch(`${API_URL}/vendors-users`);
-            const data = await response.json();
-
-            if (response.ok) {
-                const vendorList = document.getElementById('vendorList');
-                vendorList.innerHTML = '';
-                data.vendors.forEach(vendor => {
-                    const option = document.createElement('option');
-                    option.value = vendor._id;
-                    option.textContent = vendor.name;
-                    vendorList.appendChild(option);
-                });
-
-                const vendorsUsersList = document.getElementById('vendorsUsersList');
-                vendorsUsersList.innerHTML = '<h3>Active Vendors</h3>';
-                data.vendors.forEach(vendor => {
-                    vendorsUsersList.innerHTML += `<p>${vendor.name} (${vendor.email})</p>`;
-                });
-
-                vendorsUsersList.innerHTML += '<h3>Active Users</h3>';
-                data.users.forEach(user => {
-                    vendorsUsersList.innerHTML += `<p>${user.name} (${user.email})</p>`;
-                });
-            } else {
-                alert('Failed to fetch vendors and users: ' + data.error);
-            }
-        }
-
-        async function fetchCoupons() {
-            const response = await fetch(`${API_URL}/coupons`);
-            const data = await response.json();
-
-            if (response.ok) {
-                const couponsList = document.getElementById('couponsList');
-                couponsList.innerHTML = '';
-                data.coupons.forEach(coupon => {
-                    couponsList.innerHTML += `<p>${coupon.code} - ${coupon.status}</p>`;
-                });
-            } else {
-                alert('Failed to fetch coupons: ' + data.error);
-            }
-        }
-
-        // Initialize the dashboard
-        fetchVendorsUsers();
-        fetchCoupons();
-    </script>
+    const fetchNewUsers = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users/new`);
+        const users = await response.json();
+        users.forEach(addUserToTable);
+      } catch (error) {
+        console.error('Error fetching new users:', error);
+      }
+    };
+  </script>
 </body>
 </html>
-
-
 -->
