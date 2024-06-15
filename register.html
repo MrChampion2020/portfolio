@@ -13,7 +13,7 @@
       margin: auto;
       padding: 0;
       font-family: Arial, sans-serif;
-      height: 98%;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -21,10 +21,8 @@
       text-decoration: none;
       color: black;
     }
-    form{
+    form {
       width: 100%;
-      height: 98%;
-    
       margin: auto;
     }
     .container {
@@ -33,7 +31,7 @@
       border-radius: 10px;
       max-width: 400px;
       width: 90%;
-      height: 90%;
+      height: auto;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
     h2 {
@@ -49,40 +47,30 @@
       display: block;
       margin-bottom: 5px;
     }
-    .form-group label a{
-      text-align: left;
-    }
-    .form-group input a{
-      text-align: left;
-    }
     .form-group input, .form-group select {
-      width: calc(90% - 20px);
+      width: calc(100% - 20px);
       padding: 10px;
-      margin: 5px;
+      margin: 5px 0;
       border: 1px solid purple;
       border-radius: 4px;
       font-size: 14px;
-    }
-    .form-group input[type="checkbox"] {
-      width: auto;
-      border: 1px solid purple;
     }
     .password-container {
       position: relative;
     }
     .password-container input {
-      width: calc(87% - 40px);
+      width: calc(100% - 40px);
       padding-right: 40px;
     }
     .password-container .eye-icon {
       position: absolute;
-      top: 18px;
-      right: 40px;
+      top: 10px;
+      right: 10px;
       cursor: pointer;
       color: purple;
     }
     .form-group button {
-      width: 90%;
+      width: 100%;
       padding: 10px;
       background-color: purple;
       border: none;
@@ -102,7 +90,7 @@
       text-decoration: none;
     }
     .form-group a:hover {
-      text-decoration: none;
+      text-decoration: underline;
       color: rgb(48, 1, 48);
     }
     .alert {
@@ -112,83 +100,121 @@
       border-radius: 4px;
       text-align: center;
     }
-
-    @media (max-width: 768px){
-
-      body{
+    @media (max-width: 768px) {
+      body {
         width: 100%;
       }
-      form{
+      form {
         width: 90%;
         height: auto;
         margin: auto;
       }
       .form-group input, .form-group select {
-      width: calc(90% -20px);
-      padding: 10px;
-      margin: 5px;
-    
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 5px;
+      }
     }
-}
   </style>
 </head>
 <body>
   <div class="container">
-
     <div id="alert" class="alert"></div>
-
     <form id="registerForm" method="POST">
-    <h2>Register</h2>
-    <div class="form-group">
+      <h2>Register</h2>
+      <div class="form-group">
         <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
-    </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group">
         <input type="email" id="email" name="email" placeholder="Email" required>
-    </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group">
         <input type="text" id="username" name="username" placeholder="Username" required>
-    </div>
-    <div class="form-group password-container">
+      </div>
+      <div class="form-group password-container">
         <input type="password" id="password" name="password" placeholder="Password" required>
-        <i class="fas fa-eye eye-icon purple" id="togglePassword"></i>
-    </div>
-    <div class="form-group">
+        <i class="fas fa-eye eye-icon" id="togglePassword"></i>
+      </div>
+      <div class="form-group">
         <input type="tel" id="phone" name="phone" placeholder="Phone" required>
-    </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group">
         <input type="text" id="couponCode" name="couponCode" placeholder="Coupon Code">
-      <a href="#">Don't have a coupon code? Get one</a>
-    </div>
-    <div class="form-group">
-        <label for="terms">Choose Package</label>
+        <a href="#">Don't have a coupon code? Get one</a>
+      </div>
+      <div class="form-group">
+        <label for="package">Choose Package</label>
         <select id="package" name="package">
           <option value="basic">$5</option>
           <option value="standard">#5000</option>
-         
-      </select>
-    </div>
-
-    <div class="form-group">
+        </select>
+      </div>
+      <div class="form-group">
         <input type="checkbox" id="terms" name="terms" required>
-        <label for="terms"><a href="">I agree to the terms</a></label>
-    </div>
-    <div class="form-group">
+        <label for="terms"><a href="#">I agree to the terms</a></label>
+      </div>
+      <input type="hidden" id="referralLink" name="referralLink">
+      <div class="form-group">
         <button type="submit">Register</button>
-    </div>
-
-
-    
-    <div class="form-group">
-
-      <a href="login.html">Already have an account? Sign In</a>
-    </div>
+      </div>
+      <div class="form-group">
+        <a href="login.html">Already have an account? Sign In</a>
+      </div>
+    </form>
   </div>
 
   <script>
+    const API_URL = 'https://elitearn.onrender.com';
 
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref');
+      if (ref) {
+        document.getElementById('referralLink').value = ref;
+      }
+    });
 
-const API_URL = `https://elitearn.onrender.com`;
-    
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch(`${API_URL}/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        const alert = document.getElementById('alert');
+        
+        if (response.ok) {
+          alert.style.display = 'block';
+          alert.style.backgroundColor = 'white';
+          alert.style.color = 'black';
+          alert.style.borderColor = 'purple';
+          alert.innerText = 'User registered successfully';
+          document.getElementById('registerForm').reset();
+        } else {
+          alert.style.display = 'block';
+          alert.style.backgroundColor = 'white';
+          alert.style.color = 'black';
+          alert.style.borderColor = 'purple';
+          alert.innerText = result.message || 'Registration failed';
+        }
+      } catch (error) {
+        const alert = document.getElementById('alert');
+        alert.style.display = 'block';
+        alert.style.backgroundColor = 'white';
+        alert.style.color = 'black';
+        alert.style.borderColor = 'purple';
+        alert.innerText = 'An error occurred while registering. Please try again.';
+      }
+    });
 
     document.getElementById('togglePassword').addEventListener('click', function () {
       const passwordField = document.getElementById('password');
@@ -197,64 +223,7 @@ const API_URL = `https://elitearn.onrender.com`;
       this.classList.toggle('fa-eye');
       this.classList.toggle('fa-eye-slash');
     });
-
-    document.getElementById("registerForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      const fullName = document.getElementById("fullName").value;
-      const email = document.getElementById("email").value;
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      const phone = document.getElementById("phone").value;
-      const couponCode = document.getElementById("couponCode").value;
-      const packageOption = document.getElementById("package").value;
-      const terms = document.getElementById("terms").checked;
-
-      if (!terms) {
-        alert('You must agree to the terms.');
-        return;
-      }
-
-
-      try {
-        const response = await fetch(`${API_URL}/register`, {
-          method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-          body: JSON.stringify({ fullName, email, username, password, phone, couponCode, package: packageOption })
-      });
-
-
-
-
-        const data = await response.json();
-
-        const alert = document.getElementById("alert");
-      if (response.ok) {
-          alert.style.display = "block";
-          alert.style.backgroundColor = "whaite";
-          alert.style.color = "black";
-          alert.style.borderColor = "purple";
-          alert.innerText = data.message;
-          document.getElementById("registerForm").reset();
-      } else {
-          alert.style.display = "block";
-          alert.style.backgroundColor = "white";
-          alert.style.color = "black";
-          alert.style.borderColor = "purple";
-          alert.innerText = data.message || "Registration failed";
-        }
-      } catch (error) {
-        const alert = document.getElementById("alert");
-        alert.style.display = "block";
-        alert.style.backgroundColor = "white";
-        alert.style.color = "black";
-        alert.style.borderColor = "purple";
-        alert.innerText = "An error occurred while registering. Please try again.";
-      }
-    });
   </script>
 </body>
 </html>
-
 
