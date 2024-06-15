@@ -176,6 +176,80 @@ app.post("/register", async (req, res) => {
     }
 
     const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon || !coupon.isActive || coupon.isUsed) {
+      return res.status(400).json({ message: "Invalid or inactive coupon code" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      verificationToken: crypto.randomBytes(20).toString("hex"),
+    });
+
+    // Generate referral link
+    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+
+    if (referralLink) {
+      const referrer = await User.findOne({ username: referralLink });
+      if (referrer && referrer.referralLinkActive) {
+        newUser.referredBy = referrer._id;
+        referrer.referrals.push(newUser._id);
+
+        // Credit referrer's wallet
+        const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
+        referrer.wallet += amountToCredit;
+        referrer.referralWallet += amountToCredit;
+        await referrer.save();
+      } else {
+        return res.status(400).json({ message: "Invalid or inactive referral link" });
+      }
+    }
+
+    await newUser.save();
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+
+    // Mark coupon as used
+    coupon.isUsed = true;
+    coupon.isActive = false;
+    coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
+    await coupon.save();
+
+    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
+  } catch (error) {
+    console.log("Error registering user:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate key error", error: error.message });
+    }
+    res.status(500).json({ message: "Registration failed" });
+  }
+});
+
+
+
+/*
+app.post("/register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const coupon = await Coupon.findOne({ code: couponCode });
     if (!coupon || !coupon.isActive) {
       return res.status(400).json({ message: "Invalid or inactive coupon code" });
     }
@@ -224,7 +298,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-
+*/
 
 /*
 app.post("/register", async (req, res) => {
