@@ -191,7 +191,7 @@ app.post("/register", async (req, res) => {
     });
 
     // Generate referral link
-    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+    newUser.referralLink = `${API_URL}/register?ref=${username}`;
 
     if (referralLink) {
       const referrer = await User.findOne({ username: referralLink });
