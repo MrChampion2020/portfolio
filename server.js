@@ -49,6 +49,27 @@ const authenticateToken = (req, res, next) => {
 };
 
 
+// Manually add admin user (one-time operation)
+const addAdminUser = async () => {
+  try {
+    const admin = new Admin({
+      fullName: 'Edith Akporero',
+      phone: '9030155327',
+      username: 'Admin',
+      email: 'kingeden@gmail.com',
+      password: 'Admin.1234',
+    });
+    await admin.save();
+    console.log("Admin user created");
+  } catch (error) {
+    console.log("Error creating admin user:", error);
+  }
+};
+
+// Uncomment the following line and run the server once to add the admin user
+addAdminUser();
+
+
 
 const generateCouponCode = () => crypto.randomBytes(4).toString("hex");
 
@@ -100,28 +121,6 @@ app.get('/coupons', async (req, res) => {
   }
 });
 
-
-/*
-// Generate coupon endpoint
-app.post('/generate-coupon', authenticateToken, async (req, res) => {
-  try {
-    const { userId, currency } = req.body;
-    const value = currency === 'Naira' ? 5000 : 5;
-
-    const newCoupon = new Coupon({
-      code: generateCouponCode(),
-      value,
-      currency,
-      userId: mongoose.Types.ObjectId(userId) // Convert userId to ObjectId
-    });
-
-    await newCoupon.save();
-    res.status(200).json({ message: 'Coupon generated successfully', coupon: newCoupon });
-  } catch (error) {
-    console.log('Error generating coupon:', error);
-    res.status(500).json({ message: 'Failed to generate coupon' });
-  }
-});*/
 
 
 const sendVerificationEmail = async (email, verificationToken) => {
@@ -236,79 +235,6 @@ app.post("/register", async (req, res) => {
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, './')));
 
-/*
-app.post("/register", async (req, res) => {
-  try {
-    const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
-
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ message: "Username already taken" });
-    }
-
-    const coupon = await Coupon.findOne({ code: couponCode });
-    if (!coupon || !coupon.isActive || coupon.isUsed) {
-      return res.status(400).json({ message: "Invalid or inactive coupon code" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      fullName,
-      email,
-      phone,
-      password: hashedPassword,
-      username,
-      verificationToken: crypto.randomBytes(20).toString("hex"),
-    });
-
-    // Generate referral link
-    newUser.referralLink = `${API_URL}/register?ref=${username}`;
-
-    if (referralLink) {
-      const referrer = await User.findOne({ username: referralLink });
-      if (referrer && referrer.referralLinkActive) {
-        newUser.referredBy = referrer._id;
-        referrer.referrals.push(newUser._id);
-
-        // Credit referrer's wallet
-        const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
-        referrer.wallet += amountToCredit;
-        referrer.referralWallet += amountToCredit;
-        await referrer.save();
-      } else {
-        return res.status(400).json({ message: "Invalid or inactive referral link" });
-      }
-    }
-
-    await newUser.save();
-    await sendVerificationEmail(newUser.email, newUser.verificationToken);
-
-    // Mark coupon as used
-    coupon.isUsed = true;
-    coupon.isActive = false;
-    coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
-    await coupon.save();
-
-    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
-  } catch (error) {
-    console.log("Error registering user:", error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "Duplicate key error", error: error.message });
-    }
-    res.status(500).json({ message: "Registration failed" });
-  }
-});
-*/
-
 
 
 app.get("/verify/:token", async (req, res) => {
@@ -406,20 +332,23 @@ app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, r
   }
 });
 
+
+// Admin registration endpoint
 app.post("/register/admin", async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { fullName, phone, username, email, password } = req.body;
 
-    const existingAdmin = await Admin.findOne({ email });
+    const existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
     if (existingAdmin) {
-      return res.status(400).json({ message: "Email already registered" });
+      return res.status(400).json({ message: "Username or email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = new Admin({
-      name,
-      email,
+      fullName,
       phone,
+      username,
+      email,
       password: hashedPassword,
     });
 
@@ -432,13 +361,16 @@ app.post("/register/admin", async (req, res) => {
   }
 });
 
+// Admin login endpoint
 app.post("/login/admin", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
+    const { usernameOrEmail, password } = req.body;
+    const admin = await Admin.findOne({
+      $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }]
+    });
 
     if (!admin || !await bcrypt.compare(password, admin.password)) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid username or email or password" });
     }
 
     const token = jwt.sign({ adminId: admin._id, role: 'admin' }, secretKey, { expiresIn: '1h' });
@@ -450,6 +382,28 @@ app.post("/login/admin", async (req, res) => {
   }
 });
 
+// Middleware to authenticate admin token
+const authenticateAdminToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, admin) => {
+    if (err) return res.sendStatus(403);
+    req.admin = admin;
+    next();
+  });
+};
+
+// Example of a protected admin route
+app.get('/admin/protected', authenticateAdminToken, (req, res) => {
+  res.status(200).json({ message: 'This is a protected admin route' });
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+
