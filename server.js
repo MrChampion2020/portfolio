@@ -67,7 +67,9 @@ const addAdminUser = async () => {
 };
 
 // Uncomment the following line and run the server once to add the admin user
+
 //addAdminUser();
+
 
 
 
