@@ -56,7 +56,7 @@ const addAdminUser = async () => {
       fullName: 'Edith Akporero',
       phone: '9030155327',
       username: 'Admin',
-      email: 'kingeden@gmail.com',
+      email: 'akporeroedith96@gmail.com',
       password: 'Admin.1234',
     });
     await admin.save();
@@ -362,7 +362,7 @@ app.post("/register/admin", async (req, res) => {
     res.status(500).json({ message: "Admin registration failed" });
   }
 });
-
+/*
 // Admin login endpoint
 app.post("/login/admin", async (req, res) => {
   try {
@@ -404,8 +404,84 @@ app.get('/admin/protected', authenticateAdminToken, (req, res) => {
 });
 
 
+//user count
+app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.status(200).json({ userCount });
+  } catch (error) {
+    console.log("Error fetching user count:", error);
+    res.status(500).json({ message: "Failed to fetch user count" });
+  }
+});*/
+
+
+// Admin login endpoint
+app.post("/login/admin", async (req, res) => {
+  try {
+    const { usernameOrEmail, password } = req.body;
+    const admin = await Admin.findOne({
+      $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }]
+    });
+
+    if (!admin || !await bcrypt.compare(password, admin.password)) {
+      return res.status(401).json({ message: "Invalid username or email or password" });
+    }
+
+    const token = jwt.sign({ adminId: admin._id, role: 'admin' }, secretKey, { expiresIn: '1h' });
+
+    res.status(200).json({ message: "Admin login successful", token });
+  } catch (error) {
+    console.log("Error logging in admin:", error);
+    res.status(500).json({ message: "Admin login failed" });
+  }
+});
+
+// Middleware to authenticate admin token
+const authenticateAdminToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, admin) => {
+    if (err) return res.sendStatus(403);
+    req.admin = admin;
+    next();
+  });
+};
+
+// Example of a protected admin route
+app.get('/admin/protected', authenticateAdminToken, (req, res) => {
+  res.status(200).json({ message: 'This is a protected admin route' });
+});
+
+// Get user count
+app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.status(200).json({ userCount });
+  } catch (error) {
+    console.log("Error fetching user count:", error);
+    res.status(500).json({ message: "Failed to fetch user count" });
+  }
+});
+
+// Get all users in descending order
+app.get("/admin/users", authenticateAdminToken, async (req, res) => {
+  try {
+    const users = await User.find().sort({ _id: -1 });
+    res.status(200).json(users);
+  } catch (error) {
+    console.log("Error fetching users:", error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+
 
 
