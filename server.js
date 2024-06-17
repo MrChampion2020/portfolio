@@ -1,3 +1,5 @@
+
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -404,10 +406,28 @@ app.get("/admin/users", authenticateAdminToken, async (req, res) => {
   }
 });
 
+
+app.get("/admin-details", authenticateAdminToken, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.adminId);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.status(200).json({
+      admin: {
+        fullName: admin.fullName,
+        email: admin.email,
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching admin details:", error);
+    res.status(500).json({ message: "Error fetching admin details", error });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-
 
 
