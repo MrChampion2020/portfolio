@@ -335,34 +335,6 @@ app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, r
 });
 
 
-// Admin registration endpoint
-app.post("/register/admin", async (req, res) => {
-  try {
-    const { fullName, phone, username, email, password } = req.body;
-
-    const existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
-    if (existingAdmin) {
-      return res.status(400).json({ message: "Username or email already registered" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newAdmin = new Admin({
-      fullName,
-      phone,
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    await newAdmin.save();
-
-    res.status(200).json({ message: "Admin registered successfully", adminId: newAdmin._id });
-  } catch (error) {
-    console.log("Error registering admin:", error);
-    res.status(500).json({ message: "Admin registration failed" });
-  }
-});
-/*
 // Admin login endpoint
 app.post("/login/admin", async (req, res) => {
   try {
@@ -384,58 +356,8 @@ app.post("/login/admin", async (req, res) => {
   }
 });
 
-// Middleware to authenticate admin token
-const authenticateAdminToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, admin) => {
-    if (err) return res.sendStatus(403);
-    req.admin = admin;
-    next();
-  });
-};
-
-// Example of a protected admin route
-app.get('/admin/protected', authenticateAdminToken, (req, res) => {
-  res.status(200).json({ message: 'This is a protected admin route' });
-});
 
 
-//user count
-app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
-  try {
-    const userCount = await User.countDocuments();
-    res.status(200).json({ userCount });
-  } catch (error) {
-    console.log("Error fetching user count:", error);
-    res.status(500).json({ message: "Failed to fetch user count" });
-  }
-});*/
-
-
-// Admin login endpoint
-app.post("/login/admin", async (req, res) => {
-  try {
-    const { usernameOrEmail, password } = req.body;
-    const admin = await Admin.findOne({
-      $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }]
-    });
-
-    if (!admin || !await bcrypt.compare(password, admin.password)) {
-      return res.status(401).json({ message: "Invalid username or email or password" });
-    }
-
-    const token = jwt.sign({ adminId: admin._id, role: 'admin' }, secretKey, { expiresIn: '1h' });
-
-    res.status(200).json({ message: "Admin login successful", token });
-  } catch (error) {
-    console.log("Error logging in admin:", error);
-    res.status(500).json({ message: "Admin login failed" });
-  }
-});
 
 // Middleware to authenticate admin token
 const authenticateAdminToken = (req, res, next) => {
@@ -451,12 +373,16 @@ const authenticateAdminToken = (req, res, next) => {
   });
 };
 
+
+
 // Example of a protected admin route
 app.get('/admin/protected', authenticateAdminToken, (req, res) => {
   res.status(200).json({ message: 'This is a protected admin route' });
 });
 
-// Get user count
+
+
+// Get user count (example of a protected admin route)
 app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
   try {
     const userCount = await User.countDocuments();
@@ -467,7 +393,7 @@ app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
   }
 });
 
-// Get all users in descending order
+// Get all users in descending order (example of a protected admin route)
 app.get("/admin/users", authenticateAdminToken, async (req, res) => {
   try {
     const users = await User.find().sort({ _id: -1 });
