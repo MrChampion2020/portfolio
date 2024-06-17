@@ -1,3 +1,351 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body, html {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f4f4;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 1200px;
+      width: 90%;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+    }
+    .login-container, .dashboard-container {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .dashboard-container {
+      display: none;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .buttons {
+      width: 90%;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: purple;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: darkpurple;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .display-area {
+      display: none;
+    }
+    .close-button {
+      margin-top: 20px;
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container login-container" id="loginContainer">
+    <h1>Welcome Admin</h1>
+    <p>Login to access your dashboard</p>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="container dashboard-container" id="dashboardContainer">
+    <div><b id="adminName"></b><p id="adminDetails">Welcome</p></div>
+
+    <div class="buttons">
+      <button onclick="showSection('userDisplayArea')">View Full List of Users</button>
+      <button onclick="showSection('vendorDisplayArea')">View Full List of Vendors</button>
+      <button onclick="showSection('couponContainer')">Generate Coupon</button>
+      <button onclick="showSection('withdrawalRequestsArea')">Withdrawal Requests</button>
+    </div>
+
+    <div class="display-area" id="userDisplayArea">
+      <h2>Number of Users: <span id="userCount">0</span></h2>
+      <table id="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Wallet</th>
+            <th>Referral Wallet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-User data will be populated here ->
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('userDisplayArea')">Close</button>
+    </div>
+
+    <div class="display-area" id="vendorDisplayArea">
+      <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
+      <!-Vendor data will be populated here ->
+      <button class="close-button" onclick="hideSection('vendorDisplayArea')">Close</button>
+    </div>
+
+    <div class="display-area coupon-container" id="couponContainer">
+      <h2>Active Coupons</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Value</th>
+            <th>Currency</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="couponTableBody">
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('couponContainer')">Close</button>
+      <button id="generateCouponButton">Generate Coupon</button>
+    </div>
+
+    <div class="display-area" id="withdrawalRequestsArea">
+      <h2>Withdrawal Requests</h2>
+      <!-Withdrawal requests data will be populated here ->
+      <button class="close-button" onclick="hideSection('withdrawalRequestsArea')">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://elitearn.onrender.com';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const isAuthenticated = localStorage.getItem('isAuthenticated');
+      const loginContainer = document.getElementById('loginContainer');
+      const dashboardContainer = document.getElementById('dashboardContainer');
+
+      if (isAuthenticated) {
+        loginContainer.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        fetchAdminData();
+      } else {
+        loginContainer.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
+      }
+    });
+
+    const fetchAdminData = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/admin-details`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('adminName').textContent = data.admin.fullName;
+          document.getElementById('adminDetails').textContent = `Email: ${data.admin.email}`;
+          fetchCounts();
+          fetchCoupons();
+          fetchNewUsers();
+        } else {
+          alert('Failed to fetch admin data');
+          localStorage.removeItem('token');
+          localStorage.removeItem('isAuthenticated');
+          document.getElementById('loginContainer').style.display = 'flex';
+          document.getElementById('dashboardContainer').style.display = 'none';
+        }
+      } catch (error) {
+        alert('An error occurred while fetching admin data');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+      }
+    };
+
+    const login = async () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(`${API_URL}/login/admin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usernameOrEmail: username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('isAuthenticated', 'true');
+          document.getElementById('loginContainer').style.display = 'none';
+          document.getElementById('dashboardContainer').style.display = 'block';
+          document.getElementById('adminName').innerText = `Welcome, ${data.admin.fullName}`;
+          fetchAdminData();
+        } else {
+          document.getElementById('error').innerText = data.message;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error').innerText = 'Login failed. Please try again.';
+      }
+    };
+
+    const fetchCounts = async () => {
+      try {
+        const userResponse = await fetch(`${API_URL}/admin/users`);
+        const userCount = await userResponse.json();
+        document.getElementById('userCount').innerText = userCount;
+
+        const vendorResponse = await fetch(`${API_URL}/vendors/count`);
+        const vendorCount = await vendorResponse.json();
+        document.getElementById('vendorCount').innerText = vendorCount;
+      } catch (error) {
+        console.error('Error fetching counts:', error);
+      }
+    };
+
+    document.getElementById('generateCouponButton').addEventListener('click', async () => {
+      try {
+        const response = await fetch(`${API_URL}/generate-coupon`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ value: 5000, currency: 'Naira' }),
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+          addCouponToTable(data.coupon);
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        console.error('Error generating coupon:', error);
+        alert('Failed to generate coupon');
+      }
+    });
+
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch(`${API_URL}/coupons`);
+        const coupons = await response.json();
+        const couponTableBody = document.getElementById('couponTableBody');
+        couponTableBody.innerHTML = '';
+        coupons.forEach(coupon => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${coupon.code}</td>
+            <td>${coupon.value}</td>
+            <td>${coupon.currency}</td>
+            <td>${coupon.isActive ? 'Active' : 'Used'}</td>
+          `;
+          couponTableBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching coupons:', error);
+      }
+    };
+
+    const fetchNewUsers = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users`);
+        const users = await response.json();
+        const userTableBody = document.querySelector('#user-table tbody');
+        userTableBody.innerHTML = '';
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.fullName}</td>
+            <td>${user.email}</td>
+            <td>${user.username}</td>
+            <td>${user.phone}</td>
+            <td>${user.wallet}</td>
+            <td>${user.referralWallet}</td>
+          `;
+          userTableBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching new users:', error);
+      }
+    };
+
+    const showSection = (sectionId) => {
+      document.getElementById(sectionId).style.display = 'block';
+    };
+
+    const hideSection = (sectionId) => {
+      document.getElementById(sectionId).style.display = 'none';
+    };
+  </script>
+</body>
+</html>
+
+
+
+
+
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +372,7 @@
       width: 90%;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
-    .login-container {
+    .login-container, .dashboard-container {
       display: none;
       flex-direction: column;
       justify-content: center;
@@ -43,9 +391,15 @@
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+    .buttons {
+      width: 90%;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+    }
     button {
       padding: 10px 20px;
-      background-color: #4CAF50;
+      background-color: purple;
       color: white;
       border: none;
       cursor: pointer;
@@ -53,7 +407,7 @@
       margin-top: 10px;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: darkpurple;
     }
     .error {
       color: red;
@@ -72,11 +426,20 @@
       padding: 10px;
       text-align: left;
     }
+    .display-area {
+      display: none;
+    }
+    .close-button {
+      margin-top: 20px;
+      background-color: red;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <div class="container login-container" id="loginContainer">
-    <h1>Admin Login</h1>
+    <h1>Welcome Admin</h1>
+    <p>Login to access your dashboard</p>
     <input type="text" id="username" placeholder="Username" required>
     <input type="password" id="password" placeholder="Password" required>
     <button onclick="login()">Login</button>
@@ -84,19 +447,44 @@
   </div>
 
   <div class="container dashboard-container" id="dashboardContainer">
+    <div><b id="adminName"></b><p id="adminDetails">Welcome</p></div>
+
+    <div class="buttons">
+      <button onclick="showSection('userDisplayArea')">View Full List of Users</button>
+      <button onclick="showSection('vendorDisplayArea')">View Full List of Vendors</button>
+      <button onclick="showSection('couponContainer')">Generate Coupon</button>
+      <button onclick="showSection('withdrawalRequestsArea')">Withdrawal Requests</button>
+    </div>
+
     <div class="display-area" id="userDisplayArea">
       <h2>Number of Users: <span id="userCount">0</span></h2>
-      <button onclick="viewUsers()">View Full List of Users</button>
+      <table id="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Wallet</th>
+            <th>Referral Wallet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!---User data will be populated here -->
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('userDisplayArea')">Close</button>
     </div>
 
     <div class="display-area" id="vendorDisplayArea">
       <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
-      <button onclick="viewVendors()">View Full List of Vendors</button>
+      <!-- Vendor data will be populated here -->
+      <button class="close-button" onclick="hideSection('vendorDisplayArea')">Close</button>
     </div>
 
-    <div class="table-container">
+    <div class="display-area coupon-container" id="couponContainer">
       <h2>Active Coupons</h2>
-      <button onclick="generateCoupon()">Generate Coupon</button>
       <table>
         <thead>
           <tr>
@@ -109,26 +497,19 @@
         <tbody id="couponTableBody">
         </tbody>
       </table>
+      <button class="close-button" onclick="hideSection('couponContainer')">Close</button>
+      <button id="generateCouponButton">Generate Coupon</button>
     </div>
 
-    <div class="table-container">
-      <h2>New Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Joined</th>
-          </tr>
-        </thead>
-        <tbody id="newUserTableBody">
-        </tbody>
-      </table>
+    <div class="display-area" id="withdrawalRequestsArea">
+      <h2>Withdrawal Requests</h2>
+      <!--Withdrawal requests data will be populated here -->
+      <button class="close-button" onclick="hideSection('withdrawalRequestsArea')">Close</button>
     </div>
   </div>
 
   <script>
-    const API_URL = `https://elitearn.onrender.com`;
+    const API_URL = 'https://elitearn.onrender.com';
 
     document.addEventListener('DOMContentLoaded', () => {
       const isAuthenticated = localStorage.getItem('isAuthenticated');
@@ -138,34 +519,85 @@
       if (isAuthenticated) {
         loginContainer.style.display = 'none';
         dashboardContainer.style.display = 'block';
-        fetchCounts();
-        fetchCoupons();
-        fetchNewUsers();
+        fetchAdminData();
       } else {
         loginContainer.style.display = 'flex';
         dashboardContainer.style.display = 'none';
       }
     });
 
-    const login = () => {
+    const fetchAdminData = async () => {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/admin-details`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('adminName').textContent = data.admin.fullName;
+          document.getElementById('adminDetails').textContent = `Email: ${data.admin.email}`;
+          fetchCounts();
+          fetchCoupons();
+          fetchNewUsers();
+        } else {
+          alert('Failed to fetch admin data');
+          localStorage.removeItem('token');
+          localStorage.removeItem('isAuthenticated');
+          document.getElementById('loginContainer').style.display = 'flex';
+          document.getElementById('dashboardContainer').style.display = 'none';
+        }
+      } catch (error) {
+        alert('An error occurred while fetching admin data');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+      }
+    };
+
+    const login = async () => {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      if (username === 'Admin' && password === 'admin.1234') {
-        localStorage.setItem('isAuthenticated', 'true');
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('dashboardContainer').style.display = 'block';
-        fetchCounts();
-        fetchCoupons();
-        fetchNewUsers();
-      } else {
-        document.getElementById('error').innerText = 'Invalid username or password';
+      try {
+        const response = await fetch(`${API_URL}/login/admin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usernameOrEmail: username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('isAuthenticated', 'true');
+          document.getElementById('loginContainer').style.display = 'none';
+          document.getElementById('dashboardContainer').style.display = 'block';
+          document.getElementById('adminName').innerText = `Welcome, ${data.admin.fullName}`;
+          fetchAdminData();
+        } else {
+          document.getElementById('error').innerText = data.message;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error').innerText = 'Login failed. Please try again.';
       }
     };
 
     const fetchCounts = async () => {
       try {
-        const userResponse = await fetch(`${API_URL}/users/count`);
+        const userResponse = await fetch(`${API_URL}/admin/users`);
         const userCount = await userResponse.json();
         document.getElementById('userCount').innerText = userCount;
 
@@ -177,78 +609,68 @@
       }
     };
 
-    const viewUsers = () => {
-      window.location.href = '/users.html';
-    };
-
-    const viewVendors = () => {
-      window.location.href = '/vendors.html';
-    };
-
-    const generateCoupon = async () => {
-      try {
-        const response = await fetch(`${API_URL}/generate-coupon`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ value: 5000, currency: 'Naira' }),
-        });
-        
-        const data = await response.json();
-        if (response.ok) {
-          addCouponToTable(data.coupon);
-        } else {
-          alert(data.message);
-        }
-      } catch (error) {
-        console.error('Error generating coupon:', error);
-        alert('Failed to generate coupon');
-      }
-    };
-
-    const addCouponToTable = (coupon) => {
-      const tableBody = document.getElementById('couponTableBody');
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${coupon.code}</td>
-        <td>${coupon.value}</td>
-        <td>${coupon.currency}</td>
-        <td>${coupon.isActive ? 'Active' : 'Used'}</td>
-      `;
-      tableBody.appendChild(row);
-    };
-
     const fetchCoupons = async () => {
       try {
         const response = await fetch(`${API_URL}/coupons`);
         const coupons = await response.json();
-        coupons.forEach(addCouponToTable);
+        const couponTableBody = document.getElementById('couponTableBody');
+        couponTableBody.innerHTML = coupons.map(coupon => `
+          <tr>
+            <td>${coupon.code}</td>
+            <td>${coupon.value}</td>
+            <td>${coupon.currency}</td>
+            <td>${coupon.isActive ? 'Active' : 'Used'}</td>
+          </tr>
+        `).join('');
       } catch (error) {
         console.error('Error fetching coupons:', error);
       }
     };
 
-    const addUserToTable = (user) => {
-      const tableBody = document.getElementById('newUserTableBody');
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${user.username}</td>
-        <td>${user.email}</td>
-        <td>${new Date(user.createdAt).toLocaleString()}</td>
-      `;
-      tableBody.appendChild(row);
-    };
-
     const fetchNewUsers = async () => {
       try {
-        const response = await fetch(`${API_URL}/users`);
+        const response = await fetch(`${API_URL}/admin/users`);
         const users = await response.json();
-        users.forEach(addUserToTable);
+        const userTable = document.getElementById('user-table').getElementsByTagName('tbody')[0];
+        userTable.innerHTML = users.map(user => `
+          <tr>
+            <td>${user._id}</td>
+            <td>${user.fullName}</td>
+            <td>${user.email}</td>
+            <td>${user.username}</td>
+            <td>${user.phone}</td>
+            <td>${user.wallet}</td>
+            <td>${user.referralWallet}</td>
+          </tr>
+        `).join('');
       } catch (error) {
         console.error('Error fetching new users:', error);
       }
     };
+
+    const showSection = (sectionId) => {
+      const sections = document.querySelectorAll('.display-area');
+      sections.forEach(section => section.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+    };
+
+    const hideSection = (sectionId) => {
+      document.getElementById(sectionId).style.display = 'none';
+    };
+
+    document.getElementById('generateCouponButton').addEventListener('click', async () => {
+      try {
+        const response = await fetch(`${API_URL}/generate-coupon`, { method: 'POST' });
+        if (response.ok) {
+          alert('Coupon generated successfully');
+          fetchCoupons();
+        } else {
+          alert('Failed to generate coupon');
+        }
+      } catch (error) {
+        console.error('Error generating coupon:', error);
+      }
+    });
   </script>
 </body>
 </html>
