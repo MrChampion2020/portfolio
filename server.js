@@ -308,6 +308,9 @@ const authenticateAdmin = (req, res, next) => {
   next();
 };
 
+
+
+
 app.post("/vendor-register", async (req, res) => {
   try {
     const { fullName, email, phone, password, username, companyName, companyAddress } = req.body;
