@@ -309,32 +309,40 @@ const authenticateAdmin = (req, res, next) => {
 };
 
 
-app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, res) => {
+
+app.post("/vendor-register", async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { fullName, email, phone, password, username, companyName, companyAddress } = req.body;
 
     const existingVendor = await Vendor.findOne({ email });
     if (existingVendor) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
+    const existingVendorUsername = await Vendor.findOne({ username });
+    if (existingVendorUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newVendor = new Vendor({
-      name,
+      fullName,
       email,
       phone,
       password: hashedPassword,
-      active: false // Set vendor status to inactive by default
+      username,
+      companyName,
+      companyAddress,
     });
 
     await newVendor.save();
-
-    res.status(200).json({ message: "Vendor registered successfully, awaiting approval", vendorId: newVendor._id });
+    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
   } catch (error) {
     console.log("Error registering vendor:", error);
     res.status(500).json({ message: "Vendor registration failed" });
   }
 });
+
 
 
 // Admin login endpoint
