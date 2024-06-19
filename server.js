@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -310,31 +308,39 @@ const authenticateAdmin = (req, res, next) => {
   next();
 };
 
-app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, res) => {
+app.post("/vendor-register", async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { fullName, email, phone, password, username, companyName, companyAddress } = req.body;
 
     const existingVendor = await Vendor.findOne({ email });
     if (existingVendor) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
+    const existingVendorUsername = await Vendor.findOne({ username });
+    if (existingVendorUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newVendor = new Vendor({
-      name,
+      fullName,
       email,
       phone,
       password: hashedPassword,
+      username,
+      companyName,
+      companyAddress,
     });
 
     await newVendor.save();
-
     res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
   } catch (error) {
     console.log("Error registering vendor:", error);
     res.status(500).json({ message: "Vendor registration failed" });
   }
 });
+
 
 
 // Admin login endpoint
@@ -384,28 +390,6 @@ app.get('/admin/protected', authenticateAdminToken, (req, res) => {
 
 
 
-// Get user count (example of a protected admin route)
-app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
-  try {
-    const userCount = await User.countDocuments();
-    res.status(200).json({ userCount });
-  } catch (error) {
-    console.log("Error fetching user count:", error);
-    res.status(500).json({ message: "Failed to fetch user count" });
-  }
-});
-
-// Get all users in descending order (example of a protected admin route)
-app.get("/admin/users", authenticateAdminToken, async (req, res) => {
-  try {
-    const users = await User.find().sort({ _id: -1 });
-    res.status(200).json(users);
-  } catch (error) {
-    console.log("Error fetching users:", error);
-    res.status(500).json({ message: "Failed to fetch users" });
-  }
-});
-
 
 app.get("/admin-details", authenticateAdminToken, async (req, res) => {
   try {
@@ -423,6 +407,112 @@ app.get("/admin-details", authenticateAdminToken, async (req, res) => {
   } catch (error) {
     console.log("Error fetching admin details:", error);
     res.status(500).json({ message: "Error fetching admin details", error });
+  }
+});
+
+
+// Endpoint to get the number of users
+app.get('/admin/user-count', authenticateAdminToken, async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.status(200).json({ userCount });
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    res.status(500).json({ message: 'Failed to fetch user count' });
+  }
+});
+
+// Endpoint to fetch user details
+app.get('/admin/users', authenticateAdminToken, async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0 }); // Exclude password field
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Failed to fetch users' });
+  }
+});
+
+
+
+// Endpoint to get the last 10 registered users
+app.get('/admin/user', async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 }).limit(10);
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error });
+  }
+});
+
+
+// Vendor login route
+app.post('/login/vendor', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const vendor = await Vendor.findOne({ email });
+    if (!vendor) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    const isMatch = await bcrypt.compare(password, vendor.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    if (!vendor.active) {
+      return res.status(403).json({ message: 'Account not activated. Please contact admin.' });
+    }
+    const token = jwt.sign({ id: vendor._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.log('Error logging in vendor:', error);
+    res.status(500).json({ message: 'Login failed' });
+  }
+});
+
+// Middleware to authenticate vendor
+const authenticateVendorToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Access token required' });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// Route to get vendor details
+app.get('/vendor/details', authenticateVendorToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.user.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.status(200).json(vendor);
+  } catch (error) {
+    console.log('Error fetching vendor details:', error);
+    res.status(500).json({ message: 'Failed to fetch vendor details' });
+  }
+});
+
+
+
+// Route to check coupon status
+app.get('/coupon/check', async (req, res) => {
+  try {
+    const { code } = req.query;
+    const coupon = await Coupon.findOne({ code });
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon not found' });
+    }
+    const message = coupon.used ? 'Coupon has already been used' : 'Coupon is active';
+    res.status(200).json({ message });
+  } catch (error) {
+    console.log('Error checking coupon status:', error);
+    res.status(500).json({ message: 'Failed to check coupon status' });
   }
 });
 

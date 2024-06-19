@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,10 +21,14 @@
       padding: 10px;
       text-align: left;
     }
+    .actions button {
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>User Details</h1>
+  <p>Total Users: <span id="userCount"></span></p>
   <table id="userTable">
     <thead>
       <tr>
@@ -34,6 +39,7 @@
         <th>Phone</th>
         <th>Wallet Balance</th>
         <th>Referral Balance</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="userTableBody">
@@ -42,12 +48,31 @@
   </table>
 
   <script>
+    const API_URL = `https://elitearn.onrender.com`;
 
-const API_URL = `https://elitearn.onrender.com`;
+    // Fetch total user count from API
+    async function fetchUserCount() {
+      try {
+        const response = await fetch(`${API_URL}/admin/user-count`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        document.getElementById('userCount').innerText = data.userCount;
+      } catch (error) {
+        console.error('Error fetching user count:', error);
+      }
+    }
+
     // Fetch user details from API and populate the table
     async function fetchUsers() {
       try {
-        const response = await fetch(`${API_URL}/user`);
+        const response = await fetch(`${API_URL}/admin/users`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         const users = await response.json();
         const tableBody = document.getElementById('userTableBody');
         tableBody.innerHTML = '';
@@ -55,13 +80,17 @@ const API_URL = `https://elitearn.onrender.com`;
         users.forEach(user => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${user.id}</td>
+            <td>${user._id}</td>
             <td>${user.fullName}</td>
             <td>${user.email}</td>
             <td>${user.username}</td>
             <td>${user.phone}</td>
-            <td>${user.walletBalance}</td>
-            <td>${user.referralBalance}</td>
+            <td>${user.wallet}</td>
+            <td>${user.referralWallet}</td>
+            <td class="actions">
+              <button onclick="viewUser('${user._id}')">View</button>
+              <button onclick="deleteUser('${user._id}')">Delete</button>
+            </td>
           `;
           tableBody.appendChild(row);
         });
@@ -70,7 +99,36 @@ const API_URL = `https://elitearn.onrender.com`;
       }
     }
 
-    fetchUsers(); // Fetch users when the page loads
+    // Function to view user details
+    function viewUser(userId) {
+      alert(`View details for user ID: ${userId}`);
+    }
+
+    // Function to delete user
+    function deleteUser(userId) {
+      alert(`Delete user with ID: ${userId}`);
+    }
+
+    // Fetch user count and details on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchUserCount();
+      fetchUsers();
+    });
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

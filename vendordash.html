@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vendor Dashboard</title>
+  <style>
+    #registrationScreen, #loginScreen, #dashboard {
+      display: none;
+    }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body onload="showRegistrationScreen()">
+  <div id="registrationScreen" class="screen">
+    <h2>Vendor Registration</h2>
+    <form id="vendorRegForm">
+      <label for="regFullName">Full Name:</label>
+      <input type="text" id="regFullName" name="fullName" required><br>
+      <label for="regEmail">Email:</label>
+      <input type="email" id="regEmail" name="email" required><br>
+      <label for="regPhone">Phone:</label>
+      <input type="tel" id="regPhone" name="phone" required><br>
+      <label for="regUsername">Username:</label>
+      <input type="text" id="regUsername" name="username" required><br>
+      <label for="regPassword">Password:</label>
+      <input type="password" id="regPassword" name="password" required><br>
+      <label for="regCompanyName">Company Name:</label>
+      <input type="text" id="regCompanyName" name="companyName" required><br>
+      <label for="regCompanyAddress">Company Address:</label>
+      <input type="text" id="regCompanyAddress" name="companyAddress" required><br>
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="#" onclick="showLoginScreen()">Login here</a></p>
+  </div>
+
+  <div id="loginScreen" class="screen">
+    <h2>Vendor Login</h2>
+    <form id="vendorLoginForm">
+      <label for="loginEmail">Email:</label>
+      <input type="email" id="loginEmail" name="email" required><br>
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" name="password" required><br>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="#" onclick="showRegistrationScreen()">Register here</a></p>
+  </div>
+
+  <div id="dashboard" class="screen">
+    <h2>Vendor Dashboard</h2>
+    <div id="vendorDetails"></div>
+    <h3>Check Coupon</h3>
+    <input type="text" id="couponCode" placeholder="Enter coupon code">
+    <button onclick="checkCoupon()">Check Coupon</button>
+    <div id="couponResult"></div>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const API_URL = `https://elitearn.onrender.com`;
+
+    function showRegistrationScreen() {
+      document.getElementById('registrationScreen').style.display = 'block';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function showLoginScreen() {
+      document.getElementById('registrationScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('registrationScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    }
+
+    async function registerVendor(event) {
+      event.preventDefault();
+      const fullName = document.getElementById('regFullName').value;
+      const email = document.getElementById('regEmail').value;
+      const phone = document.getElementById('regPhone').value;
+      const username = document.getElementById('regUsername').value;
+      const password = document.getElementById('regPassword').value;
+      const companyName = document.getElementById('regCompanyName').value;
+      const companyAddress = document.getElementById('regCompanyAddress').value;
+
+      const response = await fetch(`${API_URL}/vendor-register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fullName, email, phone, username, password, companyName, companyAddress })
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      if (response.ok) {
+        showLoginScreen();
+      }
+    }
+
+    async function loginVendor(event) {
+      event.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const response = await fetch(`${API_URL}/vendor-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      if (response.ok) {
+        localStorage.setItem('vendorToken', data.token);
+        showDashboard();
+        fetchVendorDetails();
+      }
+    }
+
+    async function fetchVendorDetails() {
+      const token = localStorage.getItem('vendorToken');
+      const response = await fetch(`${API_URL}/vendor-details`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const vendor = await response.json();
+      const vendorDetailsDiv = document.getElementById('vendorDetails');
+      vendorDetailsDiv.innerHTML = `
+        <p>Full Name: ${vendor.fullName}</p>
+        <p>Email: ${vendor.email}</p>
+        <p>Phone: ${vendor.phone}</p>
+        <p>Username: ${vendor.username}</p>
+        <p>Company Name: ${vendor.companyName}</p>
+        <p>Company Address: ${vendor.companyAddress}</p>
+        <p>Status: ${vendor.active ? 'Active' : 'Inactive'}</p>
+      `;
+    }
+
+    async function checkCoupon() {
+      const couponCode = document.getElementById('couponCode').value;
+      const response = await fetch(`${API_URL}/coupon/check?code=${couponCode}`);
+      const result = await response.json();
+      const couponResultDiv = document.getElementById('couponResult');
+      couponResultDiv.innerHTML = `<p>${result.message}</p>`;
+    }
+
+    function logout() {
+      localStorage.removeItem('vendorToken');
+      showLoginScreen();
+    }
+
+    document.getElementById('vendorRegForm').addEventListener('submit', registerVendor);
+    document.getElementById('vendorLoginForm').addEventListener('submit', loginVendor);
+
+    // Check if a token is already stored, if so, show the dashboard
+    if (localStorage.getItem('vendorToken')) {
+      showDashboard();
+      fetchVendorDetails();
+    }
+  </script>
+</body>
+</html>
