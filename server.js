@@ -308,6 +308,7 @@ const authenticateAdmin = (req, res, next) => {
   next();
 };
 
+
 app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -323,11 +324,12 @@ app.post("/register/vendor", authenticateToken, authenticateAdmin, async (req, r
       email,
       phone,
       password: hashedPassword,
+      active: false // Set vendor status to inactive by default
     });
 
     await newVendor.save();
 
-    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
+    res.status(200).json({ message: "Vendor registered successfully, awaiting approval", vendorId: newVendor._id });
   } catch (error) {
     console.log("Error registering vendor:", error);
     res.status(500).json({ message: "Vendor registration failed" });
@@ -438,8 +440,78 @@ app.get('/admin/user', async (req, res) => {
 });
 
 
+// Vendor login route
+app.post('/login/vendor', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const vendor = await Vendor.findOne({ email });
+    if (!vendor) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    const isMatch = await bcrypt.compare(password, vendor.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    if (!vendor.active) {
+      return res.status(403).json({ message: 'Account not activated. Please contact admin.' });
+    }
+    const token = jwt.sign({ id: vendor._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.log('Error logging in vendor:', error);
+    res.status(500).json({ message: 'Login failed' });
+  }
+});
+
+// Middleware to authenticate vendor
+const authenticateVendorToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Access token required' });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// Route to get vendor details
+app.get('/vendor/details', authenticateVendorToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.user.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.status(200).json(vendor);
+  } catch (error) {
+    console.log('Error fetching vendor details:', error);
+    res.status(500).json({ message: 'Failed to fetch vendor details' });
+  }
+});
+
+
+
+// Route to check coupon status
+app.get('/coupon/check', async (req, res) => {
+  try {
+    const { code } = req.query;
+    const coupon = await Coupon.findOne({ code });
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon not found' });
+    }
+    const message = coupon.used ? 'Coupon has already been used' : 'Coupon is active';
+    res.status(200).json({ message });
+  } catch (error) {
+    console.log('Error checking coupon status:', error);
+    res.status(500).json({ message: 'Failed to check coupon status' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
 
