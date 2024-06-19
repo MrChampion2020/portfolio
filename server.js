@@ -428,7 +428,7 @@ app.get('/admin/users', authenticateAdminToken, async (req, res) => {
 
 
 // Endpoint to get the last 10 registered users
-app.get('/admin/users', async (req, res) => {
+app.get('/admin/user', async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 }).limit(10);
     res.json(users);
@@ -442,6 +442,4 @@ app.get('/admin/users', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-
 
