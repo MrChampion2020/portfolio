@@ -301,6 +301,27 @@ app.get("/user-details", authenticateToken, async (req, res) => {
   }
 });
 
+
+
+const authenticateAdminToken = async (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) return res.status(401).json({ message: "Access Denied" });
+
+  try {
+    const verified = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = verified;
+
+    const user = await User.findById(req.user.userId);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    next();
+  } catch (error) {
+    res.status(400).json({ message: "Invalid Token" });
+  }
+};
+
 const authenticateAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.sendStatus(403);
@@ -359,19 +380,7 @@ app.post("/login/admin", async (req, res) => {
 
 
 
-// Middleware to authenticate admin token
-const authenticateAdminToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, admin) => {
-    if (err) return res.sendStatus(403);
-    req.admin = admin;
-    next();
-  });
-};
 
 
 
@@ -382,7 +391,28 @@ app.get('/admin/protected', authenticateAdminToken, (req, res) => {
 
 
 
-// Get user count (example of a protected admin route)
+
+app.get("/admin-details", authenticateAdminToken, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.adminId);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.status(200).json({
+      admin: {
+        fullName: admin.fullName,
+        email: admin.email,
+      }
+    });
+  } catch (error) {
+    console.log("Error fetching admin details:", error);
+    res.status(500).json({ message: "Error fetching admin details", error });
+  }
+});
+
+
+// Admin routes
 app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
   try {
     const userCount = await User.countDocuments();
@@ -393,7 +423,6 @@ app.get("/admin/user-count", authenticateAdminToken, async (req, res) => {
   }
 });
 
-// Get all users in descending order (example of a protected admin route)
 app.get("/admin/users", authenticateAdminToken, async (req, res) => {
   try {
     const users = await User.find().sort({ _id: -1 });
@@ -404,29 +433,32 @@ app.get("/admin/users", authenticateAdminToken, async (req, res) => {
   }
 });
 
-
-app.get("/admin-details", authenticateToken, async (req, res) => {
+// Suspend user account
+app.post("/admin/suspend-user", authenticateAdminToken, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admins._Id);
-    if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
-
-    res.status(200).json({
-      admin: {
-        fullName: admin.fullName,
-        email: admin.email,
-        
-      }
-    });
+    const { userId } = req.body;
+    await User.findByIdAndUpdate(userId, { isSuspended: true });
+    res.status(200).json({ message: "User account suspended" });
   } catch (error) {
-    console.log("Error fetching admin details:", error);
-    res.status(500).json({ message: "Error fetching admin details", error });
+    console.log("Error suspending user:", error);
+    res.status(500).json({ message: "Failed to suspend user account" });
   }
 });
+
+// Delete user account
+app.delete("/admin/delete-user/:userId", authenticateAdminToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({ message: "User account deleted" });
+  } catch (error) {
+    console.log("Error deleting user:", error);
+    res.status(500).json({ message: "Failed to delete user account" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
 
 
