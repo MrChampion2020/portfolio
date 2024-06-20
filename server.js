@@ -566,7 +566,7 @@ app.post('/vendor/login', async (req, res) => {
   }
 });
 
-// Middleware to authenticate vendor token
+/*// Middleware to authenticate vendor token
 const authenticateVendorToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -579,7 +579,7 @@ const authenticateVendorToken = (req, res, next) => {
     next();
   });
 };
-
+*/
 // Example of a protected vendor route
 app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
   res.status(200).json({ message: 'This is a protected vendor route' });
