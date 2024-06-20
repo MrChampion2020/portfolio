@@ -148,6 +148,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 
+/*
 const distributeReferralBonus = async (userId, level) => {
   if (level > 1) {
     const user = await User.findById(userId);
@@ -232,7 +233,94 @@ app.post("/register", async (req, res) => {
     }
     res.status(500).json({ message: "Registration failed" });
   }
+});*/
+
+
+const distributeReferralBonus = async (userId, level) => {
+  if (level > 1) {
+    const user = await User.findById(userId);
+    if (user && user.referredBy) {
+      const referrer = await User.findById(user.referredBy);
+      if (referrer) {
+        referrer.wallet += 100;
+        referrer.referralWallet += 100;
+        await referrer.save();
+        await distributeReferralBonus(referrer._id, level - 1);
+      }
+    }
+  }
+};
+
+app.post("/register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon || !coupon.isActive || coupon.isUsed) {
+      return res.status(400).json({ message: "Invalid or inactive coupon code" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      verificationToken: crypto.randomBytes(20).toString("hex"),
+    });
+
+    // Generate referral link
+    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+
+    if (referralLink) {
+      const referrer = await User.findOne({ username: referralLink });
+      if (referrer && referrer.referralLinkActive) {
+        newUser.referredBy = referrer._id;
+        referrer.referrals.push(newUser._id);
+
+        // Credit referrer's wallet and referralWallet
+        referrer.wallet += 4000;
+        referrer.referralWallet += 4000;
+        await referrer.save();
+
+        // Credit referee's referralWallet
+        newUser.referralWallet += 3000;
+      } else {
+        return res.status(400).json({ message: "Invalid or inactive referral link" });
+      }
+    }
+
+    await newUser.save();
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+
+     // Mark coupon as used
+     coupon.isUsed = true;
+     coupon.isActive = false;
+     coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
+     await coupon.save();
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.log("Error registering user:", error);
+    res.status(500).json({ message: "Registration failed" });
+  }
 });
+
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, './')));
@@ -257,6 +345,7 @@ app.get("/verify/:token", async (req, res) => {
     res.status(500).json({ message: "Email verification failed" });
   }
 });
+
 
 app.post("/login", async (req, res) => {
   try {
@@ -286,23 +375,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-/*app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
 
-    if (!user || !await bcrypt.compare(password, user.password)) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
 
-    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
-
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.log("Error logging in user:", error);
-    res.status(500).json({ message: "Login failed" });
-  }
-});*/
 
 app.get("/user-details", authenticateToken, async (req, res) => {
   try {
@@ -500,6 +574,7 @@ app.post('/login/vendor', async (req, res) => {
   }
 });
 
+
 // Middleware to authenticate vendor
 const authenticateVendorToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
@@ -594,20 +669,7 @@ app.post('/vendor/login', async (req, res) => {
   }
 });
 
-/*// Middleware to authenticate vendor token
-const authenticateVendorToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, vendor) => {
-    if (err) return res.sendStatus(403);
-    req.vendor = vendor;
-    next();
-  });
-};
-*/
 // Example of a protected vendor route
 app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
   res.status(200).json({ message: 'This is a protected vendor route' });
@@ -672,4 +734,3 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-});
