@@ -147,7 +147,6 @@ const sendVerificationEmail = async (email, verificationToken) => {
     console.log("Error sending the verification email:", error);
   }
 };
-
 /*
 const distributeReferralBonus = async (userId, level) => {
   if (level > 1) {
@@ -235,22 +234,6 @@ app.post("/register", async (req, res) => {
   }
 });*/
 
-
-const distributeReferralBonus = async (userId, level) => {
-  if (level > 1) {
-    const user = await User.findById(userId);
-    if (user && user.referredBy) {
-      const referrer = await User.findById(user.referredBy);
-      if (referrer) {
-        referrer.wallet += 100;
-        referrer.referralWallet += 100;
-        await referrer.save();
-        await distributeReferralBonus(referrer._id, level - 1);
-      }
-    }
-  }
-};
-
 app.post("/register", async (req, res) => {
   try {
     const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
@@ -293,13 +276,11 @@ app.post("/register", async (req, res) => {
         newUser.referredBy = referrer._id;
         referrer.referrals.push(newUser._id);
 
-        // Credit referrer's wallet and referralWallet
-        referrer.wallet += 4000;
-        referrer.referralWallet += 4000;
+        // Credit referrer's wallet
+        const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
+        referrer.wallet += amountToCredit;
+        referrer.referralWallet += amountToCredit;
         await referrer.save();
-
-        // Credit referee's referralWallet
-        newUser.referralWallet += 3000;
       } else {
         return res.status(400).json({ message: "Invalid or inactive referral link" });
       }
@@ -308,18 +289,39 @@ app.post("/register", async (req, res) => {
     await newUser.save();
     await sendVerificationEmail(newUser.email, newUser.verificationToken);
 
-     // Mark coupon as used
-     coupon.isUsed = true;
-     coupon.isActive = false;
-     coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
-     await coupon.save();
+    // Mark coupon as used
+    coupon.isUsed = true;
+    coupon.isActive = false;
+    coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
+    await coupon.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Distribute referral bonuses
+    await distributeReferralBonus(newUser._id, 3); // Assuming 3 levels of referral bonus
+
+    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
   } catch (error) {
     console.log("Error registering user:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate key error", error: error.message });
+    }
     res.status(500).json({ message: "Registration failed" });
   }
 });
+
+const distributeReferralBonus = async (userId, level) => {
+  if (level > 1) {
+    const user = await User.findById(userId);
+    if (user && user.referredBy) {
+      const referrer = await User.findById(user.referredBy);
+      if (referrer) {
+        referrer.wallet += 100;
+        referrer.referralWallet += 100;
+        await referrer.save();
+        await distributeReferralBonus(referrer._id, level - 1);
+      }
+    }
+  }
+};
 
 
 // Serve static files from the 'public' directory
@@ -374,7 +376,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
-
 
 
 
@@ -734,3 +735,5 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
