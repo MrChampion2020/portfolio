@@ -267,6 +267,16 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
+    const now = new Date();
+    const lastLogin = user.lastLogin || new Date(0);
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+    if (now - lastLogin >= oneDayInMilliseconds) {
+      user.referralWallet += 250;
+      user.lastLogin = now;
+      await user.save();
+    }
+
     const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
 
     res.status(200).json({ message: "Login successful", token });
@@ -275,6 +285,24 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
+
+/*app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user || !await bcrypt.compare(password, user.password)) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.log("Error logging in user:", error);
+    res.status(500).json({ message: "Login failed" });
+  }
+});*/
 
 app.get("/user-details", authenticateToken, async (req, res) => {
   try {
