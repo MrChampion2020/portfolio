@@ -148,22 +148,6 @@ const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 
-
-const distributeReferralBonus = async (userId, level) => {
-  if (level > 1) {
-    const user = await User.findById(userId);
-    if (user && user.referredBy) {
-      const referrer = await User.findById(user.referredBy);
-      if (referrer) {
-        referrer.wallet += 100;
-        referrer.referralWallet += 100;
-        await referrer.save();
-        await distributeReferralBonus(referrer._id, level - 1);
-      }
-    }
-  }
-};
-
 app.post("/register", async (req, res) => {
   try {
     const { fullName, email, phone, password, username, referralLink, couponCode } = req.body;
@@ -209,11 +193,8 @@ app.post("/register", async (req, res) => {
         // Credit referrer's wallet
         const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
         referrer.wallet += amountToCredit;
+        referrer.referralWallet += amountToCredit;
         await referrer.save();
-        
-        // Credit newUser's referral wallet
-        const amountToCreditNewUser = referrer.accountType === 'naira' ? 3000 : 3;
-        newUser.referralWallet += amountToCreditNewUser;
       } else {
         return res.status(400).json({ message: "Invalid or inactive referral link" });
       }
@@ -241,6 +222,20 @@ app.post("/register", async (req, res) => {
   }
 });
 
+const distributeReferralBonus = async (userId, level) => {
+  if (level > 1) {
+    const user = await User.findById(userId);
+    if (user && user.referredBy) {
+      const referrer = await User.findById(user.referredBy);
+      if (referrer) {
+        referrer.wallet += 100;
+        referrer.referralWallet += 100;
+        await referrer.save();
+        await distributeReferralBonus(referrer._id, level - 1);
+      }
+    }
+  }
+};
 
 
 // Serve static files from the 'public' directory
@@ -654,3 +649,5 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
