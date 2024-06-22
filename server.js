@@ -741,6 +741,23 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
 });
 
 
+
+app.post('/spin', authenticateToken, async (req, res) => {
+  const { amount } = req.body;
+  const user = await User.findById(req.user.id);
+
+  const now = new Date();
+  if (user.lastSpin && (now - user.lastSpin) < 24 * 60 * 60 * 1000) {
+    return res.status(403).json({ message: 'You can only spin the wheel once every 24 hours.' });
+  }
+
+  user.referralWallet += amount;
+  user.lastSpin = now;
+  await user.save();
+  res.json({ referralWallet: user.referralWallet });
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
