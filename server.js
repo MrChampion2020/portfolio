@@ -371,43 +371,6 @@ app.post('/spin', authenticateToken, async (req, res) => {
 
 
 
-/*
-
-app.post("/vendor-register", async (req, res) => {
-  try {
-    const { fullName, email, phone, password, username, companyName, companyAddress } = req.body;
-
-    const existingVendor = await Vendor.findOne({ email });
-    if (existingVendor) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    const existingVendorUsername = await Vendor.findOne({ username });
-    if (existingVendorUsername) {
-      return res.status(400).json({ message: "Username already taken" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newVendor = new Vendor({
-      fullName,
-      email,
-      phone,
-      password: hashedPassword,
-      username,
-      companyName,
-      companyAddress,
-    });
-
-    await newVendor.save();
-    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
-  } catch (error) {
-    console.log("Error registering vendor:", error);
-    res.status(500).json({ message: "Vendor registration failed" });
-  }
-});
-
-
-*/
 
 
 
@@ -571,81 +534,6 @@ const setVendorStatus = async (req, res) => {
 
 
 
-/*
-// Vendor authentication
-app.post('/vendor/register', async (req, res) => {
-  try {
-    const { fullName, email, username, phone, companyName, companyAddress, password } = req.body;
-
-    const existingVendor = await Vendor.findOne({ email });
-    if (existingVendor) {
-      return res.status(400).json({ message: 'Email already registered' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newVendor = new Vendor({
-      fullName,
-      email,
-      username,
-      phone,
-      companyName,
-      companyAddress,
-      password: hashedPassword
-    });
-
-    await newVendor.save();
-    res.status(200).json({ message: 'Vendor registered successfully' });
-  } catch (error) {
-    console.log('Error registering vendor:', error);
-    res.status(500).json({ message: 'Vendor registration failed', error });
-  }
-});
-
-app.post('/vendor/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const vendor = await Vendor.findOne({ email });
-
-    if (!vendor || !await bcrypt.compare(password, vendor.password)) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    const token = jwt.sign({ id: vendor._id }, secretKey, { expiresIn: '1h' });
-
-    res.status(200).json({ message: 'Vendor login successful', token });
-  } catch (error) {
-    console.log('Error logging in vendor:', error);
-    res.status(500).json({ message: 'Vendor login failed', error });
-  }
-});
-
-*/
-
-/*
-// Vendor details route
-app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.vendor.id);
-    if (!vendor) {
-      return res.status(404).json({ message: 'Vendor not found' });
-    }
-
-    res.status(200).json({
-      vendor: {
-        fullName: vendor.fullName,
-        email: vendor.email,
-        username: vendor.username,
-        phone: vendor.phone,
-        companyName: vendor.companyName,
-        companyAddress: vendor.companyAddress,
-      }
-    });
-  } catch (error) {
-    console.log('Error fetching vendor details:', error);
-    res.status(500).json({ message: 'Error fetching vendor details', error });
-  }
-});
-*/
 // Endpoint to get the number of vendors
 app.get('/admin/vendor-count', authenticateAdminToken, async (req, res) => {
   try {
@@ -794,40 +682,11 @@ app.post("/vendor-login", async (req, res) => {
 });
 
 
-/*
-// Endpoint to get vendor details
-app.get("/vendor-details", authenticateVendorToken, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.vendor.userId);
-    if (!vendor) {
-      return res.status(404).json({ message: "Vendor not found" });
-    }
 
-    res.status(200).json({
-      vendor: {
-        fullName: vendor.fullName,
-        email: vendor.email,
-        username: vendor.username,
-        phone: vendor.phone,
-        companyName: vendor.companyName,
-        companyAddress: vendor.companyAddress,
-        wallet: vendor.wallet,
-        referralWallet: vendor.referralWallet,
-        referrals: vendor.referrals,
-        referralLink: vendor.referralLink,
-      }
-    });
-  } catch (error) {
-    console.log("Error fetching vendor details:", error);
-    res.status(500).json({ message: "Error fetching vendor details", error });
-  }
-});
-*/
 
-// Endpoint to fetch vendor details
 app.get('/vendor-details', authenticateToken, async (req, res) => {
   try {
-    const vendor = await Vendor.findById(req.vendor.id).populate('referrals').exec();
+    const vendor = await Vendor.findById(req.vendor.id);
     res.json({
       fullName: vendor.fullName,
       email: vendor.email,
@@ -835,16 +694,17 @@ app.get('/vendor-details', authenticateToken, async (req, res) => {
       username: vendor.username,
       companyName: vendor.companyName,
       companyAddress: vendor.companyAddress,
-      active: vendor.active,
-      referralLink: vendor.referralLink,
       wallet: vendor.wallet,
       referralWallet: vendor.referralWallet,
-      referrals: vendor.referrals
+      referralLink: vendor.referralLink
     });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching vendor details' });
   }
 });
+
+
+
 
 // Endpoint to fetch users registered via vendor's referral link
 app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
@@ -855,6 +715,30 @@ app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Error fetching referral users' });
   }
 });
+
+// Endpoint to check if a coupon is active or used
+app.post('/check-coupon', authenticateToken, async (req, res) => {
+  try {
+    const { couponCode } = req.body;
+    const coupon = await Coupon.findOne({ code: couponCode });
+
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon not found' });
+    }
+
+    if (coupon.used) {
+      return res.status(400).json({ message: 'Coupon already used' });
+    }
+
+    // Additional logic to check if coupon is still valid (e.g., expiry date)
+
+    res.json({ amount: coupon.amount });
+  } catch (err) {
+    res.status(500).json({ message: 'Error checking coupon' });
+  }
+});
+
+
 
 // Example of a protected vendor route
 app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
