@@ -794,7 +794,7 @@ app.post("/vendor-login", async (req, res) => {
 });
 
 
-
+/*
 // Endpoint to get vendor details
 app.get("/vendor-details", authenticateVendorToken, async (req, res) => {
   try {
@@ -820,6 +820,39 @@ app.get("/vendor-details", authenticateVendorToken, async (req, res) => {
   } catch (error) {
     console.log("Error fetching vendor details:", error);
     res.status(500).json({ message: "Error fetching vendor details", error });
+  }
+});
+*/
+
+// Endpoint to fetch vendor details
+app.get('/vendor-details', authenticateToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id).populate('referrals').exec();
+    res.json({
+      fullName: vendor.fullName,
+      email: vendor.email,
+      phone: vendor.phone,
+      username: vendor.username,
+      companyName: vendor.companyName,
+      companyAddress: vendor.companyAddress,
+      active: vendor.active,
+      referralLink: vendor.referralLink,
+      wallet: vendor.wallet,
+      referralWallet: vendor.referralWallet,
+      referrals: vendor.referrals
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching vendor details' });
+  }
+});
+
+// Endpoint to fetch users registered via vendor's referral link
+app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id).populate('referrals').exec();
+    res.json(vendor.referrals);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching referral users' });
   }
 });
 
