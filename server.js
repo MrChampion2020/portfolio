@@ -36,26 +36,66 @@ mongoose.connect(process.env.MONGO_URI, {})
   .catch((error) => console.log("Error connecting to MongoDB:", error));
 
 
+  // Auths
+
+//user
+
+  const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) return res.sendStatus(401);
+  
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+    });
+  };
 
 
-  //User Endpoints
+  const authenticateAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+      return res.sendStatus(403);
+    }
+    next();
+  };
+  
+  // Middleware to authenticate admin token
+  const authenticateAdminToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) return res.sendStatus(401);
+  
+    jwt.verify(token, secretKey, (err, admin) => {
+      if (err) return res.sendStatus(403);
+      req.admin = admin;
+      next();
+    });
+  };
 
 
 
-
-  //
-const authenticateToken = (req, res, next) => {
+  // Middleware to authenticate vendor token
+const authenticateVendorToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err, vendor) => {
     if (err) return res.sendStatus(403);
-    req.user = user;
+    req.vendor = vendor;
     next();
   });
 };
+
+
+
+
+  //User Endpoints
+
 
 
 
@@ -375,26 +415,7 @@ app.post("/vendor-register", async (req, res) => {
 
 
 
-const authenticateAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.sendStatus(403);
-  }
-  next();
-};
 
-// Middleware to authenticate admin token
-const authenticateAdminToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, admin) => {
-    if (err) return res.sendStatus(403);
-    req.admin = admin;
-    next();
-  });
-};
 
 
 // Manually add admin user (one-time operation)
@@ -665,19 +686,6 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
 
 
 
-// Middleware to authenticate vendor token
-const authenticateVendorToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, vendor) => {
-    if (err) return res.sendStatus(403);
-    req.vendor = vendor;
-    next();
-  });
-};
 
 
 
@@ -847,8 +855,6 @@ app.get('/coupon/check', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-
 
 
 
