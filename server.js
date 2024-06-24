@@ -739,6 +739,33 @@ app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
     res.status(500).json({ message: 'Error fetching vendors', error });
   }
 });
+// Controller to set vendor status
+const setVendorStatus = async (req, res) => {
+  const { vendorId } = req.params;
+  const { status } = req.body;
+
+  if (typeof vendorId === 'undefined' || typeof status === 'undefined') {
+      return res.status(400).json({ message: 'Vendor ID and status are required.' });
+  }
+
+  try {
+      const vendor = await Vendor.findById(vendorId);
+      if (!vendor) {
+          return res.status(404).json({ message: 'Vendor not found.' });
+      }
+
+      vendor.active = status;
+      await vendor.save();
+
+      res.status(200).json({ message: 'Vendor status updated successfully.' });
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating vendor status.', error });
+  }
+};
+
+
+// Endpoint to set vendor active status
+app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus);
 
 
 
