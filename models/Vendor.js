@@ -8,7 +8,13 @@ const vendorSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   companyName: { type: String, required: true },
   companyAddress: { type: String, required: true },
-  active: { type: Boolean, default: false }
+  active: { type: Boolean, default: false },
+  referralLink: { type: String, unique: true },
+  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' }],
+  wallet: { type: Number, default: 0 },
+  referralWallet: { type: Number, default: 0 },
+  lastLogin: { type: Date },
+  role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'vendor' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Vendor', vendorSchema);
