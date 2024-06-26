@@ -564,6 +564,21 @@ app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus)
 //Vendor Endpoints
 
 
+const authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization').replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied, no token provided' });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
+
 // Vendor registration endpoint
 app.post("/vendor-register", async (req, res) => {
   try {
@@ -670,7 +685,7 @@ app.post("/vendor-login", async (req, res) => {
 
 
 
-app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
+/*app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.vendor.id);
     res.json({
@@ -701,6 +716,7 @@ app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
   }
 });
 
+
 // Endpoint to check if a coupon is active or used
 app.post('/check-coupon', authenticateToken, async (req, res) => {
   try {
@@ -722,6 +738,46 @@ app.post('/check-coupon', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Error checking coupon' });
   }
 });
+*/
+
+app.get('/vendor-details', authMiddleware, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.user.id).select('-password');
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.status(200).json(vendor);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching vendor details' });
+  }
+});
+
+
+app.get('/vendor-referrals', authMiddleware, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.user.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    const referrals = await User.find({ referrer: vendor._id });
+    res.status(200).json(referrals);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching referral users' });
+  }
+});
+
+
+app.get('/check-coupon/:couponCode', async (req, res) => {
+  try {
+    const coupon = await Coupon.findOne({ code: req.params.couponCode });
+    if (!coupon) {
+      return res.status(400).json({ valid: false });
+    }
+    res.status(200).json({ valid: true, amount: coupon.amount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error checking coupon' });
+  }
+});
 
 // Example of a protected vendor route
 app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
@@ -733,5 +789,4 @@ app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
 
