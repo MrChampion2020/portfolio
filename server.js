@@ -685,7 +685,7 @@ app.post("/vendor-login", async (req, res) => {
 
 
 
-/*app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
+app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.vendor.id);
     res.json({
@@ -705,7 +705,7 @@ app.post("/vendor-login", async (req, res) => {
 });
 
 
-
+/*
 // Endpoint to fetch users registered via vendor's referral link
 app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
   try {
@@ -740,17 +740,6 @@ app.post('/check-coupon', authenticateToken, async (req, res) => {
 });
 */
 
-app.get('/vendor-details', authMiddleware, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.user.id).select('-password');
-    if (!vendor) {
-      return res.status(404).json({ message: 'Vendor not found' });
-    }
-    res.status(200).json(vendor);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching vendor details' });
-  }
-});
 
 
 app.get('/vendor-referrals', authMiddleware, async (req, res) => {
