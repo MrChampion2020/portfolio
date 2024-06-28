@@ -3,11 +3,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Details</title>
+  <title>Elitearn</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      color: purple;
     }
     table {
       width: 100%;
@@ -15,7 +17,7 @@
       margin-top: 20px;
     }
     table, th, td {
-      border: 1px solid #ddd;
+      border: 1px solid purple;
     }
     th, td {
       padding: 10px;
@@ -27,12 +29,11 @@
   </style>
 </head>
 <body>
-  <h1>User Details</h1>
+  <h1>Elitearn Users</h1>
   <p>Total Users: <span id="userCount"></span></p>
   <table id="userTable">
     <thead>
       <tr>
-        <th>ID</th>
         <th>Full Name</th>
         <th>Email</th>
         <th>Username</th>
@@ -80,7 +81,6 @@
         users.forEach(user => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${user._id}</td>
             <td>${user.fullName}</td>
             <td>${user.email}</td>
             <td>${user.username}</td>

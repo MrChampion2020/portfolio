@@ -1,7 +1,8 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
   <style>
@@ -81,8 +82,11 @@
     }
     .close-button {
       margin-top: 20px;
-      background-color: red;
-      color: white;
+      font-weight: 800;
+      font-size: 16;
+      background-color: white;
+      color: red;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
     }
     .actions button {
       margin-right: 10px;
@@ -105,7 +109,7 @@
     <div class="buttons">
       <button onclick="showSection('userDisplayArea')">View Full List of Users</button>
       <button onclick="showSection('vendorDisplayArea')">View Full List of Vendors</button>
-      <button onclick="showSection('couponContainer')">Generate Coupon</button>
+      <button onclick="showSection('couponContainer')">View Coupons</button>
       <button onclick="showSection('withdrawalRequestsArea')">Withdrawal Requests</button>
     </div>
 
@@ -121,7 +125,7 @@
             <th>Username</th>
             <th>Phone</th>
             <th>Wallet</th>
-            <th>Referral Wallet</th>
+            <th>Elite Coin</th>
           </tr>
         </thead>
         <tbody>
@@ -132,9 +136,25 @@
      <a href="user.html">View More</a>
     </div>
 
+
     <div class="display-area" id="vendorDisplayArea">
       <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
-      <!-- Vendor data will be populated here -->
+      <table id="vendorTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Vendor data will be populated here -->
+        </tbody>
+      </table>
       <button class="close-button" onclick="hideSection('vendorDisplayArea')">Close</button>
     </div>
 
@@ -207,6 +227,7 @@
           fetchCounts();
           fetchCoupons();
           fetchNewUsers();
+          fetchVendors();
         } else {
           alert('Failed to fetch admin data');
           localStorage.removeItem('token');
@@ -215,7 +236,7 @@
           document.getElementById('dashboardContainer').style.display = 'none';
         }
       } catch (error) {
-        alert('An error occurred while fetching admin data');
+        alert('Login to access admin account');
         localStorage.removeItem('token');
         localStorage.removeItem('isAuthenticated');
         document.getElementById('loginContainer').style.display = 'flex';
@@ -257,7 +278,7 @@
         const userCount = await userResponse.json();
         document.getElementById('userCount').innerText = userCount;
 
-        const vendorResponse = await fetch(`${API_URL}/vendors/count`);
+        const vendorResponse = await fetch(`${API_URL}/admin/vendor-count`);
         const vendorCount = await vendorResponse.json();
         document.getElementById('vendorCount').innerText = vendorCount;
       } catch (error) {
@@ -331,6 +352,62 @@
         alert('An error occurred while fetching user data');
       }
     };
+    
+    
+    const fetchVendors = async () => {
+    try {
+        const response = await fetch(`${API_URL}/admin/vendors`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        const vendors = await response.json();
+        const vendorTableBody = document.querySelector('#vendorTable tbody');
+        vendorTableBody.innerHTML = '';
+
+        vendors.forEach((vendor) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${vendor._id}</td>
+              <td>${vendor.fullName}</td>
+              <td>${vendor.email}</td>
+              <td>${vendor.username}</td>
+              <td>${vendor.phone}</td>
+              <td>${vendor.active}</td>
+              <td class="actions">
+                <button onclick="setVendorStatus('${vendor._id}', true)">Activate</button>
+                <button onclick="setVendorStatus('${vendor._id}', false)">Deactivate</button>
+              </td>
+            `;
+            vendorTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching vendors:', error);
+    }
+};
+
+
+const setVendorStatus = async (vendorId, status) => {
+    try {
+        const response = await fetch(`${API_URL}/admin/vendors/${vendorId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+            fetchVendors();
+        } else {
+            alert('Failed to update vendor status');
+        }
+    } catch (error) {
+        console.error('Error updating vendor status:', error);
+    }
+};
+
 
     const handleUpdate = (userId) => {
       // Update user logic here
@@ -356,3 +433,4 @@
   </script>
 </body>
 </html>
+

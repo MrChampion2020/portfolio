@@ -1,39 +1,369 @@
-<!DOCTYPE html>
-<html>
+<!--<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Vendor Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <title>Elitearn</title>
   <style>
-    #registrationScreen, #loginScreen, #dashboard {
-      display: none;
-    }
-    .screen {
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    
+
+  </style>
+</head>
+<body >
+  
+
+  
+
+  
+
+  <script>
+  
+
+    
+
+    function showLoginScreen() {
+      document.getElementById('registrationScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('registrationScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+    }
+
+    
+    const loginVendor = async () => {
+      event.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch(`${API_URL}/vendor-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('vendorToken', data.token);
+          showDashboard();
+          fetchVendorDetails();
+          fetchReferralUsers();
+        } else {
+          document.getElementById('error').innerText = data.message;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error').innerText = 'Login failed. Please try again.';
+      }
+    };
+
+    async function fetchVendorDetails() {
+  const token = localStorage.getItem('vendorToken');
+  try {
+    const response = await fetch(`${API_URL}/vendor-details`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch vendor details');
+    }
+
+    const vendorDetails = await response.json();
+    console.log('Vendor details:', vendorDetails); // Debugging
+
+    // Update DOM with fetched details
+    const vendorDetailsDiv = document.getElementById('vendorDetails');
+    vendorDetailsDiv.innerHTML = `
+      <h3>Welcome, ${vendorDetails.username}</h3>
+      <p><strong>Wallet:</strong> ${vendorDetails.wallet}</p>
+      <p><strong>Referral Wallet:</strong> ${vendorDetails.referralWallet}</p>
+      <p><strong>Referral Link:</strong> <a href="${vendorDetails.referralLink}" target="_blank">${vendorDetails.referralLink}</a></p>
+    `;
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    alert('Failed to fetch vendor details. Please try again later.');
+  }
+}
+
+    /*
+    async function fetchVendorDetails() {
+      const token = localStorage.getItem('vendorToken');
+      try {
+        const response = await fetch(`${API_URL}/vendor-details`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const vendorDetails = await response.json();
+        console.log('Vendor details:', vendorDetails); // Debugging
+
+        const vendorDetailsDiv = document.getElementById('vendorDetails');
+        vendorDetailsDiv.innerHTML = `
+          <h3>Welcome, ${vendorDetails.username}</h3>
+          <p><strong>Wallet:</strong> ${vendorDetails.wallet}</p>
+          <p><strong>Referral Wallet:</strong> ${vendorDetails.referralWallet}</p>
+          <p><strong>Referral Link:</strong> <a href="${vendorDetails.referralLink}" target="_blank">${vendorDetails.referralLink}</a></p>
+        `;
+      } catch (error) {
+        console.error('Error fetching vendor details:', error);
+        alert('Failed to fetch vendor details. Please try again later.');
+      }
+    }
+*/
+    async function fetchReferralUsers() {
+      const token = localStorage.getItem('vendorToken');
+      try {
+        const response = await fetch(`${API_URL}/vendor-referrals`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const referralUsers = await response.json();
+        console.log('Referral users:', referralUsers); // Debugging
+
+        const referralUsersDiv = document.getElementById('referralUsers');
+        referralUsersDiv.innerHTML = '';
+        referralUsers.forEach(user => {
+          referralUsersDiv.innerHTML += `<p>${user.username}</p>`;
+        });
+      } catch (error) {
+        console.error('Error fetching referral users:', error);
+        alert('Failed to fetch referral users. Please try again later.');
+      }
+    }
+
+    
+
+    
+  </script>
+</body>
+</html>
+
+
+-->
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+D+CZ4Xl5Bf5CXs1AAd7cF6a2YB2nDNEE7xYTbJ" crossorigin="anonymous">
+  <title>Admin Panel</title>
+  <style>
+    body, html {
+      width: 100%;
+      margin: auto;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f4f4f4;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 1200px;
+      width: 90%;
+      margin: auto;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+    }
+    .login-container, .dashboard-container {
+      display: none;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
     }
-    input {
-      margin-bottom: 10px;
+    h1, h2 {
+      text-align: center;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .buttons {
+      width: 90%;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      padding: 10px;
+      background-color: purple;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      width: 20%;
+    }
+    button:hover {
+      background-color: darkpurple;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .display-area {
+      display: none;
+    }
+    .close-button {
+      margin-top: 20px;
+      font-weight: 800;
+      font-size: 16;
+      background-color: white;
+      color: red;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+    }
+    .actions button {
+      margin-right: 10px;
+    }
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 90%;
+      max-width: 400px;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+    .screen h2, .screen h3 {
+      margin: 10px 0;
+    }
+    .screen form {
+      width: 100%;
+    }
+    .screen form label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .screen form input {
+      width: calc(100% - 40px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid purple;
+      border-radius: 5px;
+    }
+    .screen form button {
+      width: 100%;
+      padding: 10px;
+      background-color: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .screen form button:hover {
+      background-color: #b3008c;
+    }
+    .screen p {
+      margin: 5px 0;
+      background-color: white;
+    }
+    .screen a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .screen a:hover {
+      text-decoration: underline;
+    }
+    .screen div {
+      width: 100%;
+    }
+    #dashboard {
+      display: none;
+    }
+    #vendorDetails p, #referralUsers p {
+      margin: 5px 0;
+    }
+    #vendorDetails, #referralUsers, #couponResult {
+      width: 100%;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 600px) {
+      .screen {
+        width: 70%;
+        max-width: 500px;
+      }
+    }
+    @media (min-width: 900px) {
+      .screen {
+        width: 50%;
+        max-width: 600px;
+      }
     }
   </style>
 </head>
 <body onload="showRegistrationScreen()">
+
   <div id="registrationScreen" class="screen">
     <h2>Vendor Registration</h2>
     <form id="vendorRegForm">
-      <label for="regFullName">Full Name:</label>
-      <input type="text" id="regFullName" name="fullName" required><br>
-      <label for="regEmail">Email:</label>
-      <input type="email" id="regEmail" name="email" required><br>
-      <label for="regPhone">Phone:</label>
-      <input type="tel" id="regPhone" name="phone" required><br>
-      <label for="regUsername">Username:</label>
-      <input type="text" id="regUsername" name="username" required><br>
-      <label for="regPassword">Password:</label>
-      <input type="password" id="regPassword" name="password" required><br>
-      <label for="regCompanyName">Company Name:</label>
-      <input type="text" id="regCompanyName" name="companyName" required><br>
-      <label for="regCompanyAddress">Company Address:</label>
-      <input type="text" id="regCompanyAddress" name="companyAddress" required><br>
+      <label for="regFullName"><i class="fas fa-user"></i> Full Name:</label>
+      <input type="text" id="regFullName" name="fullName" required>
+      <label for="regEmail"><i class="fas fa-envelope"></i> Email:</label>
+      <input type="email" id="regEmail" name="email" required>
+      <label for="regPhone"><i class="fas fa-phone"></i> Phone:</label>
+      <input type="tel" id="regPhone" name="phone" required>
+      <label for="regUsername"><i class="fas fa-user-tag"></i> Username:</label>
+      <input type="text" id="regUsername" name="username" required>
+      <label for="regPassword"><i class="fas fa-lock"></i> Password:</label>
+      <input type="password" id="regPassword" name="password" required>
+      <label for="regCompanyName"><i class="fas fa-building"></i> Company Name:</label>
+      <input type="text" id="regCompanyName" name="companyName" required>
+      <label for="regCompanyAddress"><i class="fas fa-map-marker-alt"></i> Company Address:</label>
+      <input type="text" id="regCompanyAddress" name="companyAddress" required>
       <button type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="#" onclick="showLoginScreen()">Login here</a></p>
@@ -42,45 +372,128 @@
   <div id="loginScreen" class="screen">
     <h2>Vendor Login</h2>
     <form id="vendorLoginForm">
-      <label for="loginEmail">Email:</label>
-      <input type="email" id="loginEmail" name="email" required><br>
-      <label for="loginPassword">Password:</label>
-      <input type="password" id="loginPassword" name="password" required><br>
+      <label for="loginEmail"><i class="fas fa-envelope"></i> Email:</label>
+      <input type="email" id="loginEmail" name="email" required>
+      <label for="loginPassword"><i class="fas fa-lock"></i> Password:</label>
+      <input type="password" id="loginPassword" name="password" required>
       <button type="submit">Login</button>
     </form>
     <p>Don't have an account? <a href="#" onclick="showRegistrationScreen()">Register here</a></p>
   </div>
 
-  <div id="dashboard" class="screen">
-    <h2>Vendor Dashboard</h2>
-    <div id="vendorDetails"></div>
-    <h3>Check Coupon</h3>
-    <input type="text" id="couponCode" placeholder="Enter coupon code">
-    <button onclick="checkCoupon()">Check Coupon</button>
-    <div id="couponResult"></div>
-    <button onclick="logout()">Logout</button>
+  <div class="container dashboard-container" id="dashboardContainer">
+    <div><b id="adminName"></b><p id="adminDetails">Welcome</p></div>
+
+    <div id="dashboard" class="screen">
+      <h2>Dashboard</h2>
+      <div id="vendorDetails"></div>
+      <h3>Check Coupon</h3>
+      <input type="text" id="couponCode" placeholder="Enter coupon code">
+      <button onclick="checkCoupon()">Check Coupon</button>
+      <div id="couponResult"></div>
+      <h3>Users Registered via Referral Link</h3>
+      <div id="referralUsers"></div>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="buttons">
+      <button onclick="showSection('userDisplayArea')">View Full List of Users</button>
+      <button onclick="showSection('vendorDisplayArea')">View Full List of Vendors</button>
+      <button onclick="showSection('couponContainer')">View Coupons</button>
+      <button onclick="showSection('withdrawalRequestsArea')">Withdrawal Requests</button>
+    </div>
+
+
+
+    <div class="display-area" id="userDisplayArea">
+      <h2>Number of Users: <span id="userCount">0</span></h2>
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Wallet</th>
+            <th>Elite Coin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- User data will be populated here -->
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('userDisplayArea')">Close</button>
+     <a href="user.html">View More</a>
+    </div>
+
+
+    <div class="display-area" id="vendorDisplayArea">
+      <h2>Number of Vendors: <span id="vendorCount">0</span></h2>
+      <table id="vendorTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Vendor data will be populated here -->
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('vendorDisplayArea')">Close</button>
+    </div>
+
+    <div class="display-area coupon-container" id="couponContainer">
+      <h2>Active Coupons</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Value</th>
+            <th>Currency</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="couponTableBody">
+        </tbody>
+      </table>
+      <button class="close-button" onclick="hideSection('couponContainer')">Close</button>
+      <a href="coupon.html">Generate Coupon</a>
+    </div>
+
+    <div class="display-area" id="withdrawalRequestsArea">
+      <h2>Withdrawal Requests</h2>
+      <!-- Withdrawal requests data will be populated here -->
+      <button class="close-button" onclick="hideSection('withdrawalRequestsArea')">Close</button>
+    </div>
   </div>
 
   <script>
-    const API_URL = `https://elitearn.onrender.com`;
+    const API_URL = 'https://elitearn.onrender.com';
 
-    function showRegistrationScreen() {
-      document.getElementById('registrationScreen').style.display = 'block';
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'none';
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const isAuthenticated = localStorage.getItem('isAuthenticated');
+      const loginContainer = document.getElementById('loginContainer');
+      const dashboardContainer = document.getElementById('dashboardContainer');
 
-    function showLoginScreen() {
-      document.getElementById('registrationScreen').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'block';
-      document.getElementById('dashboard').style.display = 'none';
-    }
 
-    function showDashboard() {
-      document.getElementById('registrationScreen').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-    }
+
+      if (isAuthenticated) {
+        loginContainer.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        document.getElementById('userDisplayArea').style.display = 'block';
+        fetchVendorDetails();
+      } else {
+        loginContainer.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
+      }
+    });
 
     async function registerVendor(event) {
       event.preventDefault();
@@ -101,61 +514,178 @@
       });
 
       const data = await response.json();
+      console.log('Vendor registration response:', data); // Debugging
       alert(data.message);
       if (response.ok) {
         showLoginScreen();
       }
     }
 
-    async function loginVendor(event) {
-      event.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+    function showRegistrationScreen() {
+      document.getElementById('registrationScreen').style.display = 'flex';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+    }
 
-      const response = await fetch(`${API_URL}/vendor-login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password })
-      });
+    const fetchVendorDetails = async () => {
+      const token = localStorage.getItem('token');
 
-      const data = await response.json();
-      alert(data.message);
-      if (response.ok) {
-        localStorage.setItem('vendorToken', data.token);
-        showDashboard();
-        fetchVendorDetails();
+      if (!token) {
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+        return;
       }
-    }
 
-    async function fetchVendorDetails() {
-      const token = localStorage.getItem('vendorToken');
-      const response = await fetch(`${API_URL}/vendor-details`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      try {
+        const response = await fetch(`${API_URL}/vendor-details`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('adminName').textContent = data.admin.fullName;
+          document.getElementById('adminDetails').textContent = `Email: ${data.admin.email}`;
+          fetchCounts();
+          fetchCoupons();
+          fetchNewUsers();
+          fetchVendors();
+        } else {
+          alert('Failed to fetch admin data');
+          localStorage.removeItem('token');
+          localStorage.removeItem('isAuthenticated');
+          document.getElementById('loginContainer').style.display = 'flex';
+          document.getElementById('dashboardContainer').style.display = 'none';
         }
-      });
-      const vendor = await response.json();
-      const vendorDetailsDiv = document.getElementById('vendorDetails');
-      vendorDetailsDiv.innerHTML = `
-        <p>Full Name: ${vendor.fullName}</p>
-        <p>Email: ${vendor.email}</p>
-        <p>Phone: ${vendor.phone}</p>
-        <p>Username: ${vendor.username}</p>
-        <p>Company Name: ${vendor.companyName}</p>
-        <p>Company Address: ${vendor.companyAddress}</p>
-        <p>Status: ${vendor.active ? 'Active' : 'Inactive'}</p>
-      `;
+      } catch (error) {
+        alert('Login to access admin account');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isAuthenticated');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('dashboardContainer').style.display = 'none';
+      }
+    };
+
+    const login = async () => {
+      const username = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginpassword').value;
+
+      try {
+        const response = await fetch(`${API_URL}/vendor-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usernameOrEmail: username, password }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('isAuthenticated', 'true');
+          document.getElementById('loginContainer').style.display = 'none';
+          document.getElementById('dashboardContainer').style.display = 'block';
+          document.getElementById('adminName').innerText = `Welcome, ${data.admin.fullName}`;
+          fetchAdminData();
+        } else {
+          document.getElementById('error').innerText = data.message;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error').innerText = 'Login failed. Please try again.';
+      }
+    };
+
+   
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch(`${API_URL}/coupons`);
+        const coupons = await response.json();
+
+        const couponTableBody = document.getElementById('couponTableBody');
+        couponTableBody.innerHTML = '';
+
+        coupons.forEach((coupon) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${coupon.code}</td>
+            <td>${coupon.value}</td>
+            <td>${coupon.currency}</td>
+         <td>${coupon.isActive ? 'Active' : 'Used'}</td>
+          `;
+          couponTableBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching coupons:', error);
+      }
+    };
+
+
+    
+    const fetchVendors = async () => {
+    try {
+        const response = await fetch(`${API_URL}/admin/vendors`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        const vendors = await response.json();
+        const vendorTableBody = document.querySelector('#vendorTable tbody');
+        vendorTableBody.innerHTML = '';
+
+        vendors.forEach((vendor) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${vendor._id}</td>
+              <td>${vendor.fullName}</td>
+              <td>${vendor.email}</td>
+              <td>${vendor.username}</td>
+              <td>${vendor.phone}</td>
+              <td>${vendor.active}</td>
+              <td class="actions">
+                <button onclick="setVendorStatus('${vendor._id}', true)">Activate</button>
+                <button onclick="setVendorStatus('${vendor._id}', false)">Deactivate</button>
+              </td>
+            `;
+            vendorTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching vendors:', error);
     }
+};
+
+
+
+
+   
+    const showSection = (sectionId) => {
+      const sections = document.querySelectorAll('.display-area');
+      sections.forEach((section) => section.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+    };
+
+    const hideSection = (sectionId) => {
+      document.getElementById(sectionId).style.display = 'none';
+    };
+
 
     async function checkCoupon() {
       const couponCode = document.getElementById('couponCode').value;
-      const response = await fetch(`${API_URL}/coupon/check?code=${couponCode}`);
-      const result = await response.json();
-      const couponResultDiv = document.getElementById('couponResult');
-      couponResultDiv.innerHTML = `<p>${result.message}</p>`;
+      try {
+        const response = await fetch(`${API_URL}/check-coupon/${couponCode}`);
+        const data = await response.json();
+        console.log('Coupon check response:', data); // Debugging
+
+        const couponResultDiv = document.getElementById('couponResult');
+        couponResultDiv.innerHTML = data.valid ? `<p>Coupon is valid: ${data.amount}</p>` : `<p>Coupon is invalid</p>`;
+      } catch (error) {
+        console.error('Error checking coupon:', error);
+        alert('Failed to check coupon. Please try again later.');
+      }
     }
+
+
 
     function logout() {
       localStorage.removeItem('vendorToken');
@@ -165,11 +695,17 @@
     document.getElementById('vendorRegForm').addEventListener('submit', registerVendor);
     document.getElementById('vendorLoginForm').addEventListener('submit', loginVendor);
 
-    // Check if a token is already stored, if so, show the dashboard
-    if (localStorage.getItem('vendorToken')) {
-      showDashboard();
-      fetchVendorDetails();
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('vendorToken');
+      if (token) {
+        showDashboard();
+        fetchVendorDetails();
+        fetchReferralUsers();
+      } else {
+        showLoginScreen();
+      }
+    });
   </script>
 </body>
 </html>
+

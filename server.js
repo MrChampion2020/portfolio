@@ -35,43 +35,66 @@ mongoose.connect(process.env.MONGO_URI, {})
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.log("Error connecting to MongoDB:", error));
 
-const authenticateToken = (req, res, next) => {
+
+  // Auths
+
+//user
+
+  const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) return res.sendStatus(401);
+  
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+    });
+  };
+
+
+  const authenticateAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+      return res.sendStatus(403);
+    }
+    next();
+  };
+  
+  // Middleware to authenticate admin token
+  const authenticateAdminToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) return res.sendStatus(401);
+  
+    jwt.verify(token, secretKey, (err, admin) => {
+      if (err) return res.sendStatus(403);
+      req.admin = admin;
+      next();
+    });
+  };
+
+
+
+  // Middleware to authenticate vendor token
+const authenticateVendorToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err, vendor) => {
     if (err) return res.sendStatus(403);
-    req.user = user;
+    req.vendor = vendor;
     next();
   });
 };
 
 
-// Manually add admin user (one-time operation)
-const addAdminUser = async () => {
-  try {
-    const admin = new Admin({
-      fullName: 'Edith Akporero',
-      phone: '9030155327',
-      username: 'Admin',
-      email: 'akporeroedith96@gmail.com',
-      password: 'Admin.1234',
-    });
-    await admin.save();
-    console.log("Admin user created");
-  } catch (error) {
-    console.log("Error creating admin user:", error);
-  }
-};
-
-// Uncomment the following line and run the server once to add the admin user
-
-//addAdminUser();
 
 
-
+  //User Endpoints
 
 const generateCouponCode = () => crypto.randomBytes(4).toString("hex");
 
@@ -111,8 +134,6 @@ app.post('/mark-coupon-used', async (req, res) => {
 });
 
 
-
-
 app.get('/coupons', async (req, res) => {
   try {
     const coupons = await Coupon.find();
@@ -147,6 +168,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
     console.log("Error sending the verification email:", error);
   }
 };
+
 
 const distributeReferralBonus = async (userId, level) => {
   if (level > 1) {
@@ -210,6 +232,10 @@ app.post("/register", async (req, res) => {
         referrer.wallet += amountToCredit;
         referrer.referralWallet += amountToCredit;
         await referrer.save();
+        
+        // Credit newUser's referral wallet
+        const amountToCreditNewUser = referrer.accountType === 'naira' ? 3000 : 3;
+        newUser.referralWallet += amountToCreditNewUser;
       } else {
         return res.status(400).json({ message: "Invalid or inactive referral link" });
       }
@@ -223,6 +249,9 @@ app.post("/register", async (req, res) => {
     coupon.isActive = false;
     coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
     await coupon.save();
+
+    // Distribute referral bonuses
+    await distributeReferralBonus(newUser._id, 3); // Assuming 3 levels of referral bonus
 
     res.status(200).json({ message: "User registered successfully", userId: newUser._id });
   } catch (error) {
@@ -258,6 +287,7 @@ app.get("/verify/:token", async (req, res) => {
   }
 });
 
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -265,6 +295,16 @@ app.post("/login", async (req, res) => {
 
     if (!user || !await bcrypt.compare(password, user.password)) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const now = new Date();
+    const lastLogin = user.lastLogin || new Date(0);
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+    if (now - lastLogin >= oneDayInMilliseconds) {
+      user.referralWallet += 250;
+      user.lastLogin = now;
+      await user.save();
     }
 
     const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
@@ -275,6 +315,8 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
+
+
 
 app.get("/user-details", authenticateToken, async (req, res) => {
   try {
@@ -301,48 +343,51 @@ app.get("/user-details", authenticateToken, async (req, res) => {
   }
 });
 
-const authenticateAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.sendStatus(403);
+
+
+app.post('/spin', authenticateToken, async (req, res) => {
+  const { amount } = req.body;
+  const user = await User.findById(req.user.id);
+
+  const now = new Date();
+  if (user.lastSpin && (now - user.lastSpin) < 24 * 60 * 60 * 1000) {
+    return res.status(403).json({ message: 'You can only spin the wheel once every 24 hours.' });
   }
-  next();
+
+  user.referralWallet += amount;
+  user.lastSpin = now;
+  await user.save();
+  res.json({ referralWallet: user.referralWallet });
+});
+
+
+
+
+
+
+//Admin Endpoints
+
+
+// Manually add admin user (one-time operation)
+const addAdminUser = async () => {
+  try {
+    const admin = new Admin({
+      fullName: 'Edith Akporero',
+      phone: '9030155327',
+      username: 'Admin',
+      email: 'akporeroedith96@gmail.com',
+      password: 'Admin.1234',
+    });
+    await admin.save();
+    console.log("Admin user created");
+  } catch (error) {
+    console.log("Error creating admin user:", error);
+  }
 };
 
+// Uncomment the following line and run the server once to add the admin user
 
-
-
-app.post("/vendor-register", async (req, res) => {
-  try {
-    const { fullName, email, phone, password, username, companyName, companyAddress } = req.body;
-
-    const existingVendor = await Vendor.findOne({ email });
-    if (existingVendor) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    const existingVendorUsername = await Vendor.findOne({ username });
-    if (existingVendorUsername) {
-      return res.status(400).json({ message: "Username already taken" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newVendor = new Vendor({
-      fullName,
-      email,
-      phone,
-      password: hashedPassword,
-      username,
-      companyName,
-      companyAddress,
-    });
-
-    await newVendor.save();
-    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
-  } catch (error) {
-    console.log("Error registering vendor:", error);
-    res.status(500).json({ message: "Vendor registration failed" });
-  }
-});
+//addAdminUser();
 
 
 
@@ -367,22 +412,6 @@ app.post("/login/admin", async (req, res) => {
   }
 });
 
-
-
-
-// Middleware to authenticate admin token
-const authenticateAdminToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, admin) => {
-    if (err) return res.sendStatus(403);
-    req.admin = admin;
-    next();
-  });
-};
 
 
 
@@ -449,43 +478,7 @@ app.get('/admin/user', async (req, res) => {
 });
 
 
-// Vendor login route
-app.post('/login/vendor', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const vendor = await Vendor.findOne({ email });
-    if (!vendor) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-    const isMatch = await bcrypt.compare(password, vendor.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-    if (!vendor.active) {
-      return res.status(403).json({ message: 'Account not activated. Please contact admin.' });
-    }
-    const token = jwt.sign({ id: vendor._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ message: 'Login successful', token });
-  } catch (error) {
-    console.log('Error logging in vendor:', error);
-    res.status(500).json({ message: 'Login failed' });
-  }
-});
 
-// Middleware to authenticate vendor
-const authenticateVendorToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) {
-    return res.status(401).json({ message: 'Access token required' });
-  }
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid token' });
-    }
-    req.user = user;
-    next();
-  });
-};
 
 // Route to get vendor details
 app.get('/vendor/details', authenticateVendorToken, async (req, res) => {
@@ -502,25 +495,288 @@ app.get('/vendor/details', authenticateVendorToken, async (req, res) => {
 });
 
 
+// Controller to set vendor status
+const setVendorStatus = async (req, res) => {
+  const { vendorId } = req.params;
+  const { status } = req.body;
 
-// Route to check coupon status
-app.get('/coupon/check', async (req, res) => {
+  if (typeof vendorId === 'undefined' || typeof status === 'undefined') {
+      return res.status(400).json({ message: 'Vendor ID and status are required.' });
+  }
+
   try {
-    const { code } = req.query;
-    const coupon = await Coupon.findOne({ code });
+      const vendor = await Vendor.findById(vendorId);
+      if (!vendor) {
+          return res.status(404).json({ message: 'Vendor not found.' });
+      }
+
+      vendor.active = status;
+      await vendor.save();
+
+      res.status(200).json({ message: 'Vendor status updated successfully.' });
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating vendor status.', error });
+  }
+};
+
+
+
+// Endpoint to get the number of vendors
+app.get('/admin/vendor-count', authenticateAdminToken, async (req, res) => {
+  try {
+    const vendorCount = await Vendor.countDocuments();
+    res.status(200).json({ vendorCount });
+  } catch (error) {
+    console.error('Error fetching vendor count:', error);
+    res.status(500).json({ message: 'Failed to fetch vendor count' });
+  }
+});
+
+// Endpoint to fetch vendor details
+app.get('/admin/vendors', authenticateAdminToken, async (req, res) => {
+  try {
+    const vendors = await Vendor.find({}, { password: 0 }); // Exclude password field
+    res.status(200).json(vendors);
+  } catch (error) {
+    console.error('Error fetching vendors:', error);
+    res.status(500).json({ message: 'Failed to fetch vendors' });
+  }
+});
+
+// Endpoint to get the last 10 registered vendors
+app.get('/admin/vendor', authenticateAdminToken, async (req, res) => {
+  try {
+    const vendors = await Vendor.find().sort({ createdAt: -1 }).limit(10);
+    res.json(vendors);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching vendors', error });
+  }
+});
+
+
+// Endpoint to set vendor active status
+app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus);
+
+
+
+
+
+//Vendor Endpoints
+
+
+const authMiddleware = (req, res, next) => {
+  const token = req.header('Authorization').replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied, no token provided' });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
+
+// Vendor registration endpoint
+app.post("/vendor-register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, companyName, companyAddress, referralLink } = req.body;
+
+    const existingVendor = await Vendor.findOne({ email });
+    if (existingVendor) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingVendorUsername = await Vendor.findOne({ username });
+    if (existingVendorUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newVendor = new Vendor({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      companyName,
+      companyAddress,
+      referralLink: `${process.env.API_URL}/register?vendor=${username}`
+    });
+
+    if (referralLink) {
+      const referrer = await Vendor.findOne({ username: referralLink });
+      if (referrer) {
+        newVendor.referredBy = referrer._id;
+        referrer.referrals.push(newVendor._id);
+        referrer.wallet += 4000;
+        referrer.referralWallet += 4000;
+        await referrer.save();
+        await addReferralBonus(referrer._id, 200, 100);
+      } else {
+        return res.status(400).json({ message: "Invalid referral link" });
+      }
+    }
+
+    await newVendor.save();
+    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
+  } catch (error) {
+    console.log("Error registering vendor:", error);
+    res.status(500).json({ message: "Vendor registration failed" });
+  }
+});
+
+// Add referral bonuses recursively
+const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) => {
+  const referrer = await Vendor.findById(referrerId);
+  if (referrer && referrer.referredBy) {
+    const secondLevelReferrer = await Vendor.findById(referrer.referredBy);
+    if (secondLevelReferrer) {
+      secondLevelReferrer.wallet += secondLevelBonus;
+      secondLevelReferrer.referralWallet += secondLevelBonus;
+      await secondLevelReferrer.save();
+      if (secondLevelReferrer.referredBy) {
+        const thirdLevelReferrer = await Vendor.findById(secondLevelReferrer.referredBy);
+        if (thirdLevelReferrer) {
+          thirdLevelReferrer.wallet += thirdLevelBonus;
+          thirdLevelReferrer.referralWallet += thirdLevelBonus;
+          await thirdLevelReferrer.save();
+        }
+      }
+    }
+  }
+};
+
+// Vendor login endpoint
+app.post("/vendor-login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const vendor = await Vendor.findOne({ email });
+
+    if (!vendor || !await bcrypt.compare(password, vendor.password)) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (!vendor.active) {
+      return res.status(403).json({ message: "Vendor is not active" });
+    }
+
+    const now = new Date();
+    const lastLogin = vendor.lastLogin || new Date(0);
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+    if (now - lastLogin >= oneDayInMilliseconds) {
+      vendor.referralWallet += 250;
+      vendor.lastLogin = now;
+    }
+
+    const token = jwt.sign({ userId: vendor._id }, secretKey, { expiresIn: '1h' });
+    await vendor.save();
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.log("Error logging in vendor:", error);
+    res.status(500).json({ message: "Login failed" });
+  }
+});
+
+
+
+
+app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id);
+    res.json({
+      fullName: vendor.fullName,
+      email: vendor.email,
+      phone: vendor.phone,
+      username: vendor.username,
+      companyName: vendor.companyName,
+      companyAddress: vendor.companyAddress,
+      wallet: vendor.wallet,
+      referralWallet: vendor.referralWallet,
+      referralLink: vendor.referralLink
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching vendor details' });
+  }
+});
+
+
+/*
+// Endpoint to fetch users registered via vendor's referral link
+app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id).populate('referrals').exec();
+    res.json(vendor.referrals);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching referral users' });
+  }
+});
+
+
+// Endpoint to check if a coupon is active or used
+app.post('/check-coupon', authenticateToken, async (req, res) => {
+  try {
+    const { couponCode } = req.body;
+    const coupon = await Coupon.findOne({ code: couponCode });
+
     if (!coupon) {
       return res.status(404).json({ message: 'Coupon not found' });
     }
-    const message = coupon.used ? 'Coupon has already been used' : 'Coupon is active';
-    res.status(200).json({ message });
-  } catch (error) {
-    console.log('Error checking coupon status:', error);
-    res.status(500).json({ message: 'Failed to check coupon status' });
+
+    if (coupon.used) {
+      return res.status(400).json({ message: 'Coupon already used' });
+    }
+
+    // Additional logic to check if coupon is still valid (e.g., expiry date)
+
+    res.json({ amount: coupon.amount });
+  } catch (err) {
+    res.status(500).json({ message: 'Error checking coupon' });
   }
 });
+*/
+
+
+
+
+app.get('/vendor-referrals', authMiddleware, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.user.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    const referrals = await User.find({ referrer: vendor._id });
+    res.status(200).json(referrals);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching referral users' });
+  }
+});
+
+
+app.get('/check-coupon/:couponCode', async (req, res) => {
+  try {
+    const coupon = await Coupon.findOne({ code: req.params.couponCode });
+    if (!coupon) {
+      return res.status(400).json({ valid: false });
+    }
+    res.status(200).json({ valid: true, amount: coupon.amount });
+  } catch (error) {
+    res.status(500).json({ message: 'Error checking coupon' });
+  }
+});
+
+// Example of a protected vendor route
+app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
+  res.status(200).json({ message: 'This is a protected vendor route' });
+});
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
 

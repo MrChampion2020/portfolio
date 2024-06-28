@@ -71,7 +71,7 @@
     
     main {
       margin: auto;
-      height: 65%;
+      height: 100vh;
       width: 90%;
       display: flex;
       flex-direction: column;
@@ -257,6 +257,8 @@
       main h1,  h3{
         font-size: 14px;
         font-weight: 100;
+        margin: auto;
+        text-align: center;
       }
       .profile-top{
         height: 20%;
@@ -287,6 +289,122 @@
       margin: auto;
 
     }
+    }
+
+    .wheel{
+      font-family: Arial, sans-serif;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background-color: #ffffff;
+      width: 60%;
+      margin: auto;
+      margin-top: 3%;
+    }
+    #wheel-container {
+      position: relative;
+      width: 30%;
+      height: 100%;
+      margin-bottom: 20px;
+      margin: auto;
+    }
+    #wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 5px solid #000;
+      position: relative;
+      transition: transform 10s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    .segment {
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 0%;
+      clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .segment span {
+      margin-bottom: 70%;
+    }
+    .segment:nth-child(1) { transform: rotate(0deg); background-color: #f44336; }
+    .segment:nth-child(2) { transform: rotate(72deg); background-color: #e91e63; }
+    .segment:nth-child(3) { transform: rotate(144deg); background-color: #9c27b0; }
+    .segment:nth-child(4) { transform: rotate(216deg); background-color: #673ab7; }
+    .segment:nth-child(5) { transform: rotate(288deg); background-color: #3f51b5; }
+    #wheel-holder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40%;
+      background: radial-gradient(circle, #ffeb3b, #fbc02d);
+      border-radius: 50%;
+      z-index: 1;
+    }
+    #stopper {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 30px solid #000;
+      z-index: 1;
+    }
+    #spin-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      font-size: 16px;
+      background-color: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 20%;
+     margin-left: 40%;
+    }
+    #spin-button:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+    }
+    #spin-button:hover {
+      background-color: #490939;
+    }
+    #congratulations {
+      display: none;
+      font-size: 24px;
+      font-weight: bold;
+      color: green;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .ribbon {
+      position: absolute;
+      width: 5px;
+      height: 10px;
+      background-color: red;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) rotateZ(45deg);
+      animation: fall 1s forwards;
+      opacity: 0;
+    }
+    @keyframes fall {
+      to {
+        top: 100%;
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -341,8 +459,8 @@
      <section class="profile-down">
 
       <div class="wallet">
-       <h1>Referral Balance</h1>
-       <h3>Balance: <b id="referralWallet"></b></h3>
+       <h1>Elite Coins</h1>
+       <h3>EC: <b id="referralWallet"></b></h3>
        <p></p>
       </div>
   
@@ -364,7 +482,25 @@
       </div>
      </section>
 
+      <section class="wheel">
+        <div id="wheel-container">
+          <div id="wheel">
+            <div class="segment"><span>10</span></div>
+            <div class="segment"><span>250</span></div>
+            <div class="segment"><span>300</span></div>
+            <div class="segment"><span>50</span></div>
+            <div class="segment"><span>150</span></div>
+          </div>
+          <div id="wheel-holder"></div>
+          <div id="stopper"></div>
+        </div>
+        <button id="spin-button">Spin the Wheel</button>
+        <div id="congratulations">Congratulations! You won <span id="win-amount"></span>!</div>
+    
+      </section>
+   
   </main>
+  
   <footer>
     <p> &copy; 2024 <a href="index.html">Elitearn</a>. All rights reserved.</p>
   </footer>
@@ -396,7 +532,7 @@ const fetchUserData = async () => {
             document.getElementById('referralLink').textContent = data.user.referralLink;
             document.getElementById('referralLink').href = data.user.referralLink;
         } else {
-            alert('Failed to fetch user data');
+            alert('Login to access your dashboard');
             localStorage.removeItem('token');
             window.location.href = 'login.html';
         }
@@ -410,49 +546,94 @@ const fetchUserData = async () => {
 // Fetch user data when the page loads
 window.onload = fetchUserData;
 
+const amounts = [10, 250, 300, 50, 150];
+    let token = '';
+    let spinning = false;
 
-
-
-/*
-const API_URL = `https://elitearn.onrender.com`;
-
-const fetchUserData = async () => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
+    async function login() {
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'testuser', password: 'password' })
+      });
+      const data = await response.json();
+      token = data.token;
     }
 
-    try {
-        const response = await fetch(`${API_URL}/user-details`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
+    async function updateReferralWallet(amount) {
+      const response = await fetch(`${API_URL}/spin`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': token 
+        },
+        body: JSON.stringify({ amount })
+      });
+      const data = await response.json();
+    }
 
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('username').textContent = data.user.username;
-            document.getElementById('wallet').textContent = data.user.wallet;
-            document.getElementById('referralWallet').textContent = data.user.referralWallet;
-            document.getElementById('referralLink').textContent = data.user.referralLink;
-            document.getElementById('referralLink').href = data.user.referralLink;
+    function createRibbons(amount) {
+      for (let i = 0; i < 200; i++) {
+        const ribbon = document.createElement('div');
+        ribbon.className = 'ribbon';
+        ribbon.style.left = `${Math.random() * 100}%`;
+        ribbon.style.top = `${Math.random() * 100}%`;
+        ribbon.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
+        document.body.appendChild(ribbon);
+        setTimeout(() => ribbon.remove(), 2000);
+      }
+    }
+
+    function spinWheel() {
+      if (spinning) return; // Prevent additional spins while spinning
+
+      spinning = true;
+      const wheel = document.getElementById('wheel');
+      const randomDegree = Math.floor(Math.random() * 3600) + 3600; // Ensure the wheel spins at least 10 times
+      wheel.style.transform = `rotate(${randomDegree}deg)`;
+
+      setTimeout(() => {
+        const actualDegree = randomDegree % 360;
+        const segmentIndex = Math.floor((actualDegree + 36) / 72) % 5; // Adjust the degree to find the segment index
+        const amount = amounts[segmentIndex];
+        updateReferralWallet(amount);
+        document.getElementById('congratulations').style.display = 'block';
+        document.getElementById('win-amount').textContent = amount;
+        createRibbons(amount);
+        // Reset the wheel
+        setTimeout(() => {
+          wheel.style.transform = 'rotate(0deg)';
+          spinning = false; // Allow spinning again
+          // Store the current time as the last spin time
+          localStorage.setItem('lastSpinTime', Date.now().toString());
+          checkSpinAvailability(); // Check if the button should be enabled again
+        }, 2000);
+      }, 10000); // Wait for the animation to complete after 10 seconds
+    }
+
+    function checkSpinAvailability() {
+      const spinButton = document.getElementById('spin-button');
+      const lastSpinTime = parseInt(localStorage.getItem('lastSpinTime'), 10);
+      if (lastSpinTime) {
+        const timeElapsed = Date.now() - lastSpinTime;
+        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        if (timeElapsed < twentyFourHours) {
+          spinButton.disabled = true;
+          setTimeout(() => {
+            spinButton.disabled = false;
+          }, twentyFourHours - timeElapsed); // Enable the button after the remaining time
         } else {
-            alert('Failed to fetch user data');
-            localStorage.removeItem('token');
-            window.location.href = 'login.html';
+          spinButton.disabled = false;
         }
-    } catch (error) {
-        alert('An error occurred while fetching user data');
-        localStorage.removeItem('token');
-        window.location.href = 'login.html';
+      } else {
+        spinButton.disabled = false;
+      }
     }
-};
 
-// Fetch user data when the page loads
-window.onload = fetchUserData;*/
+    document.getElementById('spin-button').addEventListener('click', spinWheel);
+
+    // Perform login on page load and check spin availability
+    login().then(checkSpinAvailability);
   
   </script>
 </body>
