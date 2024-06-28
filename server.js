@@ -742,7 +742,6 @@ app.post('/check-coupon', authenticateToken, async (req, res) => {
 
 
 
-
 app.get('/vendor-referrals', authMiddleware, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.user.id);

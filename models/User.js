@@ -17,8 +17,10 @@ const UserSchema = new mongoose.Schema({
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'user' },
   referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
   lastLogin: { type: Date, default: null },
   lastSpin: { type: Date, default: null }
+
 }, { timestamps: true });
 
 UserSchema.pre('save', function(next) {
