@@ -344,7 +344,7 @@ app.get("/user-details", authenticateToken, async (req, res) => {
 });
 
 
-
+/*
 app.post('/spin', authenticateToken, async (req, res) => {
   const { amount } = req.body;
   const user = await User.findById(req.user.id);
@@ -360,9 +360,31 @@ app.post('/spin', authenticateToken, async (req, res) => {
   res.json({ referralWallet: user.referralWallet });
 });
 
+*/
 
+// Spin endpoint
+app.post('/spin', authenticateToken, async (req, res) => {
+  const { userId } = req.user; // Assuming you have middleware to attach userId to req.user
+  const user = await User.findById(userId);
 
+  // Check last spin time
+  const now = new Date();
+  if (user.lastSpin && (now - user.lastSpin) < 24 * 60 * 60 * 1000) {
+    return res.status(403).json({ message: 'You can only spin the wheel once every 24 hours.' });
+  }
 
+  // Mocked logic to select a random reward
+  const segments = [0, 1, 5, 8, 10, 50, 20, 100, 150, 250, 500, 350, 25, 430, 400, 380, 450];
+  const randomIndex = Math.floor(Math.random() * segments.length);
+  const amount = segments[randomIndex];
+
+  // Update user's referralWallet
+  user.referralWallet += amount;
+  user.lastSpin = now;
+  await user.save();
+
+  res.json({ referralWallet: user.referralWallet });
+});
 
 
 //Admin Endpoints
@@ -564,19 +586,7 @@ app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus)
 //Vendor Endpoints
 
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied, no token provided' });
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(400).json({ message: 'Invalid token' });
-  }
-};
+
 
 
 // Vendor registration endpoint

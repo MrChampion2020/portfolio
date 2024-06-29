@@ -3,228 +3,190 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spinning Wheel</title>
+  <title>Spin Wheel</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      background-color: #f0f0f0;
-      overflow: hidden;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
     }
-    #wheel-container {
+
+    .wheel-container {
       position: relative;
-      width: 300px;
-      height: 300px;
-      margin-bottom: 20px;
+      width: 350px;
+      height: 350px;
     }
-    #wheel {
+
+    .basement {
+      position: absolute;
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 5px solid #000;
-      position: relative;
-      transition: transform 10s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-    .segment {
-      width: 50%;
-      height: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform-origin: 0% 0%;
-      clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
+      background: radial-gradient(circle, gold 30%, transparent 31%), radial-gradient(circle, gold 30%, transparent 31%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #fff;
-      font-weight: bold;
-      font-size: 14px;
     }
-    .segment span {
-      margin-bottom: 70%;
-    }
-    .segment:nth-child(1) { transform: rotate(0deg); background-color: #f44336; }
-    .segment:nth-child(2) { transform: rotate(72deg); background-color: #e91e63; }
-    .segment:nth-child(3) { transform: rotate(144deg); background-color: #9c27b0; }
-    .segment:nth-child(4) { transform: rotate(216deg); background-color: #673ab7; }
-    .segment:nth-child(5) { transform: rotate(288deg); background-color: #3f51b5; }
-    #wheel-holder {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 40px;
-      height: 40%;
-      background: radial-gradient(circle, #ffeb3b, #fbc02d);
+
+    .inner-basement {
+      width: 90%;
+      height: 90%;
       border-radius: 50%;
-      z-index: 1;
+      background: linear-gradient(to bottom, #ffd700, #ffac1c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    #stopper {
+
+    .wheel {
+      width: 85%;
+      height: 85%;
+      border-radius: 50%;
+      background: purple;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transform: rotate(0deg);
+      transition: transform 10s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .segment {
       position: absolute;
-      top: -20px;
+      width: 50%;
+      height: 50%;
+      background: purple;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      clip-path: polygon(100% 0, 0 0, 50% 100%);
+      border: 4px solid gold;
+      transform: rotate(calc(360deg / 17 * var(--i))) translateY(-100%);
+    }
+
+    .stopper {
+      position: absolute;
+      top: -10px;
       left: 50%;
-      transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 30px solid #000;
-      z-index: 1;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 20px solid white;
+      transform: translateX(-50%);
     }
-    #spin-button {
-      margin-top: 20px;
+
+    button {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
       padding: 10px 20px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
+      background-color: gold;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      font-size: 16px;
     }
-    #spin-button:disabled {
+
+    button:disabled {
       background-color: grey;
       cursor: not-allowed;
     }
-    #spin-button:hover {
-      background-color: #45a049;
-    }
-    #congratulations {
-      display: none;
-      font-size: 24px;
-      font-weight: bold;
-      color: green;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .ribbon {
-      position: absolute;
-      width: 5px;
-      height: 10px;
-      background-color: red;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) rotateZ(45deg);
-      animation: fall 1s forwards;
-      opacity: 0;
-    }
-    @keyframes fall {
-      to {
-        top: 100%;
-        opacity: 1;
-      }
+
+    button:active {
+      transform: translateX(-50%) scale(0.95);
     }
   </style>
 </head>
 <body>
-  <div id="wheel-container">
-    <div id="wheel">
-      <div class="segment"><span>10</span></div>
-      <div class="segment"><span>250</span></div>
-      <div class="segment"><span>300</span></div>
-      <div class="segment"><span>50</span></div>
-      <div class="segment"><span>150</span></div>
+  
+  <div class="wheel-container">
+    <div class="basement">
+      <div class="inner-basement">
+        <div class="wheel" id="wheel">
+          <div class="segment" style="--i:0;">0</div>
+          <div class="segment" style="--i:1;">1</div>
+          <div class="segment" style="--i:2;">5</div>
+          <div class="segment" style="--i:3;">8</div>
+          <div class="segment" style="--i:4;">10</div>
+          <div class="segment" style="--i:5;">50</div>
+          <div class="segment" style="--i:6;">20</div>
+          <div class="segment" style="--i:7;">100</div>
+          <div class="segment" style="--i:8;">150</div>
+          <div class="segment" style="--i:9;">250</div>
+          <div class="segment" style="--i:10;">500</div>
+          <div class="segment" style="--i:11;">350</div>
+          <div class="segment" style="--i:12;">25</div>
+          <div class="segment" style="--i:13;">430</div>
+          <div class="segment" style="--i:14;">400</div>
+          <div class="segment" style="--i:15;">380</div>
+          <div class="segment" style="--i:16;">450</div>
+        </div>
+        <div class="stopper"></div>
+      </div>
     </div>
-    <div id="wheel-holder"></div>
-    <div id="stopper"></div>
   </div>
-  <button id="spin-button">Spin the Wheel</button>
-  <div id="congratulations">Congratulations! You won <span id="win-amount"></span>!</div>
+
   <script>
-
-const API_URL = `https://elitearn.onrender.com`;
-
-    const amounts = [10, 250, 300, 50, 150];
-    let token = '';
-    let spinning = false;
-
-    async function login() {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'testuser', password: 'password' })
-      });
-      const data = await response.json();
-      token = data.token;
-    }
-
-    async function updateReferralWallet(amount) {
-      const response = await fetch(`${API_URL}/spin`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': token 
-        },
-        body: JSON.stringify({ amount })
-      });
-      const data = await response.json();
-    }
-
-    function createRibbons(amount) {
-      for (let i = 0; i < 200; i++) {
-        const ribbon = document.createElement('div');
-        ribbon.className = 'ribbon';
-        ribbon.style.left = `${Math.random() * 100}%`;
-        ribbon.style.top = `${Math.random() * 100}%`;
-        ribbon.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
-        document.body.appendChild(ribbon);
-        setTimeout(() => ribbon.remove(), 2000);
-      }
-    }
-
-    function spinWheel() {
-      if (spinning) return; // Prevent additional spins while spinning
-
-      spinning = true;
+    document.addEventListener('DOMContentLoaded', function() {
       const wheel = document.getElementById('wheel');
-      const randomDegree = Math.floor(Math.random() * 3600) + 3600; // Ensure the wheel spins at least 10 times
-      wheel.style.transform = `rotate(${randomDegree}deg)`;
 
-      setTimeout(() => {
-        const actualDegree = randomDegree % 360;
-        const segmentIndex = Math.floor((actualDegree + 36) / 72) % 5; // Adjust the degree to find the segment index
-        const amount = amounts[segmentIndex];
-        updateReferralWallet(amount);
-        document.getElementById('congratulations').style.display = 'block';
-        document.getElementById('win-amount').textContent = amount;
-        createRibbons(amount);
-        // Reset the wheel
-        setTimeout(() => {
-          wheel.style.transform = 'rotate(0deg)';
-          spinning = false; // Allow spinning again
-          // Store the current time as the last spin time
-          localStorage.setItem('lastSpinTime', Date.now().toString());
-          checkSpinAvailability(); // Check if the button should be enabled again
-        }, 2000);
-      }, 10000); // Wait for the animation to complete after 10 seconds
-    }
-
-    function checkSpinAvailability() {
-      const spinButton = document.getElementById('spin-button');
-      const lastSpinTime = parseInt(localStorage.getItem('lastSpinTime'), 10);
-      if (lastSpinTime) {
-        const timeElapsed = Date.now() - lastSpinTime;
-        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        if (timeElapsed < twentyFourHours) {
-          spinButton.disabled = true;
-          setTimeout(() => {
-            spinButton.disabled = false;
-          }, twentyFourHours - timeElapsed); // Enable the button after the remaining time
-        } else {
-          spinButton.disabled = false;
-        }
-      } else {
-        spinButton.disabled = false;
+      const lastSpin = localStorage.getItem('lastSpin');
+      const now = new Date().getTime();
+      
+      if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+        alert('You can spin again in 24 hours');
       }
-    }
 
-    document.getElementById('spin-button').addEventListener('click', spinWheel);
+      function spinWheel() {
+        const lastSpin = localStorage.getItem('lastSpin');
+        const now = new Date().getTime();
 
-    // Perform login on page load and check spin availability
-    login().then(checkSpinAvailability);
+        if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+          alert('You can spin again in 24 hours');
+          return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * 17);
+        const degrees = (360 / 17) * randomIndex + (360 * 10); // Spin multiple times for effect
+        wheel.style.transform = `rotate(${degrees}deg)`;
+
+        setTimeout(() => {
+          const selectedValue = wheel.querySelector(`.segment:nth-child(${randomIndex + 1})`).textContent;
+          alert(`You won ${selectedValue}!`);
+          updateReferralWallet(selectedValue);
+          localStorage.setItem('lastSpin', new Date().getTime());
+        }, 10000); // Delay matches the transition time
+      }
+
+      function updateReferralWallet(amount) {
+        fetch('/spin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer your_token_here', // Adjust as needed
+          },
+          body: JSON.stringify({ amount: parseInt(amount, 10) }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      }
+
+      wheel.addEventListener('click', spinWheel);
+      wheel.addEventListener('touchend', spinWheel);
+    });
   </script>
 </body>
 </html>
