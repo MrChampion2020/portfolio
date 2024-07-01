@@ -693,8 +693,31 @@ app.post("/vendor-login", async (req, res) => {
 });
 
 
+app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.json({
+      fullName: vendor.fullName,
+      email: vendor.email,
+      phone: vendor.phone,
+      username: vendor.username,
+      companyName: vendor.companyName,
+      companyAddress: vendor.companyAddress,
+      wallet: vendor.wallet,
+      referralWallet: vendor.referralWallet,
+      referralLink: vendor.referralLink
+    });
+  } catch (err) {
+    console.error('Error fetching vendor details:', err);
+    res.status(500).json({ message: 'Error fetching vendor details' });
+  }
+});
 
 
+/*
 app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.vendor.id);
@@ -713,7 +736,7 @@ app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
     res.status(500).json({ message: 'Error fetching vendor details' });
   }
 });
-
+*/
 
 /*
 // Endpoint to fetch users registered via vendor's referral link
