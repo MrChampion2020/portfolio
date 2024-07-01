@@ -76,8 +76,29 @@ mongoose.connect(process.env.MONGO_URI, {})
   };
 
 
+const authenticateVendorToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-  // Middleware to authenticate vendor token
+  if (!token) return res.sendStatus(401);
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    const vendor = await Vendor.findById(decoded.id);
+    
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+
+    req.vendor = vendor;
+    next();
+  } catch (err) {
+    console.error('Authentication error:', err);
+    res.status(403).json({ message: 'Invalid token' });
+  }
+};
+
+  /*// Middleware to authenticate vendor token
 const authenticateVendorToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -91,7 +112,7 @@ const authenticateVendorToken = (req, res, next) => {
   });
 };
 
-
+*/
 
 
   //User Endpoints
@@ -718,6 +739,31 @@ app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
 
 
 /*
+app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
+  try {
+    const vendor = await Vendor.findById(req.vendor.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.json({
+      fullName: vendor.fullName,
+      email: vendor.email,
+      phone: vendor.phone,
+      username: vendor.username,
+      companyName: vendor.companyName,
+      companyAddress: vendor.companyAddress,
+      wallet: vendor.wallet,
+      referralWallet: vendor.referralWallet,
+      referralLink: vendor.referralLink
+    });
+  } catch (err) {
+    console.error('Error fetching vendor details:', err);
+    res.status(500).json({ message: 'Error fetching vendor details' });
+  }
+});
+
+
+
 app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
   try {
     const vendor = await Vendor.findById(req.vendor.id);
