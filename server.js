@@ -75,6 +75,19 @@ mongoose.connect(process.env.MONGO_URI, {})
     });
   };
 
+// Middleware for authenticating vendor token
+const authenticateVendorToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.vendor = user;
+    next();
+  });
+};
 /*
 
   // Middleware to authenticate vendor token
@@ -775,19 +788,7 @@ app.post("/vendor-login", async (req, res) => {
   }
 });
 
-// Middleware for authenticating vendor token
-const authenticateVendorToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.vendor = user;
-    next();
-  });
-};
 
 // Vendor details endpoint
 app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
