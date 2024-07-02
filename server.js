@@ -75,6 +75,21 @@ mongoose.connect(process.env.MONGO_URI, {})
     });
   };
 
+/*
+
+  // Middleware to authenticate vendor token
+const authenticateVendorToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, vendor) => {
+    if (err) return res.sendStatus(403);
+    req.vendor = vendor;
+    next();
+  });
+};
 
 const authenticateVendorToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -98,22 +113,7 @@ const authenticateVendorToken = async (req, res, next) => {
   }
 };
 
-  /*// Middleware to authenticate vendor token
-const authenticateVendorToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, vendor) => {
-    if (err) return res.sendStatus(403);
-    req.vendor = vendor;
-    next();
-  });
-};
-
 */
-
 
   //User Endpoints
 
@@ -680,6 +680,8 @@ const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) =
   }
 };
 
+
+/*
 // Vendor login endpoint
 app.post("/vendor-login", async (req, res) => {
   try {
@@ -736,12 +738,61 @@ app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
     res.status(500).json({ message: 'Error fetching vendor details' });
   }
 });
+*/
 
 
-/*
+
+// Vendor login endpoint
+app.post("/vendor-login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const vendor = await Vendor.findOne({ email });
+
+    if (!vendor || !await bcrypt.compare(password, vendor.password)) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (!vendor.active) {
+      return res.status(403).json({ message: "Vendor is not active" });
+    }
+
+    const now = new Date();
+    const lastLogin = vendor.lastLogin || new Date(0);
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+    if (now - lastLogin >= oneDayInMilliseconds) {
+      vendor.referralWallet += 250;
+      vendor.lastLogin = now;
+    }
+
+    const token = jwt.sign({ userId: vendor._id }, secretKey, { expiresIn: '1h' });
+    await vendor.save();
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    console.log("Error logging in vendor:", error);
+    res.status(500).json({ message: "Login failed" });
+  }
+});
+
+// Middleware for authenticating vendor token
+const authenticateVendorToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.vendor = user;
+    next();
+  });
+};
+
+// Vendor details endpoint
 app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
   try {
-    const vendor = await Vendor.findById(req.vendor.id);
+    const vendor = await Vendor.findById(req.vendor.userId);
     if (!vendor) {
       return res.status(404).json({ message: 'Vendor not found' });
     }
@@ -762,62 +813,6 @@ app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
   }
 });
 
-
-
-app.get('/vendor-details', authenticateVendorToken, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.vendor.id);
-    res.json({
-      fullName: vendor.fullName,
-      email: vendor.email,
-      phone: vendor.phone,
-      username: vendor.username,
-      companyName: vendor.companyName,
-      companyAddress: vendor.companyAddress,
-      wallet: vendor.wallet,
-      referralWallet: vendor.referralWallet,
-      referralLink: vendor.referralLink
-    });
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching vendor details' });
-  }
-});
-*/
-
-/*
-// Endpoint to fetch users registered via vendor's referral link
-app.get('/vendor-referral-users', authenticateToken, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.vendor.id).populate('referrals').exec();
-    res.json(vendor.referrals);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching referral users' });
-  }
-});
-
-
-// Endpoint to check if a coupon is active or used
-app.post('/check-coupon', authenticateToken, async (req, res) => {
-  try {
-    const { couponCode } = req.body;
-    const coupon = await Coupon.findOne({ code: couponCode });
-
-    if (!coupon) {
-      return res.status(404).json({ message: 'Coupon not found' });
-    }
-
-    if (coupon.used) {
-      return res.status(400).json({ message: 'Coupon already used' });
-    }
-
-    // Additional logic to check if coupon is still valid (e.g., expiry date)
-
-    res.json({ amount: coupon.amount });
-  } catch (err) {
-    res.status(500).json({ message: 'Error checking coupon' });
-  }
-});
-*/
 
 
 
@@ -857,4 +852,3 @@ app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
