@@ -75,6 +75,7 @@ mongoose.connect(process.env.MONGO_URI, {})
     });
   };
 
+  
 // Middleware for authenticating vendor token
 const authenticateVendorToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -88,45 +89,7 @@ const authenticateVendorToken = (req, res, next) => {
     next();
   });
 };
-/*
 
-  // Middleware to authenticate vendor token
-const authenticateVendorToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, secretKey, (err, vendor) => {
-    if (err) return res.sendStatus(403);
-    req.vendor = vendor;
-    next();
-  });
-};
-
-const authenticateVendorToken = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) return res.sendStatus(401);
-
-  try {
-    const decoded = jwt.verify(token, secretKey);
-    const vendor = await Vendor.findById(decoded.id);
-    
-    if (!vendor) {
-      return res.status(404).json({ message: 'Vendor not found' });
-    }
-
-    req.vendor = vendor;
-    next();
-  } catch (err) {
-    console.error('Authentication error:', err);
-    res.status(403).json({ message: 'Invalid token' });
-  }
-};
-
-*/
 
   //User Endpoints
 
@@ -694,66 +657,6 @@ const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) =
 };
 
 
-/*
-// Vendor login endpoint
-app.post("/vendor-login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const vendor = await Vendor.findOne({ email });
-
-    if (!vendor || !await bcrypt.compare(password, vendor.password)) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    if (!vendor.active) {
-      return res.status(403).json({ message: "Vendor is not active" });
-    }
-
-    const now = new Date();
-    const lastLogin = vendor.lastLogin || new Date(0);
-    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-
-    if (now - lastLogin >= oneDayInMilliseconds) {
-      vendor.referralWallet += 250;
-      vendor.lastLogin = now;
-    }
-
-    const token = jwt.sign({ userId: vendor._id }, secretKey, { expiresIn: '1h' });
-    await vendor.save();
-
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.log("Error logging in vendor:", error);
-    res.status(500).json({ message: "Login failed" });
-  }
-});
-
-
-app.post('/vendor-details', authenticateVendorToken, async (req, res) => {
-  try {
-    const vendor = await Vendor.findById(req.vendor.id);
-    if (!vendor) {
-      return res.status(404).json({ message: 'Vendor not found' });
-    }
-    res.json({
-      fullName: vendor.fullName,
-      email: vendor.email,
-      phone: vendor.phone,
-      username: vendor.username,
-      companyName: vendor.companyName,
-      companyAddress: vendor.companyAddress,
-      wallet: vendor.wallet,
-      referralWallet: vendor.referralWallet,
-      referralLink: vendor.referralLink
-    });
-  } catch (err) {
-    console.error('Error fetching vendor details:', err);
-    res.status(500).json({ message: 'Error fetching vendor details' });
-  }
-});
-*/
-
-
 
 // Vendor login endpoint
 app.post("/vendor-login", async (req, res) => {
@@ -787,7 +690,6 @@ app.post("/vendor-login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
-
 
 
 // Vendor details endpoint
@@ -830,16 +732,46 @@ app.get('/vendor-referrals', authenticateVendorToken, async (req, res) => {
   }
 });
 
-
-app.get('/check-coupon/:couponCode', async (req, res) => {
+// Check coupon endpoint
+app.post('/check-coupon', authenticateVendorToken, async (req, res) => {
   try {
-    const coupon = await Coupon.findOne({ code: req.params.couponCode });
+    const { couponCode } = req.body;
+    const coupon = await Coupon.findOne({ code: couponCode, vendor: req.vendor.userId });
+
     if (!coupon) {
-      return res.status(400).json({ valid: false });
+      return res.status(404).json({ message: 'Coupon not found' });
     }
-    res.status(200).json({ valid: true, amount: coupon.amount });
-  } catch (error) {
+
+    const isActive = coupon.active;
+    coupon.checkedByVendor.push(req.vendor.userId);
+    await coupon.save();
+
+    res.json({ isActive, coupon });
+  } catch (err) {
+    console.error('Error checking coupon:', err);
     res.status(500).json({ message: 'Error checking coupon' });
+  }
+});
+
+// Get all checked coupons by vendor
+app.post('/checked-coupons', authenticateVendorToken, async (req, res) => {
+  try {
+    const coupons = await Coupon.find({ checkedByVendor: req.vendor.userId });
+    res.json(coupons);
+  } catch (err) {
+    console.error('Error fetching checked coupons:', err);
+    res.status(500).json({ message: 'Error fetching checked coupons' });
+  }
+});
+
+// Get users who used vendor's coupons
+app.post('/coupon-users', authenticateVendorToken, async (req, res) => {
+  try {
+    const users = await User.find({ 'usedCoupons.vendor': req.vendor.userId });
+    res.json(users);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ message: 'Error fetching users' });
   }
 });
 
@@ -853,3 +785,4 @@ app.get('/vendor/protected', authenticateVendorToken, (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
