@@ -17,11 +17,11 @@
       overflow: hidden;
     }
     #main-header {
-      background-color: #333;
-      color: #fff;
+      background-color: rgb(252, 241, 252);
+      color: purple;
       padding-top: 30px;
       min-height: 70px;
-      border-bottom: #0779e4 3px solid;
+      border-bottom: purple 3px solid;
     }
     #main-header h1 {
       text-align: center;
@@ -29,7 +29,7 @@
       margin: 0;
       font-size: 24px;
     }
-    .form, .actions {
+    .form, .actions, .content-area {
       background: #fff;
       padding: 20px;
       margin-top: 20px;
@@ -46,21 +46,23 @@
       width: 100%;
       padding: 10px;
       box-sizing: border-box;
+      border: 1px solid purple;
     }
     .form-group button {
       padding: 10px 15px;
-      background: #333;
+      background: #6a0dad;
       color: #fff;
       border: none;
+      cursor: pointer;
     }
     .form-group button:hover {
-      background: #0779e4;
+      background: #9a4dad;
     }
     .btn {
       display: inline-block;
       padding: 10px 15px;
       margin-top: 10px;
-      background: #333;
+      background: #6a0dad;
       color: #fff;
       border: none;
       cursor: pointer;
@@ -68,7 +70,7 @@
       text-align: center;
     }
     .btn:hover {
-      background: #0779e4;
+      background: #9a4dad;
     }
     .link {
       display: block;
@@ -78,6 +80,28 @@
     #vendor-details-content {
       white-space: pre-wrap;
       word-wrap: break-word;
+    }
+    .content-area {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .content-area .close-btn {
+      background: #fff;
+      color: #6a0dad;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
   </style>
 </head>
@@ -136,7 +160,7 @@
         <input type="text" id="companyAddress">
       </div>
       <div class="form-group">
-        <label for="referralLink">Referral Link (Optional)</label>
+        <label for="referralLink">Referral Link</label>
         <input type="text" id="referralLink">
       </div>
       <button class="btn" onclick="registerVendor()">Register Vendor</button>
@@ -145,20 +169,44 @@
   </div>
 
   <div class="container" id="dashboard" style="display:none;">
-    <div id="vendor-details" class="form">
-      <h2>Vendor Details</h2>
-      <pre id="vendor-details-content"></pre>
-    </div>
-
+    <div id="welcome-message"></div>
+    <div id="wallet-balance"></div>
     <div class="actions">
-      <h2>Vendor Actions</h2>
-      <button class="btn" onclick="fetchVendorDetails()">Refresh Vendor Details</button>
-      <button class="btn" onclick="checkCoupon()">Check Coupon</button>
+      <button class="btn" onclick="showContent('referralLinkContent')">Referral Link</button>
+      <button class="btn" onclick="showContent('checkCouponContent')">Check Coupon</button>
+      <button class="btn" onclick="showContent('checkUsersContent')">Check Users</button>
+      <button class="btn" onclick="logoutVendor()">Log Out</button>
     </div>
   </div>
 
+  <div id="referralLinkContent" class="content-area">
+    <button class="close-btn" onclick="closeContent('referralLinkContent')">Close</button>
+    <h2>Referral Link</h2>
+    <p id="referral-link"></p>
+    <button class="btn" onclick="copyReferralLink()">Copy Link</button>
+  </div>
+
+  <div id="checkCouponContent" class="content-area">
+    <button class="close-btn" onclick="closeContent('checkCouponContent')">Close</button>
+    <h2>Check Coupon</h2>
+    <div class="form-group">
+      <label for="couponCode">Coupon Code</label>
+      <input type="text" id="couponCode">
+    </div>
+    <button class="btn" onclick="checkCoupon()">Check Coupon</button>
+    <h3>Checked Coupons</h3>
+    <button class="btn" onclick="fetchCheckedCoupons()">Show Checked Coupons</button>
+    <pre id="checked-coupons"></pre>
+  </div>
+
+  <div id="checkUsersContent" class="content-area">
+    <button class="close-btn" onclick="closeContent('checkUsersContent')">Close</button>
+    <h2>Users Using Your Coupons</h2>
+    <pre id="coupon-users"></pre>
+  </div>
+
   <script>
-    const API_URL = `https://elitearn.onrender.com`;
+    const API_URL = `https://elitearn.onrender.com`; // Change to your backend URL
 
     function showRegistrationForm() {
       document.getElementById('login-form').style.display = 'none';
@@ -170,123 +218,229 @@
       document.getElementById('login-form').style.display = 'block';
     }
 
+    function showContent(contentId) {
+      document.getElementById(contentId).style.display = 'block';
+    }
+
+    function closeContent(contentId) {
+      document.getElementById(contentId).style.display = 'none';
+    }
+
+  
+
+ async function loginVendor() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      try {
+        const response = await fetch(`${API_URL}/vendor-login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("vendorToken", data.token);
+          alert(data.message);
+          document.getElementById("login-form").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+          fetchVendorDetails(); // Fetch vendor details after login
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message);
+        }
+      } catch (error) {
+        console.error("Error logging in vendor:", error);
+        alert("Login failed");
+      }
+    }
+
     async function fetchVendorDetails() {
-      const token = localStorage.getItem('vendorToken');
+      const token = localStorage.getItem("vendorToken");
+
       if (!token) {
-        alert('You need to log in first');
+        alert("Please login first.");
         return;
       }
 
       try {
         const response = await fetch(`${API_URL}/vendor-details`, {
-          method: 'GET',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {
           const data = await response.json();
-          document.getElementById('vendor-details-content').innerText = JSON.stringify(data, null, 2);
+          document.getElementById("welcome-message").innerText = `Welcome, ${data.username}`;
+          document.getElementById("wallet-balance").innerText = `Wallet Balance: $${data.wallet}`;
+          document.getElementById("referral-link").innerText = data.referralLink;
         } else {
           const errorData = await response.json();
-          console.error('Error fetching vendor details:', errorData);
-          alert(`Failed to fetch vendor details: ${errorData.message}`);
+          alert(errorData.message);
         }
       } catch (error) {
-        console.error('Error fetching vendor details:', error);
-        alert('An error occurred while fetching vendor details');
-      }
-    }
-
-    async function checkCoupon() {
-      const couponCode = prompt('Enter coupon code');
-      if (!couponCode) return;
-
-      try {
-        const response = await fetch(`${API_URL}/check-coupon/${couponCode}`);
-        const data = await response.json();
-
-        if (data.valid) {
-          alert(`Coupon is valid. Amount: ${data.amount}`);
-        } else {
-          alert('Invalid coupon code');
-        }
-      } catch (error) {
-        console.error('Error checking coupon:', error);
-        alert('An error occurred while checking the coupon');
+        console.error("Error fetching vendor details:", error);
+        alert("Error fetching vendor details");
       }
     }
 
     async function registerVendor() {
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const password = document.getElementById('password').value;
-      const username = document.getElementById('username').value;
-      const companyName = document.getElementById('companyName').value;
-      const companyAddress = document.getElementById('companyAddress').value;
-      const referralLink = document.getElementById('referralLink').value;
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      const password = document.getElementById("password").value;
+      const username = document.getElementById("username").value;
+      const companyName = document.getElementById("companyName").value;
+      const companyAddress = document.getElementById("companyAddress").value;
+      const referralLink = document.getElementById("referralLink").value;
 
       try {
         const response = await fetch(`${API_URL}/vendor-register`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ fullName, email, phone, password, username, companyName, companyAddress, referralLink })
+          body: JSON.stringify({
+            fullName,
+            email,
+            phone,
+            password,
+            username,
+            companyName,
+            companyAddress,
+            referralLink,
+          }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          alert('Vendor registered successfully');
-          showLoginForm();
+          alert(data.message);
+          showLoginForm(); // Show login form after successful registration
         } else {
           const errorData = await response.json();
-          console.error('Error registering vendor:', errorData);
-          alert(`Registration failed: ${errorData.message}`);
+          alert(errorData.message);
         }
       } catch (error) {
-        console.error('Error registering vendor:', error);
-        alert('An error occurred while registering the vendor');
+        console.error("Error registering vendor:", error);
+        alert("Registration failed");
       }
     }
 
-    async function loginVendor() {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+    async function checkCoupon() {
+      const token = localStorage.getItem("vendorToken");
+      const couponCode = document.getElementById("couponCode").value;
+
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
 
       try {
-        const response = await fetch(`${API_URL}/vendor-login`, {
-          method: 'POST',
+        const response = await fetch(`${API_URL}/check-coupon`, {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ couponCode }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          localStorage.setItem('vendorToken', data.token);
-          document.getElementById('login-form').style.display = 'none';
-          document.getElementById('dashboard').style.display = 'block';
-          fetchVendorDetails();
+          alert(`Coupon is ${data.isActive ? "Active" : "Used"}`);
+          fetchCheckedCoupons();
         } else {
           const errorData = await response.json();
-          console.error('Error logging in vendor:', errorData);
-          alert(`Login failed: ${errorData.message}`);
+          alert(errorData.message);
         }
       } catch (error) {
-        console.error('Error logging in vendor:', error);
-        alert('An error occurred while logging in the vendor');
+        console.error("Error checking coupon:", error);
+        alert("Error checking coupon");
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('login-form').style.display = 'block';
-      document.getElementById('registration-form').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'none';
-    });
+    async function fetchCheckedCoupons() {
+      const token = localStorage.getItem("vendorToken");
+
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/checked-coupons`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById("checked-coupons").innerText = JSON.stringify(data, null, 2);
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message);
+        }
+      } catch (error) {
+        console.error("Error fetching checked coupons:", error);
+        alert("Error fetching checked coupons");
+      }
+    }
+
+    async function fetchCouponUsers() {
+      const token = localStorage.getItem("vendorToken");
+
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/coupon-users`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById("coupon-users").innerText = JSON.stringify(data, null, 2);
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message);
+        }
+      } catch (error) {
+        console.error("Error fetching coupon users:", error);
+        alert("Error fetching coupon users");
+      }
+    }
+
+    async function logoutVendor() {
+      localStorage.removeItem("vendorToken");
+      document.getElementById("dashboard").style.display = "none";
+      showLoginForm();
+    }
+
+    function copyReferralLink() {
+      const referralLink = document.getElementById("referral-link").innerText;
+      navigator.clipboard.writeText(referralLink)
+        .then(() => alert("Referral link copied!"))
+        .catch(err => console.error("Error copying referral link:", err));
+    }
+
+    // Fetch coupon users when check users content is shown
+    document.getElementById("checkUsersContent").addEventListener("show", fetchCouponUsers);
   </script>
+
 </body>
 </html>
