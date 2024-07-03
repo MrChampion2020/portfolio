@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" href="logo.jpg" type="image/jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vendor Dashboard</title>
+  <title>Elitearn</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,6 +14,7 @@
     }
     .container {
       width: 80%;
+      height: auto;
       margin: auto;
       overflow: hidden;
     }
@@ -81,6 +83,7 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+
     .content-area {
       display: none;
       position: fixed;
@@ -103,12 +106,29 @@
       top: 20px;
       right: 20px;
     }
+    #dashboard{
+      height: 100vh;
+
+    }
+    #welcome-message{
+      height: 10%;
+      width: 100%;
+      padding: 10px;
+    }
+    .wallet{
+      height: 15%;
+      padding: 10px;
+    }
+    .empty{
+      height: 40%;
+    }
+
   </style>
 </head>
 <body>
   <header id="main-header">
     <div class="container">
-      <h1>Vendor Dashboard</h1>
+      <h1>elitearn Vendor</h1>
     </div>
   </header>
 
@@ -170,7 +190,13 @@
 
   <div class="container" id="dashboard" style="display:none;">
     <div id="welcome-message"></div>
-    <div id="wallet-balance"></div>
+
+    <div class="wallet" > <h1 id="wallet-balance"></h1>
+      <h3>Balance</h3>
+    </div>
+
+    <div class="empty"></div>
+
     <div class="actions">
       <button class="btn" onclick="showContent('referralLinkContent')">Referral Link</button>
       <button class="btn" onclick="showContent('checkCouponContent')">Check Coupon</button>
@@ -278,7 +304,7 @@
         if (response.ok) {
           const data = await response.json();
           document.getElementById("welcome-message").innerText = `Welcome, ${data.username}`;
-          document.getElementById("wallet-balance").innerText = `Wallet Balance: $${data.wallet}`;
+          document.getElementById("wallet-balance").innerText = `NGN ${data.wallet}`;
           document.getElementById("referral-link").innerText = data.referralLink;
         } else {
           const errorData = await response.json();
