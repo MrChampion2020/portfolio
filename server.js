@@ -179,7 +179,7 @@ const distributeReferralBonus = async (userId, level) => {
 
     switch (level) {
       case 3:
-        bonusAmount = referrer.accountType === 'naira' ? 100 : 1;
+        bonusAmount = referrer.accountType === 'naira' ? 0 : 1;
         referrer.wallet += bonusAmount;
         /*referrer.referralWallet += bonusAmount;*/
         break;
@@ -189,7 +189,7 @@ const distributeReferralBonus = async (userId, level) => {
         /*referrer.referralWallet += bonusAmount;*/
         break;
       case 1:
-        bonusAmount = referrer.accountType === 'naira' ? 4000 : 4;
+        bonusAmount = referrer.accountType === 'naira' ? 100 : 4;
         referrer.wallet += bonusAmount;
         /*referrer.referralWallet += bonusAmount;*/
         break;
