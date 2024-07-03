@@ -603,7 +603,7 @@ app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus)
 
 
 
-// Add referral bonuses recursively
+/*// Add referral bonuses recursively
 const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) => {
   const referrer = await Vendor.findById(referrerId);
   if (referrer && referrer.referredBy) {
@@ -621,6 +621,37 @@ const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) =
         }
       }
     }
+  }
+};
+*/
+const addReferralBonus = async (vendorId, level) => {
+  if (level <= 0) return;
+
+  const vendor = await Vendor.findById(vendorId).populate('referredBy');
+  if (vendor && Vendor.referredBy) {
+    const referrer = vendor.referredBy;
+    let bonusAmount;
+
+    switch (level) {
+      case 3:
+        bonusAmount = referrer.accountType === 'naira' ? 100 : 1;
+        referrer.wallet += bonusAmount;
+        /*referrer.referralWallet += bonusAmount;*/
+        break;
+      case 2:
+        bonusAmount = referrer.accountType === 'naira' ? 200 : 2;
+        referrer.wallet += bonusAmount;
+        /*referrer.referralWallet += bonusAmount;*/
+        break;
+      case 1:
+        bonusAmount = referrer.accountType === 'naira' ? 4000 : 40;
+        referrer.wallet += bonusAmount;
+        /*referrer.referralWallet += bonusAmount;*/
+        break;
+    }
+
+    await referrer.save();
+    await distributeReferralBonus(referrer._id, level - 1);
   }
 };
 
@@ -657,7 +688,7 @@ app.post("/vendor-register", async (req, res) => {
         newVendor.referredBy = referrer._id;
         referrer.referrals.push(newVendor._id);
         referrer.wallet += 4000;
-        referrer.referralWallet += 4000;
+        /*referrer.referralWallet += 4000;*/
         await referrer.save();
         await addReferralBonus(referrer._id, 200, 100);
       } else {
