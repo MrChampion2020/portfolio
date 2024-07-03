@@ -169,6 +169,10 @@ const sendVerificationEmail = async (email, verificationToken) => {
 
 
 
+
+/*
+
+
 const distributeReferralBonus = async (userId, level) => {
   if (level <= 0) return;
 
@@ -181,17 +185,17 @@ const distributeReferralBonus = async (userId, level) => {
       case 3:
         bonusAmount = referrer.accountType === 'naira' ? 0 : 1;
         referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
+        /*referrer.referralWallet += bonusAmount;
         break;
       case 2:
         bonusAmount = referrer.accountType === 'naira' ? 200 : 2;
         referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
+        /*referrer.referralWallet += bonusAmount;
         break;
       case 1:
         bonusAmount = referrer.accountType === 'naira' ? 100 : 4;
         referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
+        /*referrer.referralWallet += bonusAmount;
         break;
     }
 
@@ -199,7 +203,64 @@ const distributeReferralBonus = async (userId, level) => {
     await distributeReferralBonus(referrer._id, level - 1);
   }
 };
+*/
 
+
+const distributeReferralBonus = async (userId, userLevel, vendorLevel) => {
+  if (userLevel <= 0 && vendorLevel <= 0) return;
+
+  const user = await User.findById(userId).populate('referredBy');
+  if (user && user.referredBy) {
+    const referrer = user.referredBy;
+    let bonusAmount;
+
+    if (userLevel > 0) {
+      switch (userLevel) {
+        case 3:
+          bonusAmount = 100;
+          referrer.wallet += bonusAmount;
+          break;
+        case 2:
+          bonusAmount = 200;
+          referrer.wallet += bonusAmount;
+          break;
+        case 1:
+          bonusAmount = 4000;
+          referrer.wallet += bonusAmount;
+          break;
+      }
+
+      await referrer.save();
+      await distributeReferralBonus(referrer._id, userLevel - 1, vendorLevel);
+    }
+  } else {
+    const vendor = await Vendor.findById(userId).populate('referredBy');
+    if (vendor && vendor.referredBy) {
+      const vendorReferrer = vendor.referredBy;
+      let vendorBonusAmount;
+
+      if (vendorLevel > 0) {
+        switch (vendorLevel) {
+          case 3:
+            vendorBonusAmount = 100;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+          case 2:
+            vendorBonusAmount = 200;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+          case 1:
+            vendorBonusAmount = 4000;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+        }
+
+        await vendorReferrer.save();
+        await distributeReferralBonus(vendorReferrer._id, userLevel, vendorLevel - 1);
+      }
+    }
+  }
+};
 
 
 
@@ -601,60 +662,7 @@ app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus)
 
 //Vendor Endpoints
 
-
-
-/*// Add referral bonuses recursively
-const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) => {
-  const referrer = await Vendor.findById(referrerId);
-  if (referrer && referrer.referredBy) {
-    const secondLevelReferrer = await Vendor.findById(referrer.referredBy);
-    if (secondLevelReferrer) {
-      secondLevelReferrer.wallet += secondLevelBonus;
-      secondLevelReferrer.referralWallet += secondLevelBonus;
-      await secondLevelReferrer.save();
-      if (secondLevelReferrer.referredBy) {
-        const thirdLevelReferrer = await Vendor.findById(secondLevelReferrer.referredBy);
-        if (thirdLevelReferrer) {
-          thirdLevelReferrer.wallet += thirdLevelBonus;
-          thirdLevelReferrer.referralWallet += thirdLevelBonus;
-          await thirdLevelReferrer.save();
-        }
-      }
-    }
-  }
-};
-*/
-const addReferralBonus = async (vendorId, level) => {
-  if (level <= 0) return;
-
-  const vendor = await Vendor.findById(vendorId).populate('referredBy');
-  if (vendor && Vendor.referredBy) {
-    const referrer = vendor.referredBy;
-    let bonusAmount;
-
-    switch (level) {
-      case 3:
-        bonusAmount = referrer.accountType === 'naira' ? 100 : 1;
-        referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
-        break;
-      case 2:
-        bonusAmount = referrer.accountType === 'naira' ? 200 : 2;
-        referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
-        break;
-      case 1:
-        bonusAmount = referrer.accountType === 'naira' ? 4000 : 40;
-        referrer.wallet += bonusAmount;
-        /*referrer.referralWallet += bonusAmount;*/
-        break;
-    }
-
-    await referrer.save();
-    await distributeReferralBonus(referrer._id, level - 1);
-  }
-};
-
+/*
 // Vendor registration endpoint
 app.post("/vendor-register", async (req, res) => {
   try {
@@ -688,7 +696,7 @@ app.post("/vendor-register", async (req, res) => {
         newVendor.referredBy = referrer._id;
         referrer.referrals.push(newVendor._id);
         referrer.wallet += 4000;
-        /*referrer.referralWallet += 4000;*/
+        /*referrer.referralWallet += 4000;
         await referrer.save();
         await addReferralBonus(referrer._id, 200, 100);
       } else {
@@ -705,6 +713,56 @@ app.post("/vendor-register", async (req, res) => {
 });
 
 
+*/
+
+
+
+app.post("/vendor-register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, companyName, companyAddress, referralLink } = req.body;
+
+    const existingVendor = await Vendor.findOne({ email });
+    if (existingVendor) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingVendorUsername = await Vendor.findOne({ username });
+    if (existingVendorUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newVendor = new Vendor({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      companyName,
+      companyAddress,
+      referralLink: `${process.env.API_URL}/register?vendor=${username}`
+    });
+
+    if (referralLink) {
+      const referrer = await Vendor.findOne({ username: referralLink });
+      if (referrer) {
+        newVendor.referredBy = referrer._id;
+        referrer.referrals.push(newVendor._id);
+        referrer.wallet += 4000;
+        await referrer.save();
+        await distributeReferralBonus(referrer._id, 0, 2);
+      } else {
+        return res.status(400).json({ message: "Invalid referral link" });
+      }
+    }
+
+    await newVendor.save();
+    res.status(200).json({ message: "Vendor registered successfully", vendorId: newVendor._id });
+  } catch (error) {
+    console.log("Error registering vendor:", error);
+    res.status(500).json({ message: "Vendor registration failed" });
+  }
+});
 
 
 
