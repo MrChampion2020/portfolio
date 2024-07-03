@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ['user', 'admin', 'vendor'], default: 'user' },
   referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   referralLinkActive: { type: Boolean, default: true },
+  accountType: { type: String, default: 'naira' },
   lastLogin: { type: Date, default: null },
   lastSpin: { type: Date, default: null }
 
