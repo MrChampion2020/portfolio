@@ -584,7 +584,26 @@ app.patch('/admin/vendors/:vendorId/status', authenticateToken, setVendorStatus)
 
 
 
-
+// Add referral bonuses recursively
+const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) => {
+  const referrer = await Vendor.findById(referrerId);
+  if (referrer && referrer.referredBy) {
+    const secondLevelReferrer = await Vendor.findById(referrer.referredBy);
+    if (secondLevelReferrer) {
+      secondLevelReferrer.wallet += secondLevelBonus;
+      secondLevelReferrer.referralWallet += secondLevelBonus;
+      await secondLevelReferrer.save();
+      if (secondLevelReferrer.referredBy) {
+        const thirdLevelReferrer = await Vendor.findById(secondLevelReferrer.referredBy);
+        if (thirdLevelReferrer) {
+          thirdLevelReferrer.wallet += thirdLevelBonus;
+          thirdLevelReferrer.referralWallet += thirdLevelBonus;
+          await thirdLevelReferrer.save();
+        }
+      }
+    }
+  }
+};
 
 // Vendor registration endpoint
 app.post("/vendor-register", async (req, res) => {
@@ -635,26 +654,7 @@ app.post("/vendor-register", async (req, res) => {
   }
 });
 
-// Add referral bonuses recursively
-const addReferralBonus = async (referrerId, secondLevelBonus, thirdLevelBonus) => {
-  const referrer = await Vendor.findById(referrerId);
-  if (referrer && referrer.referredBy) {
-    const secondLevelReferrer = await Vendor.findById(referrer.referredBy);
-    if (secondLevelReferrer) {
-      secondLevelReferrer.wallet += secondLevelBonus;
-      secondLevelReferrer.referralWallet += secondLevelBonus;
-      await secondLevelReferrer.save();
-      if (secondLevelReferrer.referredBy) {
-        const thirdLevelReferrer = await Vendor.findById(secondLevelReferrer.referredBy);
-        if (thirdLevelReferrer) {
-          thirdLevelReferrer.wallet += thirdLevelBonus;
-          thirdLevelReferrer.referralWallet += thirdLevelBonus;
-          await thirdLevelReferrer.save();
-        }
-      }
-    }
-  }
-};
+
 
 
 

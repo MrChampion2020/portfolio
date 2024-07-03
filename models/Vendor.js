@@ -11,7 +11,7 @@ const vendorSchema = new mongoose.Schema({
   companyAddress: { type: String, required: true },
   active: { type: Boolean, default: false },
   referralLink: { type: String, unique: true },
-  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vendor' }],
+  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   wallet: { type: Number, default: 0 },
   referralWallet: { type: Number, default: 0 },
   lastLogin: { type: Date },
