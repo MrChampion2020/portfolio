@@ -168,7 +168,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
 
 
 
-
+/*
 const distributeReferralBonus = async (userId, userLevel, vendorLevel) => {
   if (userLevel <= 0 && vendorLevel <= 0) return;
 
@@ -273,7 +273,6 @@ app.post("/register", async (req, res) => {
         // Credit referrer's wallet
         const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
         referrer.wallet += amountToCredit;
-        /*referrer.referralWallet += amountToCredit;*/
         await referrer.save();
       } else {
         return res.status(400).json({ message: "Invalid or inactive referral link" });
@@ -291,6 +290,140 @@ app.post("/register", async (req, res) => {
 
     // Distribute referral bonuses
     await distributeReferralBonus(newUser._id, 3); // Assuming 3 levels of referral bonus
+
+    res.status(200).json({ message: "User registered successfully", userId: newUser._id });
+  } catch (error) {
+    console.log("Error registering user:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "Duplicate key error", error: error.message });
+    }
+    res.status(500).json({ message: "Registration failed" });
+  }
+});
+*/
+
+
+const distributeReferralBonus = async (userId, userLevel, vendorLevel) => {
+  if (userLevel <= 0 && vendorLevel <= 0) return;
+
+  const user = await User.findById(userId).populate('referredBy');
+  if (user && user.referredBy) {
+    const referrer = user.referredBy;
+    let bonusAmount;
+
+    if (userLevel > 0) {
+      switch (userLevel) {
+        case 1:
+          bonusAmount = 4000;
+          referrer.wallet += bonusAmount;
+          break;
+        case 2:
+          bonusAmount = 200;
+          referrer.wallet += bonusAmount;
+          break;
+        case 3:
+          bonusAmount = 100;
+          referrer.wallet += bonusAmount;
+          break;
+      }
+
+      await referrer.save();
+      await distributeReferralBonus(referrer._id, userLevel - 1, vendorLevel);
+    }
+  } else {
+    const vendor = await Vendor.findById(userId).populate('referredBy');
+    if (vendor && vendor.referredBy) {
+      const vendorReferrer = vendor.referredBy;
+      let vendorBonusAmount;
+
+      if (vendorLevel > 0) {
+        switch (vendorLevel) {
+          case 1:
+            vendorBonusAmount = 4000;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+          case 2:
+            vendorBonusAmount = 200;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+          case 3:
+            vendorBonusAmount = 100;
+            vendorReferrer.wallet += vendorBonusAmount;
+            break;
+        }
+
+        await vendorReferrer.save();
+        await distributeReferralBonus(vendorReferrer._id, userLevel, vendorLevel - 1);
+      }
+    }
+  }
+};
+
+
+
+app.post("/register", async (req, res) => {
+  try {
+    const { fullName, email, phone, password, username, referralLink, couponCode, accountType = 'naira' } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon || !coupon.isActive || coupon.isUsed) {
+      return res.status(400).json({ message: "Invalid or inactive coupon code" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      fullName,
+      email,
+      phone,
+      password: hashedPassword,
+      username,
+      verificationToken: crypto.randomBytes(20).toString("hex"),
+      accountType
+    });
+
+    // Generate referral link
+    newUser.referralLink = `${process.env.API_URL}/register?ref=${username}`;
+
+    if (referralLink) {
+      const referrer = await User.findOne({ username: referralLink }) || await Vendor.findOne({ username: referralLink });
+      if (referrer && referrer.referralLinkActive) {
+        newUser.referredBy = referrer._id;
+        referrer.referrals.push(newUser._id);
+
+        // Credit referrer's wallet
+        const amountToCredit = referrer.accountType === 'naira' ? 4000 : 4;
+        referrer.wallet += amountToCredit;
+        await referrer.save();
+      } else {
+        return res.status(400).json({ message: "Invalid or inactive referral link" });
+      }
+    }
+
+    await newUser.save();
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+
+    // Mark coupon as used
+    coupon.isUsed = true;
+    coupon.isActive = false;
+    coupon.usedBy = { email: newUser.email, username: newUser.username, phone: newUser.phone };
+    await coupon.save();
+
+    // Distribute referral bonuses
+    await distributeReferralBonus(newUser._id, 3, 3); // Assuming 3 levels of referral bonus for both user and vendor
 
     res.status(200).json({ message: "User registered successfully", userId: newUser._id });
   } catch (error) {
