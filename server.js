@@ -314,7 +314,7 @@ const distributeReferralBonus = async (userId, userLevel, vendorLevel) => {
     if (userLevel > 0) {
       switch (userLevel) {
         case 1:
-          bonusAmount = 4000;
+          bonusAmount = 100;
           referrer.wallet += bonusAmount;
           break;
         case 2:
@@ -322,7 +322,7 @@ const distributeReferralBonus = async (userId, userLevel, vendorLevel) => {
           referrer.wallet += bonusAmount;
           break;
         case 3:
-          bonusAmount = 100;
+          bonusAmount = 0;
           referrer.wallet += bonusAmount;
           break;
       }
