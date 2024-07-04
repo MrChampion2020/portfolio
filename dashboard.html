@@ -18,6 +18,7 @@
     a {
       text-decoration: none;
     }
+    
     header {
       height: 15%;
       display: flex;
@@ -37,38 +38,82 @@
       height: 100%;
       object-fit: cover;
     }
-    .user-header{
+    .user-header {
       width: 30%;
       height: 100%;
       display: flex;
       flex-direction: row;
     }
-    .profile {
-      width: 50%;
-      height: 100%;
-      object-fit: cover;
-      display: flex;
-      flex-direction: row;
-    }
-    .profile img {
-      width: 20%;
-      height: 40%;
-      border: 2px solid white;
-      border-radius: 50%;
-      margin: 20px auto;
-      object-fit: cover;
-      padding: 5px;
-    }
-    .notify {
-    
-      width: 50%;
-      height: 100%;
+    .menu-icon {
+      width: 70%;
       font-size: 40px;
-      text-align: center;
-      padding: 25px;
+      cursor: pointer;
+      padding: 20px;
+      text-align: right;
+    }
+    #dropdown-menu {
+     position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: purple;
+      color: white;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+    .dropdown-header {
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: purple;
+      border-bottom: 2px solid white;
+    }
+    .close-icon {
+      cursor: pointer;
+      color: white;
+      font-size: 40px;
+      padding: 20px;
+      
+    }
+    nav ul {
+      list-style: none;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      margin: auto;
+    }
+    nav ul li {
+      margin: 20px auto;
+      cursor: pointer;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+      text-decoration: none;
+      font-weight: 600;
       color: white;
     }
-    
+    nav ul .register {
+      background-color: #fff;
+      width: 30%;
+      height: 40%;
+      border-radius: 10px;
+      margin: auto;
+      justify-content: center;
+      text-align: center;
+    }
+    nav ul .register a {
+      width: 100%;
+      color: purple;
+      text-align: center;
+      margin: auto;
+    }
+    nav ul li a {
+      color: white;
+    }
     main {
       margin: auto;
       height: 100vh;
@@ -76,150 +121,188 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      margin-bottom: 40px;
+      margin-bottom: 10px;
     }
-    
-    .user-welcome{
-      height: 5%;
+    .user-welcome {
+      height: 10%;
       width: 80%;
       margin: 0 auto;
-      padding: 20px;
+      padding: 5px;
+      display: flex;
+      flex-direction: row;
     }
-    .user-welcome b{
+    .profile {
+      width: 10%;
+      height: 60%;
+      object-fit: cover;
+    }
+    .profile img {
+      width: 30%;
       height: 100%;
-      width: 70%;
-      margin: 10% auto;
-      padding: 10px;
+      border: 2px solid white;
+      border-radius: 50%;
+      object-fit: cover;
+      padding: 5px;
+    }
+    .user-welcome b {
+      height: 100%;
+      width: 40%;
+      text-align: left;
       color: black;
       font-size: 20px;
+      margin-top: 10px;
       font-family: 'Times New Roman', Times, serif;
-      
     }
-    .profile-top{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 20px;
-     width: 95%;
-     margin: auto;
-     height: 40%;
-     border: none;
-     padding: 10px;
+    .profile-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 95%;
+      margin: auto;
+      height: 80%;
+      border: none;
+      padding: 10px;
     }
-    .profile-top h1{
+    .profile-top h1 {
       font-size: 16;
-    text-align: center;
-    color: purple;
-    grid-column: 1 / -1; /* Make the heading span all columns */
+      text-align: center;
+      color: purple;
+      grid-column: 1 / -1;
     }
     .profile-top div {
-   
-    padding: 20px;
-    background-color: #fff;
-  }
-    .wallet{
-  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-  width: 70%;
-  height: 80%;
-  margin-bottom: 2%;
-  overflow: hidden; /* Ensure any overflow is hidden */
-  position: relative;
-  border-radius: 10px;
+      padding: 20px;
+      background-color: #fff;
     }
-    .wallet h1{
-     color: purple;
-    }
-
-    .Referals {
-      border-radius: 10px;
+    .wallet {
+      margin: auto;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 70%;
-      height: 80%;
-      margin-bottom: 2%;
-      overflow: hidden; /* Ensure any overflow is hidden */
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
       position: relative;
-}
-    .withdrawal{
       border-radius: 10px;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 70%;
-      height: 80%;
-      margin-bottom: 2%;
-      overflow: hidden; /* Ensure any overflow is hidden */
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
     }
-    .profile-down{
-     display: grid;
-     grid-template-columns: 1fr 1fr 1fr;
-     grid-gap: 20px;
-     width: 95%;
-     margin: auto;
-     height: 40%;
-     border: none;
-     padding: 10px;
+    .wallet h3, .wallet h4 {
+      margin: 0;
+      font-weight: bold;
     }
-    .profile-down h1{
-    text-align: center;
-    color: purple;
-    grid-column: 1 / -1; /* Make the heading span all columns */
+    .wallet .withdraw-button {
+      align-self: flex-end;
+      padding: 5px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    .profile-down div {
-    /*box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);*/
-    padding: 20px;
-    background-color: #fff;
-  }
-    .skills{
-  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-  width: 70%;
-  height: 80%;
-  margin-bottom: 2%;
-  overflow: hidden; /* Ensure any overflow is hidden */
-  position: relative;
-  border-radius: 10px;
+    .withdraw-form {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
     }
-    .skills h1{
-     color: purple;
+    .withdraw-form input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
     }
-
+    .withdraw-form .close-button {
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
     .referralLink {
-  box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-  width: 70%;
-  height: 80%;
-  margin-bottom: 2%;
-  overflow: hidden; /* Ensure any overflow is hidden */
-  position: relative;
-  border-radius: 10px;
-  text-align: center;
-   }
-   .referralLink h6{
-    font-size: 14px;
-   }
-    .social{
+      margin: auto;
       box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 70%;
-      height: 80%;
-      margin-bottom: 2%;
-      overflow: hidden; /* Ensure any overflow is hidden */
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .referralLink span {
+      font-size: 16px;
+      color: purple;
+    }
+    .social {
+      margin: auto;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
       position: relative;
       border-radius: 10px;
       text-align: center;
       display: flex;
       flex-direction: column;
     }
-
-
-    .social h1{
-      padding: 0 10px;
-      height: 40%;
+    .social h1 {
+      padding: 0 2px;
+      height: 30%;
     }
-    .social-logo{
+    .social-logo {
       display: flex;
       flex-direction: row;
       height: 50%;
       width: 80%;
+      position: relative;
       margin: auto;
-
+      justify-content: space-around;
+      align-items: center;
     }
-
+    .social-logo i {
+      font-size: 40px;
+      cursor: pointer;
+    }
+    .activity-buttons {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+    .activity-buttons button {
+      padding: 5px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .spin-wheel, .earn-bonus {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      text-align: center;
+    }
+    .spin-wheel .close-button, .earn-bonus .close-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
     footer {
       height: 10%;
       background: rgb(255, 255, 255);
@@ -227,69 +310,40 @@
       text-align: center;
       color: purple;
     }
-    footer p{
+    footer p {
       margin: 50px auto;
       font-size: 20px;
       font-family: 'Times New Roman', Times, serif;
-    
     }
-    /* Add your custom styles here */
-
-
-
-
-
-    /* media screen for phones*/
-
-    @media (max-width: 768px){
-
-      .logo{
+    @media (max-width: 768px) {
+      .logo {
         width: 60%;
         height: 100%;
       }
-      .profile img{
+      .profile img {
         height: 25%;
         width: 30%;
       }
-      .notify{
+      .notify {
         font-size: 30px;
-      }
-      main h1,  h3{
-        font-size: 14px;
-        font-weight: 100;
+        height: 10%;
+        color: purple;
         margin: auto;
+      }
+      footer {
+        height: 10%;
+        border-top: 2px solid purple;
         text-align: center;
+        color: purple;
       }
-      .profile-top{
-        height: 20%;
+      footer p {
+        margin: 50px auto;
+        font-size: 20px;
+        font-family: 'Times New Roman', Times, serif;
       }
-      .profile-top div{
-        width: 60%;
-      }
-      .profile-down{
-        height: 20%;
-      }
-      .profile-down div{
-        width: 60%;
-      }.social{
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 60%;
-      height: 80%;
-      margin: auto;
     }
-    .social h1{
-      height: 30%;
-      width: 90%;
-    }
-      .social-logo{
-      display: flex;
-      flex-direction: row;
-      height: 70%;
-      width: 80%;
-      margin: auto;
 
-    }
-    }
+
 
     .wheel{
       font-family: Arial, sans-serif;
@@ -406,80 +460,78 @@
         opacity: 1;
       }
     }
+
+
   </style>
 </head>
 <body id="dashboard">
-  <header>
-
-    <div class="logo">
-      <img src="logo.jpg" alt="logo">
-    </div>
-    
-    <div class="user-header">
-
-    <div class="profile">
-      <img src="profile0.png" alt="profile" id="profile">
-    </div>
-
-    <div class="notify">
-      <i class="fas fa-bell white"></i>
-    </div>
   
+  <header>
+    <div class="logo">
+      <img src="logo.jpg" alt="Logo">
     </div>
-
+    <div class="user-header">
+      <i class="fa fa-bars menu-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
   </header>
+  <div id="dropdown-menu">
+    <div class="dropdown-header">
+      <div class="logo">
+        <img src="logo.jpg" alt="Logo">
+      </div>
+      <i class="fa fa-times close-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#home">profile</a></li>
+        <li><a href="#earnings">Earnings</a></li>
+        <li><a href="#withdrawals">Withdrawals</a></li>
+        <li class="register"><a href="#register">Digital Courses</a></li>
+        <li><a href="#referral">Referral</a></li>
+        <li><a href="#social">Daily Tasks</a></li>
+        <li class="logout"><a href="#">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+
+
 
   <main>
     <div class="user-welcome">
-      <b>Welcome:  <span id="username"></span></b>
+      <span class="profile">
+        <img src="profile0.png" alt="profile" id="profile">
+      </span>
+      <b>Hi,  <span id="username"></span></b>
     </div>
 
 
     <section class="profile-top">
       <div class="wallet">
-       <h1>Account Balance</h1>
        <h3>Balance: <b id="wallet"></b></h3>
-       <p></p>
-      </div>
-  
-  
-  
-      <div class="Referals">
-       <h1>Referrals <b id=""></b></h1>
-       <p></p>
-      </div>
-      
-  
-      <div class="withdrawal">
-       <h1>Withrawal</h1>
-       <p></p>
-      </div>
-     </section>
+       <h4 >EC: <b id="referralWallet"></b></h4>
+       <button class="withdraw-button" onclick="openWithdrawForm()">Withdraw</button>
+      </div>   
+   
+       <div class="referralLink">
+        <span><b>Your referral Link</b> </span><br/>
+        <a id="referralLink" href=""><b id="referralLink"></b></a>
+       </div>
+       
+   
+       <div class="social">
+        <h1>Social activity</h1>
+        <div class="social-logo">
+        <h1 class="fa-brands fa-facebook purple"> </h1>
+        <h1 class="fa-brands fa-instagram purple"></h1>
+        <h1 class="fa-brands fa-tiktok purple"></h1>
+       </div>
+       </div>
 
-     <section class="profile-down">
 
-      <div class="wallet">
-       <h1>Elite Coins</h1>
-       <h3>EC: <b id="referralWallet"></b></h3>
-       <p></p>
-      </div>
-  
-  
-  
-      <div class="referralLink">
-       <h1>Referrals</h1>
-       <a id="referralLink" href=""><b id="referralLink"></b></a>
-      </div>
-      
-  
-      <div class="social">
-       <h1>Social activity</h1>
-       <div class="social-logo">
-       <h1 class="fa-brands fa-facebook purple"> </h1>
-       <h1 class="fa-brands fa-instagram purple"></h1>
-       <h1 class="fa-brands fa-tiktok purple"></h1>
-      </div>
-      </div>
+       <div class="activity-buttons">
+      <button onclick="toggleSpinWheel()">Spin Wheel</button>
+      <button onclick="toggleEarnBonus()">Earn Bonus</button>
+    </div>
      </section>
 
       
@@ -620,6 +672,651 @@ const amounts = [10, 250, 300, 50, 150];
     // Perform login on page load and check spin availability
     login().then(checkSpinAvailability);
   
+
+
+    function toggleDropdownMenu() {
+      const menu = document.getElementById('dropdown-menu');
+      if (menu.style.left === '0px') {
+        menu.style.left = '-100%';
+      } else {
+        menu.style.left = '0';
+      }
+    }
+
+    function toggleWithdrawForm() {
+      const form = document.getElementById('withdraw-form');
+      if (form.style.display === 'block') {
+        form.style.display = 'none';
+      } else {
+        form.style.display = 'block';
+      }
+    }
+
+    function withdrawFunds() {
+      const amount = document.getElementById('withdraw-amount').value;
+      alert(`Withdrawing ${amount} coins`);
+      toggleWithdrawForm();
+    }
+
+    function toggleSpinWheel() {
+      const wheel = document.getElementById('spin-wheel');
+      if (wheel.style.display === 'block') {
+        wheel.style.display = 'none';
+      } else {
+        wheel.style.display = 'block';
+      }
+    }
+
+    function toggleEarnBonus() {
+      const bonus = document.getElementById('earn-bonus');
+      if (bonus.style.display === 'block') {
+        bonus.style.display = 'none';
+      } else {
+        bonus.style.display = 'block';
+      }
+    }
   </script>
 </body>
 </html>
+
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElitEarn</title>
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow-x: hidden;
+      text-decoration: none;
+    }
+    a {
+      text-decoration: none;
+    }
+    header {
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      background: purple;
+      color: #fff;
+    }
+    .logo {
+      width: 30%;
+      height: 100%;
+      font-size: 1.2em;
+    }
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-header {
+      width: 30%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+    .menu-icon {
+      font-size: 40px;
+      cursor: pointer;
+      padding: 10px;
+    }
+    #dropdown-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: purple;
+      color: white;
+      transition: left 0.3s ease;
+    }
+    .dropdown-header {
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: purple;
+      border-bottom: 2px solid white;
+    }
+    .close-icon {
+      cursor: pointer;
+      color: white;
+      font-size: 40px;
+      padding: 10px;
+    }
+    nav ul {
+      list-style: none;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      margin: auto;
+    }
+    nav ul li {
+      margin: 20px auto;
+      cursor: pointer;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+      text-decoration: none;
+      font-weight: 600;
+      color: white;
+    }
+    nav ul .register {
+      background-color: #fff;
+      width: 30%;
+      height: 40%;
+      border-radius: 10px;
+      margin: auto;
+      justify-content: center;
+      text-align: center;
+    }
+    nav ul .register a {
+      width: 100%;
+      color: purple;
+      text-align: center;
+      margin: auto;
+    }
+    nav ul li a {
+      color: white;
+    }
+    main {
+      margin: auto;
+      height: 100vh;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .user-welcome {
+      height: 10%;
+      width: 80%;
+      margin: 0 auto;
+      padding: 5px;
+      display: flex;
+      flex-direction: row;
+    }
+    .profile {
+      width: 10%;
+      height: 60%;
+      object-fit: cover;
+    }
+    .profile img {
+      width: 30%;
+      height: 100%;
+      border: 2px solid white;
+      border-radius: 50%;
+      object-fit: cover;
+      padding: 5px;
+    }
+    .user-welcome b {
+      height: 100%;
+      width: 40%;
+      text-align: left;
+      color: black;
+      font-size: 20px;
+      margin-top: 10px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .profile-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 95%;
+      margin: auto;
+      height: 80%;
+      border: none;
+      padding: 10px;
+      border: 1px solid red;
+    }
+    .profile-top h1 {
+      font-size: 16;
+      text-align: center;
+      color: purple;
+      grid-column: 1 / -1;
+    }
+    .profile-top div {
+      padding: 20px;
+      background-color: #fff;
+    }
+    .wallet {
+      margin: auto;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+    }
+    .wallet h3, .wallet h4 {
+      margin: 0;
+      font-weight: bold;
+    }
+    .wallet .withdraw-button {
+      align-self: flex-end;
+      padding: 5px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .withdraw-form {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .withdraw-form input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .withdraw-form .close-button {
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .referralLink {
+      margin: auto;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .referralLink h6 {
+      font-size: 20px;
+      color: purple;
+    }
+    .social {
+      margin: auto;
+      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
+      width: 90%;
+      height: 60%;
+      overflow: hidden;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .social h1 {
+      padding: 0 2px;
+      height: 30%;
+    }
+    .social-logo {
+      display: flex;
+      flex-direction: row;
+      height: 50%;
+      width: 80%;
+      position: relative;
+      margin: auto;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .social-logo i {
+      font-size: 40px;
+      cursor: pointer;
+    }
+    .activity-buttons {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+    .activity-buttons button {
+      padding: 5px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .spin-wheel, .earn-bonus {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      text-align: center;
+    }
+    .spin-wheel .close-button, .earn-bonus .close-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    footer {
+      height: 10%;
+      background: rgb(255, 255, 255);
+      border-top: 2px solid purple;
+      text-align: center;
+      color: purple;
+    }
+    footer p {
+      margin: 50px auto;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    @media (max-width: 768px) {
+      .logo {
+        width: 60%;
+        height: 100%;
+      }
+      .profile img {
+        height: 25%;
+        width: 30%;
+      }
+      .notify {
+        font-size: 30px;
+        height: 10%;
+        color: purple;
+        margin: auto;
+      }
+      footer {
+        height: 10%;
+        border-top: 2px solid purple;
+        text-align: center;
+        color: purple;
+      }
+      footer p {
+        margin: 50px auto;
+        font-size: 20px;
+        font-family: 'Times New Roman', Times, serif;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.jpg" alt="Logo">
+    </div>
+    <div class="user-header">
+      <i class="fa fa-bars menu-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
+  </header>
+  <div id="dropdown-menu">
+    <div class="dropdown-header">
+      <h2>Menu</h2>
+      <i class="fa fa-times close-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#earnings">Earnings</a></li>
+        <li><a href="#withdrawals">Withdrawals</a></li>
+        <li class="register"><a href="#register">Register</a></li>
+        <li><a href="#referral">Referral</a></li>
+        <li><a href="#social">Social Media</a></li>
+      </ul>
+    </nav>
+  </div>
+  <main>
+    <div class="user-welcome">
+      <div class="profile">
+        <img src="user.jpg" alt="User Profile Picture">
+      </div>
+      <b>Welcome, User</b>
+    </div>
+    <div class="profile-top">
+      <div class="wallet">
+        <h3>Wallet Balance: <span id="wallet-balance">1000 coins</span></h3>
+        <h4>Equivalent: <span id="wallet-equivalent">$50</span></h4>
+        <button class="withdraw-button" onclick="toggleWithdrawForm()">Withdraw</button>
+      </div>
+      <div class="referralLink">
+        <h6>Referral Link</h6>
+        <a id="referralLink" href=""><b id="referralLink"></b></a>
+      </div>
+      <div class="social">
+        <h1>Follow Us on Social Media</h1>
+        <div class="social-logo">
+          <i class="fab fa-facebook"></i>
+          <i class="fab fa-twitter"></i>
+          <i class="fab fa-instagram"></i>
+        </div>
+      </div>
+    </div>
+    <div class="activity-buttons">
+      <button onclick="toggleSpinWheel()">Spin Wheel</button>
+      <button onclick="toggleEarnBonus()">Earn Bonus</button>
+    </div>
+  </main>
+  <footer>
+    <p>© 2024 ElitEarn. All rights reserved.</p>
+  </footer>
+
+  <div class="withdraw-form" id="withdraw-form">
+    <h3>Withdraw Funds</h3>
+    <input type="text" placeholder="Amount" id="withdraw-amount">
+    <button class="close-button" onclick="toggleWithdrawForm()">Cancel</button>
+    <button class="withdraw-button" onclick="withdrawFunds()">Withdraw</button>
+  </div>
+
+  <div class="spin-wheel" id="spin-wheel">
+    <h3>Spin the Wheel</h3>
+    <div id="wheel">
+      <!- Wheel Implementation ->
+    </div>
+    <button class="close-button" onclick="toggleSpinWheel()">Close</button>
+  </div>
+
+  <div class="earn-bonus" id="earn-bonus">
+    <h3>Earn Bonus</h3>
+    <p>Complete tasks to earn bonus coins!</p>
+    <button class="close-button" onclick="toggleEarnBonus()">Close</button>
+  </div>
+
+  <script>
+const API_URL = `https://elitearn.onrender.com`;
+
+const fetchUserData = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user-details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('username').textContent = data.user.username;
+            document.getElementById('wallet').textContent = data.user.wallet;
+            document.getElementById('referralWallet').textContent = data.user.referralWallet;
+            document.getElementById('referralLink').textContent = data.user.referralLink;
+            document.getElementById('referralLink').href = data.user.referralLink;
+        } else {
+            alert('Login to access your dashboard');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        alert('An error occurred while fetching user data');
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+};
+
+// Fetch user data when the page loads
+window.onload = fetchUserData;
+
+
+const amounts = [10, 250, 300, 50, 150];
+    let token = '';
+    let spinning = false;
+
+    async function login() {
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'testuser', password: 'password' })
+      });
+      const data = await response.json();
+      token = data.token;
+    }
+
+    async function updateReferralWallet(amount) {
+      const response = await fetch(`${API_URL}/spin`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': token 
+        },
+        body: JSON.stringify({ amount })
+      });
+      const data = await response.json();
+    }
+
+    function createRibbons(amount) {
+      for (let i = 0; i < 200; i++) {
+        const ribbon = document.createElement('div');
+        ribbon.className = 'ribbon';
+        ribbon.style.left = `${Math.random() * 100}%`;
+        ribbon.style.top = `${Math.random() * 100}%`;
+        ribbon.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
+        document.body.appendChild(ribbon);
+        setTimeout(() => ribbon.remove(), 2000);
+      }
+    }
+
+    function spinWheel() {
+      if (spinning) return; // Prevent additional spins while spinning
+
+      spinning = true;
+      const wheel = document.getElementById('wheel');
+      const randomDegree = Math.floor(Math.random() * 3600) + 3600; // Ensure the wheel spins at least 10 times
+      wheel.style.transform = `rotate(${randomDegree}deg)`;
+
+      setTimeout(() => {
+        const actualDegree = randomDegree % 360;
+        const segmentIndex = Math.floor((actualDegree + 36) / 72) % 5; // Adjust the degree to find the segment index
+        const amount = amounts[segmentIndex];
+        updateReferralWallet(amount);
+        document.getElementById('congratulations').style.display = 'block';
+        document.getElementById('win-amount').textContent = amount;
+        createRibbons(amount);
+        // Reset the wheel
+        setTimeout(() => {
+          wheel.style.transform = 'rotate(0deg)';
+          spinning = false; // Allow spinning again
+          // Store the current time as the last spin time
+          localStorage.setItem('lastSpinTime', Date.now().toString());
+          checkSpinAvailability(); // Check if the button should be enabled again
+        }, 2000);
+      }, 10000); // Wait for the animation to complete after 10 seconds
+    }
+
+    function checkSpinAvailability() {
+      const spinButton = document.getElementById('spin-button');
+      const lastSpinTime = parseInt(localStorage.getItem('lastSpinTime'), 10);
+      if (lastSpinTime) {
+        const timeElapsed = Date.now() - lastSpinTime;
+        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        if (timeElapsed < twentyFourHours) {
+          spinButton.disabled = true;
+          setTimeout(() => {
+            spinButton.disabled = false;
+          }, twentyFourHours - timeElapsed); // Enable the button after the remaining time
+        } else {
+          spinButton.disabled = false;
+        }
+      } else {
+        spinButton.disabled = false;
+      }
+    }
+
+    document.getElementById('spin-button').addEventListener('click', spinWheel);
+
+    // Perform login on page load and check spin availability
+    login().then(checkSpinAvailability);
+
+    function toggleDropdownMenu() {
+      const menu = document.getElementById('dropdown-menu');
+      if (menu.style.left === '0px') {
+        menu.style.left = '-100%';
+      } else {
+        menu.style.left = '0';
+      }
+    }
+
+    function toggleWithdrawForm() {
+      const form = document.getElementById('withdraw-form');
+      if (form.style.display === 'block') {
+        form.style.display = 'none';
+      } else {
+        form.style.display = 'block';
+      }
+    }
+
+    function withdrawFunds() {
+      const amount = document.getElementById('withdraw-amount').value;
+      alert(`Withdrawing ${amount} coins`);
+      toggleWithdrawForm();
+    }
+
+    function toggleSpinWheel() {
+      const wheel = document.getElementById('spin-wheel');
+      if (wheel.style.display === 'block') {
+        wheel.style.display = 'none';
+      } else {
+        wheel.style.display = 'block';
+      }
+    }
+
+    function toggleEarnBonus() {
+      const bonus = document.getElementById('earn-bonus');
+      if (bonus.style.display === 'block') {
+        bonus.style.display = 'none';
+      } else {
+        bonus.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
+-->
