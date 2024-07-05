@@ -174,7 +174,6 @@
     }
     .wallet {
       margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
       width: 90%;
       height: 60%;
       overflow: hidden;
@@ -184,14 +183,16 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 10px;
+      border-bottom: 0.2px solid purple;
     }
-    .wallet h3, .wallet h4 {
+    .wallet h3{
       margin: 0;
       font-weight: bold;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
     .wallet .withdraw-button {
       align-self: flex-end;
-      padding: 5px 10px;
+      padding: 6px 10px;
       background: purple;
       color: white;
       border: none;
@@ -226,7 +227,6 @@
     }
     .referralLink {
       margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
       width: 90%;
       height: 60%;
       overflow: hidden;
@@ -240,7 +240,6 @@
     }
     .social {
       margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
       width: 90%;
       height: 60%;
       overflow: hidden;
@@ -249,8 +248,10 @@
       text-align: center;
       display: flex;
       flex-direction: column;
+      border-bottom: 0.1px solid purple;
     }
     .social h1 {
+      font-size: 20px;
       padding: 0 2px;
       height: 30%;
     }
@@ -264,7 +265,7 @@
       justify-content: space-around;
       align-items: center;
     }
-    .social-logo i {
+    .social-logo a {
       font-size: 40px;
       cursor: pointer;
     }
@@ -320,10 +321,26 @@
         width: 60%;
         height: 100%;
       }
-      .profile img {
-        height: 25%;
-        width: 30%;
+      .profile{
+        height: 50%;
+        width: 10%;
+        padding: 5px;
       }
+      .profile img {
+        height: 100%;
+        width: 80%;
+         margin: auto;
+         object-fit: cover;
+      }
+      .user-welcome b {
+      height: 100%;
+      width: 40%;
+      text-align: left;
+      color: black;
+      font-size: 14px;
+      margin-top: 20px;
+      font-family: 'Times New Roman', Times, serif;
+    }
       .notify {
         font-size: 30px;
         height: 10%;
@@ -507,30 +524,31 @@
 
     <section class="profile-top">
       <div class="wallet">
-       <h3>Balance: <b id="wallet"></b></h3>
-       <h4 >EC: <b id="referralWallet"></b></h4>
+       <h3>NGN: <b id="wallet"></b>  <b class="balance">Balance</b></h3>
+       <h4 >EC:<b id="referralWallet"></b> <b class="bonus">Bonus</b></h4>
        <button class="withdraw-button" onclick="openWithdrawForm()">Withdraw</button>
       </div>   
    
        <div class="referralLink">
-        <span><b>Your referral Link</b> </span><br/>
+        <span><b>Share Your referral Link to Earn</b> </span><br/>
         <a id="referralLink" href=""><b id="referralLink"></b></a>
        </div>
-       
-   
-       <div class="social">
-        <h1>Social activity</h1>
-        <div class="social-logo">
-        <h1 class="fa-brands fa-facebook purple"> </h1>
-        <h1 class="fa-brands fa-instagram purple"></h1>
-        <h1 class="fa-brands fa-tiktok purple"></h1>
-       </div>
-       </div>
 
+       <div class="social">
+        <h1>Join our Socials for Update</h1>
+        <div class="social-logo">
+          <a href="https://www.facebook.com/profile.php?id=61558977133876" target="_blank" class="fa-brands fa-facebook purple"></a>
+          <a href="https://www.instagram.com/eliteearnofficial?igsh=ZzdseGpmN3ZoYnht" target="_blank" class="fa-brands fa-instagram purple"></a>
+          <a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok purple"></a>
+          <!--<a href="https://wa.me/+2349117499173" target="_blank" class="fa-brands fa-whatsapp"></a>-->
+          <a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube"></a>
+          <a href="https://t.me/+iXU1lq5siDg0OTA0" target="_blank" class="fa-brands fa-telegram"></a>
+        </div>
+      </div>
 
        <div class="activity-buttons">
       <button onclick="toggleSpinWheel()">Spin Wheel</button>
-      <button onclick="toggleEarnBonus()">Earn Bonus</button>
+      <button onclick="toggleEarnBonus()">Tasks</button>
     </div>
      </section>
 

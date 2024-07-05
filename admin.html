@@ -119,7 +119,6 @@
       <table id="userTable">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Full Name</th>
             <th>Email</th>
             <th>Username</th>
@@ -142,7 +141,6 @@
       <table id="vendorTable">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Full Name</th>
             <th>Email</th>
             <th>Username</th>
@@ -335,7 +333,6 @@
           users.forEach((user) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-              <td>${user._id}</td>
               <td>${user.fullName}</td>
               <td>${user.email}</td>
               <td>${user.username}</td>
@@ -368,7 +365,6 @@
         vendors.forEach((vendor) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-              <td>${vendor._id}</td>
               <td>${vendor.fullName}</td>
               <td>${vendor.email}</td>
               <td>${vendor.username}</td>
