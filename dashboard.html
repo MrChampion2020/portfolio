@@ -167,15 +167,10 @@
       color: purple;
       grid-column: 1 / -1;
     }
-    .profile-top div {
-      padding: 20px;
-      background-color: #fff;
-    }
     .wallet {
       margin: auto;
       width: 90%;
-      height: 60%;
-      overflow: hidden;
+      height: 40%;
       position: relative;
       border-radius: 10px;
       display: flex;
@@ -227,8 +222,7 @@
     .referralLink {
       margin: auto;
       width: 90%;
-      height: 60%;
-      overflow: hidden;
+      height: 40%;
       position: relative;
       border-radius: 10px;
       text-align: center;
@@ -240,14 +234,13 @@
     .social {
       margin: auto;
       width: 90%;
-      height: 60%;
-      overflow: hidden;
+      height: 40%;
       position: relative;
       border-radius: 10px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      border-bottom: 0.1px solid purple;
+      /*border-bottom: 0.1px solid purple;*/
     }
     .social h1 {
       font-size: 20px;
@@ -307,9 +300,10 @@
     footer {
       height: 10%;
       background: rgb(255, 255, 255);
-      border-top: 2px solid purple;
+      border-top: 0.2px solid purple;
       text-align: center;
       color: purple;
+      border-radius: 10px;
     }
     footer p {
       margin: 50px auto;
@@ -362,123 +356,149 @@
 
 
 
-    .wheel{
-      font-family: Arial, sans-serif;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      background-color: #ffffff;
-      width: 60%;
-      margin: auto;
-      margin-top: 3%;
-    }
-    #wheel-container {
-      position: relative;
-      width: 30%;
-      height: 100%;
-      margin-bottom: 20px;
-      margin: auto;
-    }
-    #wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 5px solid #000;
-      position: relative;
-      transition: transform 10s cubic-bezier(0.33, 1, 0.68, 1);
-    }
-    .segment {
-      width: 50%;
-      height: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform-origin: 0% 0%;
-      clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    .segment span {
-      margin-bottom: 70%;
-    }
-    .segment:nth-child(1) { transform: rotate(0deg); background-color: #f44336; }
-    .segment:nth-child(2) { transform: rotate(72deg); background-color: #e91e63; }
-    .segment:nth-child(3) { transform: rotate(144deg); background-color: #9c27b0; }
-    .segment:nth-child(4) { transform: rotate(216deg); background-color: #673ab7; }
-    .segment:nth-child(5) { transform: rotate(288deg); background-color: #3f51b5; }
-    #wheel-holder {
-      position: absolute;
+    .spin-wheel, .earn-bonus {
+      display: none;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 40px;
-      height: 40%;
-      background: radial-gradient(circle, #ffeb3b, #fbc02d);
-      border-radius: 50%;
-      z-index: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      text-align: center;
     }
-    #stopper {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 30px solid #000;
-      z-index: 1;
-    }
-    #spin-button {
+    .spin-wheel .close-button, .earn-bonus .close-button {
       margin-top: 10px;
       padding: 5px 10px;
-      font-size: 16px;
-      background-color: purple;
+      background: red;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      width: 20%;
-     margin-left: 40%;
     }
-    #spin-button:disabled {
-      background-color: grey;
-      cursor: not-allowed;
+
+    #fullPageArea {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            margin: auto;
+        }
+        #exitButton{
+          padding: 6px 20px;
+          font-size: 16px;
+          background-color: purple;
+          color: white;
+          border: none;
+        }
+    
+
+        .wheel-container {
+      position: relative;
+      width: 30%;
+      height: 50%;
+      margin: auto;
+      padding: 40px;
+      margin-top: 5%;
     }
-    #spin-button:hover {
-      background-color: #490939;
+
+    .basement {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, gold 30%, transparent 31%), radial-gradient(circle, gold 30%, transparent 31%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    #congratulations {
-      display: none;
-      font-size: 24px;
-      font-weight: bold;
+
+    .inner-basement {
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #ffd700, #ffac1c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wheel {
+      width: 85%;
+      height: 85%;
+      border-radius: 50%;
+      background: purple;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transform: rotate(0deg);
+      transition: transform 20s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      background: purple;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      clip-path: polygon(100% 0, 0 0, 50% 100%);
+      border: 4px solid gold;
+      transform: rotate(calc(360deg / 17 * var(--i))) translateY(-100%);
+    }
+
+    .stopper {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 20px solid white;
+      transform: translateX(-50%);
+    }
+
+    .message {
+      position: absolute;
+      bottom: -70px;
+      left: 60%;
+      transform: translateX(-50%);
+      font-size: 20px;
       color: green;
-      margin-top: 20px;
       text-align: center;
     }
+
     .ribbon {
       position: absolute;
-      width: 5px;
-      height: 10px;
+      width: 20px;
+      height: 20px;
       background-color: red;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) rotateZ(45deg);
-      animation: fall 1s forwards;
+      animation: spread 2s ease-out;
       opacity: 0;
     }
-    @keyframes fall {
-      to {
-        top: 100%;
+
+    @keyframes spread {
+      0% {
+        transform: scale(1);
         opacity: 1;
       }
+      100% {
+        transform: scale(10);
+        opacity: 0;
+      }
     }
-
-
   </style>
 </head>
 <body id="dashboard">
@@ -500,13 +520,13 @@
     </div>
     <nav>
       <ul>
-        <li><a href="#home">Profile</a></li>
-        <li><a href="#earnings">Earnings</a></li>
-        <li><a href="#withdrawals">Top Earners</a></li>
-        <li class="register"><a href="#register">Courses</a></li>
-        <li><a href="#referral">Referral</a></li>
-        <li><a href="#social">Daily Tasks</a></li>
-        <li class="logout"><a href="#">Logout</a></li>
+        <li><a href="#home" id="showUserInfo">Profile</a></li>
+        <li><a href="#" id="earnHistory">Earnings</a></li>
+        <li><a href="#" id="topEarners">Top Earners</a></li>
+        <li class=""><a href="#">Courses</a></li>
+        <li><a href="#" id="openFullPageButton">Lucky Wheel</a></li>
+        <li><a href="#" id="openFullPageButton">Daily Tasks</a></li>
+        <li class="logout" ><a href="#">Logout</a></li>
       </ul>
     </nav>
   </div>
@@ -546,13 +566,45 @@
         </div>
       </div>
 
-       <div class="activity-buttons">
-      <button onclick="toggleSpinWheel()">Spin Wheel</button>
-      <button onclick="toggleEarnBonus()">Tasks</button>
-    </div>
      </section>
 
+     <div id="fullPageArea">
+      <button id="exitButton">Exit</button>
+
+
       
+      <!--area for full page content -->
+
+
+      
+  <div class="wheel-container">
+    <div class="basement">
+      <div class="inner-basement">
+        <div class="wheel" id="wheel">
+          <div class="segment" style="--i:0;">0</div>
+          <div class="segment" style="--i:1;">1</div>
+          <div class="segment" style="--i:2;">5</div>
+          <div class="segment" style="--i:3;">8</div>
+          <div class="segment" style="--i:4;">10</div>
+          <div class="segment" style="--i:5;">50</div>
+          <div class="segment" style="--i:6;">20</div>
+          <div class="segment" style="--i:7;">100</div>
+          <div class="segment" style="--i:8;">150</div>
+          <div class="segment" style="--i:9;">250</div>
+          <div class="segment" style="--i:10;">500</div>
+          <div class="segment" style="--i:11;">350</div>
+          <div class="segment" style="--i:12;">25</div>
+          <div class="segment" style="--i:13;">430</div>
+          <div class="segment" style="--i:14;">400</div>
+          <div class="segment" style="--i:15;">380</div>
+          <div class="segment" style="--i:16;">450</div>
+        </div>
+        <div class="stopper"></div>
+      </div>
+    </div>
+    <div class="message" id="message"></div>
+  </div>
+  </div>
    
   </main>
   
@@ -601,697 +653,14 @@ const fetchUserData = async () => {
 // Fetch user data when the page loads
 window.onload = fetchUserData;
 
-const amounts = [10, 250, 300, 50, 150];
-    let token = '';
-    let spinning = false;
 
-    async function login() {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'testuser', password: 'password' })
-      });
-      const data = await response.json();
-      token = data.token;
-    }
-
-    async function updateReferralWallet(amount) {
-      const response = await fetch(`${API_URL}/spin`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': token 
-        },
-        body: JSON.stringify({ amount })
-      });
-      const data = await response.json();
-    }
-
-    function createRibbons(amount) {
-      for (let i = 0; i < 200; i++) {
-        const ribbon = document.createElement('div');
-        ribbon.className = 'ribbon';
-        ribbon.style.left = `${Math.random() * 100}%`;
-        ribbon.style.top = `${Math.random() * 100}%`;
-        ribbon.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
-        document.body.appendChild(ribbon);
-        setTimeout(() => ribbon.remove(), 2000);
-      }
-    }
-
-    function spinWheel() {
-      if (spinning) return; // Prevent additional spins while spinning
-
-      spinning = true;
-      const wheel = document.getElementById('wheel');
-      const randomDegree = Math.floor(Math.random() * 3600) + 3600; // Ensure the wheel spins at least 10 times
-      wheel.style.transform = `rotate(${randomDegree}deg)`;
-
-      setTimeout(() => {
-        const actualDegree = randomDegree % 360;
-        const segmentIndex = Math.floor((actualDegree + 36) / 72) % 5; // Adjust the degree to find the segment index
-        const amount = amounts[segmentIndex];
-        updateReferralWallet(amount);
-        document.getElementById('congratulations').style.display = 'block';
-        document.getElementById('win-amount').textContent = amount;
-        createRibbons(amount);
-        // Reset the wheel
-        setTimeout(() => {
-          wheel.style.transform = 'rotate(0deg)';
-          spinning = false; // Allow spinning again
-          // Store the current time as the last spin time
-          localStorage.setItem('lastSpinTime', Date.now().toString());
-          checkSpinAvailability(); // Check if the button should be enabled again
-        }, 2000);
-      }, 10000); // Wait for the animation to complete after 10 seconds
-    }
-
-    function checkSpinAvailability() {
-      const spinButton = document.getElementById('spin-button');
-      const lastSpinTime = parseInt(localStorage.getItem('lastSpinTime'), 10);
-      if (lastSpinTime) {
-        const timeElapsed = Date.now() - lastSpinTime;
-        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        if (timeElapsed < twentyFourHours) {
-          spinButton.disabled = true;
-          setTimeout(() => {
-            spinButton.disabled = false;
-          }, twentyFourHours - timeElapsed); // Enable the button after the remaining time
-        } else {
-          spinButton.disabled = false;
-        }
-      } else {
-        spinButton.disabled = false;
-      }
-    }
-
-    document.getElementById('spin-button').addEventListener('click', spinWheel);
-
-    // Perform login on page load and check spin availability
-    login().then(checkSpinAvailability);
-  
-
-
-    function toggleDropdownMenu() {
-      const menu = document.getElementById('dropdown-menu');
-      if (menu.style.left === '0px') {
-        menu.style.left = '-100%';
-      } else {
-        menu.style.left = '0';
-      }
-    }
-
-    function toggleWithdrawForm() {
-      const form = document.getElementById('withdraw-form');
-      if (form.style.display === 'block') {
-        form.style.display = 'none';
-      } else {
-        form.style.display = 'block';
-      }
-    }
-
-    function withdrawFunds() {
-      const amount = document.getElementById('withdraw-amount').value;
-      alert(`Withdrawing ${amount} coins`);
-      toggleWithdrawForm();
-    }
-
-    function toggleSpinWheel() {
-      const wheel = document.getElementById('spin-wheel');
-      if (wheel.style.display === 'block') {
-        wheel.style.display = 'none';
-      } else {
-        wheel.style.display = 'block';
-      }
-    }
-
-    function toggleEarnBonus() {
-      const bonus = document.getElementById('earn-bonus');
-      if (bonus.style.display === 'block') {
-        bonus.style.display = 'none';
-      } else {
-        bonus.style.display = 'block';
-      }
-    }
-  </script>
-</body>
-</html>
-
-
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ElitEarn</title>
-  <link rel="icon" href="logo.jpg" type="image/jpg">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      height: 100%;
-      overflow-x: hidden;
-      text-decoration: none;
-    }
-    a {
-      text-decoration: none;
-    }
-    header {
-      height: 15%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px;
-      background: purple;
-      color: #fff;
-    }
-    .logo {
-      width: 30%;
-      height: 100%;
-      font-size: 1.2em;
-    }
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .user-header {
-      width: 30%;
-      height: 100%;
-      display: flex;
-      flex-direction: row;
-    }
-    .menu-icon {
-      font-size: 40px;
-      cursor: pointer;
-      padding: 10px;
-    }
-    #dropdown-menu {
-      position: fixed;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: purple;
-      color: white;
-      transition: left 0.3s ease;
-    }
-    .dropdown-header {
-      height: 15%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: purple;
-      border-bottom: 2px solid white;
-    }
-    .close-icon {
-      cursor: pointer;
-      color: white;
-      font-size: 40px;
-      padding: 10px;
-    }
-    nav ul {
-      list-style: none;
-      padding: 20px;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: left;
-      margin: auto;
-    }
-    nav ul li {
-      margin: 20px auto;
-      cursor: pointer;
-      font-size: 20px;
-      font-family: 'Times New Roman', Times, serif;
-      text-decoration: none;
-      font-weight: 600;
-      color: white;
-    }
-    nav ul .register {
-      background-color: #fff;
-      width: 30%;
-      height: 40%;
-      border-radius: 10px;
-      margin: auto;
-      justify-content: center;
-      text-align: center;
-    }
-    nav ul .register a {
-      width: 100%;
-      color: purple;
-      text-align: center;
-      margin: auto;
-    }
-    nav ul li a {
-      color: white;
-    }
-    main {
-      margin: auto;
-      height: 100vh;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .user-welcome {
-      height: 10%;
-      width: 80%;
-      margin: 0 auto;
-      padding: 5px;
-      display: flex;
-      flex-direction: row;
-    }
-    .profile {
-      width: 10%;
-      height: 60%;
-      object-fit: cover;
-    }
-    .profile img {
-      width: 30%;
-      height: 100%;
-      border: 2px solid white;
-      border-radius: 50%;
-      object-fit: cover;
-      padding: 5px;
-    }
-    .user-welcome b {
-      height: 100%;
-      width: 40%;
-      text-align: left;
-      color: black;
-      font-size: 20px;
-      margin-top: 10px;
-      font-family: 'Times New Roman', Times, serif;
-    }
-    .profile-top {
-      display: grid;
-      grid-template-columns: 1fr;
-      width: 95%;
-      margin: auto;
-      height: 80%;
-      border: none;
-      padding: 10px;
-      border: 1px solid red;
-    }
-    .profile-top h1 {
-      font-size: 16;
-      text-align: center;
-      color: purple;
-      grid-column: 1 / -1;
-    }
-    .profile-top div {
-      padding: 20px;
-      background-color: #fff;
-    }
-    .wallet {
-      margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 90%;
-      height: 60%;
-      overflow: hidden;
-      position: relative;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 10px;
-    }
-    .wallet h3, .wallet h4 {
-      margin: 0;
-      font-weight: bold;
-    }
-    .wallet .withdraw-button {
-      align-self: flex-end;
-      padding: 5px 10px;
-      background: purple;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .withdraw-form {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
-    .withdraw-form input {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    .withdraw-form .close-button {
-      padding: 5px 10px;
-      background: red;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .referralLink {
-      margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 90%;
-      height: 60%;
-      overflow: hidden;
-      position: relative;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .referralLink h6 {
-      font-size: 20px;
-      color: purple;
-    }
-    .social {
-      margin: auto;
-      box-shadow: 1px 1px 4px 2px rgb(226, 223, 223);
-      width: 90%;
-      height: 60%;
-      overflow: hidden;
-      position: relative;
-      border-radius: 10px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-    }
-    .social h1 {
-      padding: 0 2px;
-      height: 30%;
-    }
-    .social-logo {
-      display: flex;
-      flex-direction: row;
-      height: 50%;
-      width: 80%;
-      position: relative;
-      margin: auto;
-      justify-content: space-around;
-      align-items: center;
-    }
-    .social-logo i {
-      font-size: 40px;
-      cursor: pointer;
-    }
-    .activity-buttons {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px;
-    }
-    .activity-buttons button {
-      padding: 5px 10px;
-      background: purple;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .spin-wheel, .earn-bonus {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-      text-align: center;
-    }
-    .spin-wheel .close-button, .earn-bonus .close-button {
-      margin-top: 10px;
-      padding: 5px 10px;
-      background: red;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    footer {
-      height: 10%;
-      background: rgb(255, 255, 255);
-      border-top: 2px solid purple;
-      text-align: center;
-      color: purple;
-    }
-    footer p {
-      margin: 50px auto;
-      font-size: 20px;
-      font-family: 'Times New Roman', Times, serif;
-    }
-    @media (max-width: 768px) {
-      .logo {
-        width: 60%;
-        height: 100%;
-      }
-      .profile img {
-        height: 25%;
-        width: 30%;
-      }
-      .notify {
-        font-size: 30px;
-        height: 10%;
-        color: purple;
-        margin: auto;
-      }
-      footer {
-        height: 10%;
-        border-top: 2px solid purple;
-        text-align: center;
-        color: purple;
-      }
-      footer p {
-        margin: 50px auto;
-        font-size: 20px;
-        font-family: 'Times New Roman', Times, serif;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="logo">
-      <img src="logo.jpg" alt="Logo">
-    </div>
-    <div class="user-header">
-      <i class="fa fa-bars menu-icon" onclick="toggleDropdownMenu()"></i>
-    </div>
-  </header>
-  <div id="dropdown-menu">
-    <div class="dropdown-header">
-      <h2>Menu</h2>
-      <i class="fa fa-times close-icon" onclick="toggleDropdownMenu()"></i>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#earnings">Earnings</a></li>
-        <li><a href="#withdrawals">Withdrawals</a></li>
-        <li class="register"><a href="#register">Register</a></li>
-        <li><a href="#referral">Referral</a></li>
-        <li><a href="#social">Social Media</a></li>
-      </ul>
-    </nav>
-  </div>
-  <main>
-    <div class="user-welcome">
-      <div class="profile">
-        <img src="user.jpg" alt="User Profile Picture">
-      </div>
-      <b>Welcome, User</b>
-    </div>
-    <div class="profile-top">
-      <div class="wallet">
-        <h3>Wallet Balance: <span id="wallet-balance">1000 coins</span></h3>
-        <h4>Equivalent: <span id="wallet-equivalent">$50</span></h4>
-        <button class="withdraw-button" onclick="toggleWithdrawForm()">Withdraw</button>
-      </div>
-      <div class="referralLink">
-        <h6>Referral Link</h6>
-        <a id="referralLink" href=""><b id="referralLink"></b></a>
-      </div>
-      <div class="social">
-        <h1>Follow Us on Social Media</h1>
-        <div class="social-logo">
-          <i class="fab fa-facebook"></i>
-          <i class="fab fa-twitter"></i>
-          <i class="fab fa-instagram"></i>
-        </div>
-      </div>
-    </div>
-    <div class="activity-buttons">
-      <button onclick="toggleSpinWheel()">Spin Wheel</button>
-      <button onclick="toggleEarnBonus()">Earn Bonus</button>
-    </div>
-  </main>
-  <footer>
-    <p>© 2024 ElitEarn. All rights reserved.</p>
-  </footer>
-
-  <div class="withdraw-form" id="withdraw-form">
-    <h3>Withdraw Funds</h3>
-    <input type="text" placeholder="Amount" id="withdraw-amount">
-    <button class="close-button" onclick="toggleWithdrawForm()">Cancel</button>
-    <button class="withdraw-button" onclick="withdrawFunds()">Withdraw</button>
-  </div>
-
-  <div class="spin-wheel" id="spin-wheel">
-    <h3>Spin the Wheel</h3>
-    <div id="wheel">
-      <!- Wheel Implementation ->
-    </div>
-    <button class="close-button" onclick="toggleSpinWheel()">Close</button>
-  </div>
-
-  <div class="earn-bonus" id="earn-bonus">
-    <h3>Earn Bonus</h3>
-    <p>Complete tasks to earn bonus coins!</p>
-    <button class="close-button" onclick="toggleEarnBonus()">Close</button>
-  </div>
-
-  <script>
-const API_URL = `https://elitearn.onrender.com`;
-
-const fetchUserData = async () => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_URL}/user-details`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
+document.getElementById('openFullPageButton').addEventListener('click', function() {
+            document.getElementById('fullPageArea').style.display = 'block';
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('username').textContent = data.user.username;
-            document.getElementById('wallet').textContent = data.user.wallet;
-            document.getElementById('referralWallet').textContent = data.user.referralWallet;
-            document.getElementById('referralLink').textContent = data.user.referralLink;
-            document.getElementById('referralLink').href = data.user.referralLink;
-        } else {
-            alert('Login to access your dashboard');
-            localStorage.removeItem('token');
-            window.location.href = 'login.html';
-        }
-    } catch (error) {
-        alert('An error occurred while fetching user data');
-        localStorage.removeItem('token');
-        window.location.href = 'login.html';
-    }
-};
-
-// Fetch user data when the page loads
-window.onload = fetchUserData;
-
-
-const amounts = [10, 250, 300, 50, 150];
-    let token = '';
-    let spinning = false;
-
-    async function login() {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'testuser', password: 'password' })
-      });
-      const data = await response.json();
-      token = data.token;
-    }
-
-    async function updateReferralWallet(amount) {
-      const response = await fetch(`${API_URL}/spin`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': token 
-        },
-        body: JSON.stringify({ amount })
-      });
-      const data = await response.json();
-    }
-
-    function createRibbons(amount) {
-      for (let i = 0; i < 200; i++) {
-        const ribbon = document.createElement('div');
-        ribbon.className = 'ribbon';
-        ribbon.style.left = `${Math.random() * 100}%`;
-        ribbon.style.top = `${Math.random() * 100}%`;
-        ribbon.style.backgroundColor = ['red', 'blue', 'green', 'yellow', 'purple'][Math.floor(Math.random() * 5)];
-        document.body.appendChild(ribbon);
-        setTimeout(() => ribbon.remove(), 2000);
-      }
-    }
-
-    function spinWheel() {
-      if (spinning) return; // Prevent additional spins while spinning
-
-      spinning = true;
-      const wheel = document.getElementById('wheel');
-      const randomDegree = Math.floor(Math.random() * 3600) + 3600; // Ensure the wheel spins at least 10 times
-      wheel.style.transform = `rotate(${randomDegree}deg)`;
-
-      setTimeout(() => {
-        const actualDegree = randomDegree % 360;
-        const segmentIndex = Math.floor((actualDegree + 36) / 72) % 5; // Adjust the degree to find the segment index
-        const amount = amounts[segmentIndex];
-        updateReferralWallet(amount);
-        document.getElementById('congratulations').style.display = 'block';
-        document.getElementById('win-amount').textContent = amount;
-        createRibbons(amount);
-        // Reset the wheel
-        setTimeout(() => {
-          wheel.style.transform = 'rotate(0deg)';
-          spinning = false; // Allow spinning again
-          // Store the current time as the last spin time
-          localStorage.setItem('lastSpinTime', Date.now().toString());
-          checkSpinAvailability(); // Check if the button should be enabled again
-        }, 2000);
-      }, 10000); // Wait for the animation to complete after 10 seconds
-    }
-
-    function checkSpinAvailability() {
-      const spinButton = document.getElementById('spin-button');
-      const lastSpinTime = parseInt(localStorage.getItem('lastSpinTime'), 10);
-      if (lastSpinTime) {
-        const timeElapsed = Date.now() - lastSpinTime;
-        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        if (timeElapsed < twentyFourHours) {
-          spinButton.disabled = true;
-          setTimeout(() => {
-            spinButton.disabled = false;
-          }, twentyFourHours - timeElapsed); // Enable the button after the remaining time
-        } else {
-          spinButton.disabled = false;
-        }
-      } else {
-        spinButton.disabled = false;
-      }
-    }
-
-    document.getElementById('spin-button').addEventListener('click', spinWheel);
-
-    // Perform login on page load and check spin availability
-    login().then(checkSpinAvailability);
+        document.getElementById('exitButton').addEventListener('click', function() {
+            document.getElementById('fullPageArea').style.display = 'none';
+        });
 
     function toggleDropdownMenu() {
       const menu = document.getElementById('dropdown-menu');
@@ -1334,7 +703,72 @@ const amounts = [10, 250, 300, 50, 150];
         bonus.style.display = 'block';
       }
     }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const wheel = document.getElementById('wheel');
+      const message = document.getElementById('message');
+      const lastSpin = localStorage.getItem('lastSpin');
+      const now = new Date().getTime();
+      const segments = 17;
+      const rotationPerSegment = 360 / segments;
+
+      if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+        message.textContent = 'You can spin again in 24 hours';
+      }
+
+      function createRibbons() {
+        const shapes = ['ribbon', 'balloon', 'flower'];
+        const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+
+        for (let i = 0; i < 200; i++) {
+          const shape = document.createElement('div');
+          shape.className = 'ribbon';
+          shape.style.left = `${Math.random() * 100}%`;
+          shape.style.top = `${Math.random() * 100}%`;
+          shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          document.body.appendChild(shape);
+          setTimeout(() => shape.remove(), 2000);
+        }
+      }
+
+      function spinWheel() {
+        const lastSpin = localStorage.getItem('lastSpin');
+        const now = new Date().getTime();
+
+        if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+          alert('You can spin again in 24 hours');
+          return;
+        }
+
+        fetch(`${API_URL}/spin`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':  `Bearer ${token}` // Adjust as needed
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const amount = data.amount;
+          const randomIndex = segments.findIndex(value => value === amount);
+          const degrees = (rotationPerSegment * randomIndex) + (360 * 10); // Spin multiple times for effect
+          wheel.style.transform = `rotate(${degrees}deg)`;
+
+          setTimeout(() => {
+            const actualRotation = degrees % 360;
+            const selectedIndex = Math.floor((actualRotation + rotationPerSegment / 2) / rotationPerSegment) % segments;
+            const selectedValue = wheel.querySelector(`.segment:nth-child(${selectedIndex + 1})`).textContent;
+            message.textContent = `You won ${selectedValue} coins!`;
+            createRibbons();
+            localStorage.setItem('lastSpin', now);
+          }, 20000);
+        })
+        .catch(error => console.error('Error:', error));
+      }
+
+      wheel.addEventListener('click', spinWheel);
+    });
   </script>
 </body>
 </html>
--->
