@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <title>ElitEarn</title>
+  <link rel="icon" href="logo.jpg" type="image/jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow-x: hidden;
+      text-decoration: none;
+    }
+    a {
+      text-decoration: none;
+    }
+    
+    header {
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      background: purple;
+      color: #fff;
+    }
+    .logo {
+      width: 30%;
+      height: 100%;
+      font-size: 1.2em;
+    }
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-header {
+      width: 30%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+    .menu-icon {
+      width: 70%;
+      font-size: 40px;
+      cursor: pointer;
+      padding: 20px;
+      text-align: right;
+    }
+    #dropdown-menu {
+     position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: purple;
+      color: white;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+    .dropdown-header {
+      height: 15%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: purple;
+      border-bottom: 2px solid white;
+    }
+    .close-icon {
+      cursor: pointer;
+      color: white;
+      font-size: 40px;
+      padding: 20px;
+      
+    }
+    nav ul {
+      list-style: none;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      margin: auto;
+    }
+    nav ul li {
+      margin: 20px auto;
+      cursor: pointer;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+      text-decoration: none;
+      font-weight: 600;
+      color: white;
+    }
+    nav ul .register {
+      width: 30%;
+      height: 40%;
+      border-radius: 10px;
+      margin: auto;
+      justify-content: center;
+      text-align: center;
+    }
+    nav ul .register a {
+      width: 100%;
+      color: purple;
+      text-align: center;
+      margin: auto;
+    }
+    nav ul li a {
+      color: white;
+    }
+    main {
+      margin: auto;
+      height: 100vh;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .user-welcome {
+      height: 10%;
+      width: 80%;
+      margin: 0 auto;
+      padding: 5px;
+      display: flex;
+      flex-direction: row;
+    }
+    .profile {
+      width: 10%;
+      height: 60%;
+      object-fit: cover;
+    }
+    .profile img {
+      width: 30%;
+      height: 100%;
+      border: 2px solid white;
+      border-radius: 50%;
+      object-fit: cover;
+      padding: 5px;
+    }
+    .user-welcome b {
+      height: 100%;
+      width: 40%;
+      text-align: left;
+      color: black;
+      font-size: 20px;
+      margin-top: 10px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .profile-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 95%;
+      margin: auto;
+      height: 80%;
+      border: none;
+      padding: 10px;
+    }
+    .profile-top h1 {
+      font-size: 16;
+      text-align: center;
+      color: purple;
+      grid-column: 1 / -1;
+    }
+    .wallet {
+      margin: auto;
+      width: 90%;
+      height: 40%;
+      position: relative;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 0.2px solid purple;
+    }
+    .wallet h3{
+      margin: 0;
+      font-weight: bold;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    .wallet .withdraw-button {
+      align-self: flex-end;
+      padding: 6px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .withdraw-form {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .withdraw-form input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .withdraw-form .close-button {
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .referralLink {
+      margin: auto;
+      width: 90%;
+      height: 40%;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .referralLink span {
+      font-size: 16px;
+      color: purple;
+    }
+    .social {
+      margin: auto;
+      width: 90%;
+      height: 40%;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      /*border-bottom: 0.1px solid purple;*/
+    }
+    .social h1 {
+      font-size: 20px;
+      padding: 0 2px;
+      height: 30%;
+    }
+    .social-logo {
+      display: flex;
+      flex-direction: row;
+      height: 50%;
+      width: 80%;
+      position: relative;
+      margin: auto;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .social-logo a {
+      font-size: 30px;
+      cursor: pointer;
+      color: purple;
+    }
+    .activity-buttons {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+    .activity-buttons button {
+      padding: 5px 10px;
+      background: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .spin-wheel, .earn-bonus {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      text-align: center;
+    }
+    .spin-wheel .close-button, .earn-bonus .close-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    footer {
+      height: 10%;
+      background: rgb(255, 255, 255);
+      border-top: 0.2px solid purple;
+      text-align: center;
+      color: purple;
+      border-radius: 10px;
+    }
+    footer p {
+      margin: 50px auto;
+      font-size: 20px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    @media (max-width: 768px) {
+      .logo {
+        width: 60%;
+        height: 100%;
+      }
+      .profile{
+        height: 50%;
+        width: 10%;
+        padding: 5px;
+      }
+      .profile img {
+        height: 100%;
+        width: 80%;
+         margin: auto;
+         object-fit: cover;
+      }
+      .user-welcome b {
+      height: 100%;
+      width: 40%;
+      text-align: left;
+      color: black;
+      font-size: 14px;
+      margin-top: 20px;
+      font-family: 'Times New Roman', Times, serif;
+    }
+      .notify {
+        font-size: 30px;
+        height: 10%;
+        color: purple;
+        margin: auto;
+      }
+      footer {
+        height: 10%;
+        border-top: 2px solid purple;
+        text-align: center;
+        color: purple;
+      }
+      footer p {
+        margin: 50px auto;
+        font-size: 20px;
+        font-family: 'Times New Roman', Times, serif;
+      }
+    }
+
+
+
+    .spin-wheel, .earn-bonus {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      text-align: center;
+    }
+    .spin-wheel .close-button, .earn-bonus .close-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #fullPageArea {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            margin: auto;
+        }
+        #exitButton{
+          padding: 6px 20px;
+          font-size: 16px;
+          background-color: purple;
+          color: white;
+          border: none;
+        }
+    
+
+        .wheel-container {
+      position: relative;
+      width: 30%;
+      height: 50%;
+      margin: auto;
+      padding: 40px;
+      margin-top: 5%;
+    }
+
+    .basement {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle, gold 30%, transparent 31%), radial-gradient(circle, gold 30%, transparent 31%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .inner-basement {
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #ffd700, #ffac1c);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .wheel {
+      width: 85%;
+      height: 85%;
+      border-radius: 50%;
+      background: purple;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transform: rotate(0deg);
+      transition: transform 20s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      background: purple;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      clip-path: polygon(100% 0, 0 0, 50% 100%);
+      border: 4px solid gold;
+      transform: rotate(calc(360deg / 17 * var(--i))) translateY(-100%);
+    }
+
+    .stopper {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 20px solid white;
+      transform: translateX(-50%);
+    }
+
+    .message {
+      position: absolute;
+      bottom: -70px;
+      left: 60%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: green;
+      text-align: center;
+    }
+
+    .ribbon {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      animation: spread 2s ease-out;
+      opacity: 0;
+    }
+
+    @keyframes spread {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(10);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body id="dashboard">
+  
+  <header>
+    <div class="logo">
+      <img src="logo.jpg" alt="Logo">
+    </div>
+    <div class="user-header">
+      <i class="fa fa-bars menu-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
+  </header>
+  <div id="dropdown-menu">
+    <div class="dropdown-header">
+      <div class="logo">
+        <img src="logo.jpg" alt="Logo">
+      </div>
+      <i class="fa fa-times close-icon" onclick="toggleDropdownMenu()"></i>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#home" id="showUserInfo">Profile</a></li>
+        <li><a href="#" id="earnHistory">Earnings</a></li>
+        <li><a href="#" id="topEarners">Top Earners</a></li>
+        <li class=""><a href="#">Courses</a></li>
+        <li><a href="#" id="openFullPageButton">Lucky Wheel</a></li>
+        <li><a href="#" id="openFullPageButton">Daily Tasks</a></li>
+        <li class="logout" ><a href="#">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+
+
+
+  <main>
+    <div class="user-welcome">
+      <span class="profile">
+        <img src="profile0.png" alt="profile" id="profile">
+      </span>
+      <b>Hi,  <span id="username"></span></b>
+    </div>
+
+
+    <section class="profile-top">
+      <div class="wallet">
+       <h3>NGN: <b id="wallet"></b>  <!--<b class="balance">Balance</b>--></h3>
+       <h4 > EC: <b id="referralWallet"></b>   <!--<b class="bonus">Bonus</b>--></h4>
+       <button class="withdraw-button" onclick="openWithdrawForm()">Withdraw</button>
+      </div>   
+   
+       <div class="referralLink">
+        <span><b>Share Your referral Link to Earn</b> </span><br/>
+        <a id="referralLink" href=""><b id="referralLink"></b></a>
+       </div>
+
+       <div class="social">
+        <h1>Join our Socials for Update</h1>
+        <div class="social-logo">
+          <a href="https://www.facebook.com/profile.php?id=61558977133876" target="_blank" class="fa-brands fa-facebook purple"></a>
+          <a href="https://www.instagram.com/eliteearnofficial?igsh=ZzdseGpmN3ZoYnht" target="_blank" class="fa-brands fa-instagram purple"></a>
+          <a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok purple"></a>
+          <!--<a href="https://wa.me/+2349117499173" target="_blank" class="fa-brands fa-whatsapp"></a>-->
+          <a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube purple"></a>
+          <a href="https://t.me/+iXU1lq5siDg0OTA0" target="_blank" class="fa-brands fa-telegram purple"></a>
+        </div>
+      </div>
+
+     </section>
+
+     <div id="fullPageArea">
+      <button id="exitButton">Exit</button>
+
+
+      
+      <!--area for full page content -->
+
+
+      
+  <div class="wheel-container">
+    <div class="basement">
+      <div class="inner-basement">
+        <div class="wheel" id="wheel">
+          <div class="segment" style="--i:0;">0</div>
+          <div class="segment" style="--i:1;">1</div>
+          <div class="segment" style="--i:2;">5</div>
+          <div class="segment" style="--i:3;">8</div>
+          <div class="segment" style="--i:4;">10</div>
+          <div class="segment" style="--i:5;">50</div>
+          <div class="segment" style="--i:6;">20</div>
+          <div class="segment" style="--i:7;">100</div>
+          <div class="segment" style="--i:8;">150</div>
+          <div class="segment" style="--i:9;">250</div>
+          <div class="segment" style="--i:10;">500</div>
+          <div class="segment" style="--i:11;">350</div>
+          <div class="segment" style="--i:12;">25</div>
+          <div class="segment" style="--i:13;">430</div>
+          <div class="segment" style="--i:14;">400</div>
+          <div class="segment" style="--i:15;">380</div>
+          <div class="segment" style="--i:16;">450</div>
+        </div>
+        <div class="stopper"></div>
+      </div>
+    </div>
+    <div class="message" id="message"></div>
+  </div>
+  </div>
+   
+  </main>
+  
+  <footer>
+    <p> &copy; 2024 <a href="index.html">Elitearn</a>. All rights reserved.</p>
+  </footer>
+
+  <script>
+const API_URL = `https://elitearn.onrender.com`;
+
+const fetchUserData = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user-details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('username').textContent = data.user.username;
+            document.getElementById('wallet').textContent = data.user.wallet;
+            document.getElementById('referralWallet').textContent = data.user.referralWallet;
+            document.getElementById('referralLink').textContent = data.user.referralLink;
+            document.getElementById('referralLink').href = data.user.referralLink;
+        } else {
+            alert('Login to access your dashboard');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        alert('An error occurred while fetching user data');
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    }
+};
+
+// Fetch user data when the page loads
+window.onload = fetchUserData;
+
+
+document.getElementById('openFullPageButton').addEventListener('click', function() {
+            document.getElementById('fullPageArea').style.display = 'block';
+        });
+
+        document.getElementById('exitButton').addEventListener('click', function() {
+            document.getElementById('fullPageArea').style.display = 'none';
+        });
+
+    function toggleDropdownMenu() {
+      const menu = document.getElementById('dropdown-menu');
+      if (menu.style.left === '0px') {
+        menu.style.left = '-100%';
+      } else {
+        menu.style.left = '0';
+      }
+    }
+
+    function toggleWithdrawForm() {
+      const form = document.getElementById('withdraw-form');
+      if (form.style.display === 'block') {
+        form.style.display = 'none';
+      } else {
+        form.style.display = 'block';
+      }
+    }
+
+    function withdrawFunds() {
+      const amount = document.getElementById('withdraw-amount').value;
+      alert(`Withdrawing ${amount} coins`);
+      toggleWithdrawForm();
+    }
+
+    function toggleSpinWheel() {
+      const wheel = document.getElementById('spin-wheel');
+      if (wheel.style.display === 'block') {
+        wheel.style.display = 'none';
+      } else {
+        wheel.style.display = 'block';
+      }
+    }
+
+    function toggleEarnBonus() {
+      const bonus = document.getElementById('earn-bonus');
+      if (bonus.style.display === 'block') {
+        bonus.style.display = 'none';
+      } else {
+        bonus.style.display = 'block';
+      }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const wheel = document.getElementById('wheel');
+      const message = document.getElementById('message');
+      const lastSpin = localStorage.getItem('lastSpin');
+      const now = new Date().getTime();
+      const segments = 17;
+      const rotationPerSegment = 360 / segments;
+
+      if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+        message.textContent = 'You can spin again in 24 hours';
+      }
+
+      function createRibbons() {
+        const shapes = ['ribbon', 'balloon', 'flower'];
+        const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+
+        for (let i = 0; i < 200; i++) {
+          const shape = document.createElement('div');
+          shape.className = 'ribbon';
+          shape.style.left = `${Math.random() * 100}%`;
+          shape.style.top = `${Math.random() * 100}%`;
+          shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          document.body.appendChild(shape);
+          setTimeout(() => shape.remove(), 2000);
+        }
+      }
+
+      function spinWheel() {
+        const lastSpin = localStorage.getItem('lastSpin');
+        const now = new Date().getTime();
+
+        if (lastSpin && (now - lastSpin) < 24 * 60 * 60 * 1000) {
+          alert('You can spin again in 24 hours');
+          return;
+        }
+
+        fetch(`${API_URL}/spin`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':  `Bearer ${token}` // Adjust as needed
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const amount = data.amount;
+          const randomIndex = segments.findIndex(value => value === amount);
+          const degrees = (rotationPerSegment * randomIndex) + (360 * 10); // Spin multiple times for effect
+          wheel.style.transform = `rotate(${degrees}deg)`;
+
+          setTimeout(() => {
+            const actualRotation = degrees % 360;
+            const selectedIndex = Math.floor((actualRotation + rotationPerSegment / 2) / rotationPerSegment) % segments;
+            const selectedValue = wheel.querySelector(`.segment:nth-child(${selectedIndex + 1})`).textContent;
+            message.textContent = `You won ${selectedValue} coins!`;
+            createRibbons();
+            localStorage.setItem('lastSpin', now);
+          }, 20000);
+        })
+        .catch(error => console.error('Error:', error));
+      }
+
+      wheel.addEventListener('click', spinWheel);
+    });
+  </script>
+</body>
+</html>
