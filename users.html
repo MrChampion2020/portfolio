@@ -6,7 +6,6 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-
   <title>ElitEarn</title>
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -18,6 +17,7 @@
       height: 100%;
       overflow-x: hidden;
       text-decoration: none;
+      background-color: purple;
     }
     a {
       text-decoration: none;
@@ -31,6 +31,7 @@
       padding: 0 20px;
       background: purple;
       color: #fff;
+      border-bottom: 1px solid white;
     }
     .logo {
       width: 30%;
@@ -49,7 +50,7 @@
       flex-direction: row;
     }
     .menu-icon {
-      width: 70%;
+      width: 80%;
       font-size: 40px;
       cursor: pointer;
       padding: 20px;
@@ -119,12 +120,14 @@
     }
     main {
       margin: auto;
-      height: 100vh;
-      width: 90%;
+      height: 70%;
+      width: 80%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       margin-bottom: 10px;
+      background-color: rgb(248, 216, 248);
+      border-radius: 10px;
     }
     .user-welcome {
       height: 10%;
@@ -157,11 +160,11 @@
       font-family: 'Times New Roman', Times, serif;
     }
     .profile-top {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       width: 95%;
       margin: auto;
-      height: 80%;
+      height: 90%;
       border: none;
       padding: 10px;
     }
@@ -226,10 +229,11 @@
     .referralLink {
       margin: auto;
       width: 90%;
-      height: 40%;
+      height: 15%;
       position: relative;
       border-radius: 10px;
       text-align: center;
+      padding: 10px;
     }
     .referralLink span {
       font-size: 16px;
@@ -301,18 +305,24 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    footer {
+    footer{
+      margin: auto;
+      width: 80%;
       height: 10%;
-      background: rgb(255, 255, 255);
+      background-color: purple;
       border-top: 0.2px solid purple;
       text-align: center;
-      color: purple;
+      color: rgb(255, 255, 255);
       border-radius: 10px;
+      border-top: 0.2px solid white;
     }
     footer p {
       margin: 50px auto;
       font-size: 20px;
       font-family: 'Times New Roman', Times, serif;
+    }
+    footer p a{
+      color: white;
     }
     @media (max-width: 768px) {
       .logo {
@@ -347,9 +357,12 @@
       }
       footer {
         height: 10%;
-        border-top: 2px solid purple;
+        border-top: 2px solid rgb(255, 255, 255);
         text-align: center;
-        color: purple;
+        color: rgb(255, 255, 255);
+        background-color: purple;
+        border: 1px solid red;
+        
       }
       footer p {
         margin: 50px auto;
@@ -503,8 +516,20 @@
         opacity: 0;
       }
     }
+
+
+    @media (max-width: 600px) {
+      .message {
+        font-size: 3vw;
+        bottom: -50px;
+      }
+      .segment {
+        font-size: 3vw;
+      }
+    }
   </style>
 </head>
+
 <body id="dashboard">
   
   <header>
@@ -515,7 +540,9 @@
       <i class="fa fa-bars menu-icon" onclick="toggleDropdownMenu()"></i>
     </div>
   </header>
+
   <div id="dropdown-menu">
+
     <div class="dropdown-header">
       <div class="logo">
         <img src="logo.jpg" alt="Logo">
@@ -538,6 +565,7 @@
 
 
   <main>
+
     <div class="user-welcome">
       <span class="profile">
         <img src="profile0.png" alt="profile" id="profile">
