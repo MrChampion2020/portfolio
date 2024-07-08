@@ -145,7 +145,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
                 const data = await response.json();
                 localStorage.setItem('token', data.token);
                 /*alert('Login successful');*/
-                window.location.href = 'users.html';
+                window.location.href = 'dashboard.html';
             } else {
           alert.style.display = "block";
           alert.style.backgroundColor = "white";
