@@ -232,46 +232,8 @@
       background-color: #3b2735;
       transform: translate(-50px, 50px);
     }
-    @media (max-width: 768px) {
-      .circle {
-        width: 40%;
-        height: 80%;
-        margin: auto;
-      }
-      .bubble {
-        width: 30px;
-        height: 30px;
-      }
-      .bubble:nth-child(1) {
-        transform: translate(0, -55px);
-      }
-      .bubble:nth-child(2) {
-        transform: translate(55px, 0);
-      }
-      .bubble:nth-child(3) {
-        transform: translate(0, 55px);
-      }
-      .bubble:nth-child(4) {
-        transform: translate(-55px, 0);
-      }
-      .bubble:nth-child(5) {
-        transform: translate(35%, -35%);
-      }
-      .bubble:nth-child(6) {
-        transform: translate(50%, -50%);
-      }
-
-      .more{
-        width: 40%;
-        padding: 20px;
-      }
-    }
-
     
-
-
-
-
+    
     .sliding-page {
       margin: auto;
       position: fixed;
@@ -603,6 +565,73 @@
       height: 90%;
     }
 
+
+
+    @media (max-width: 768px) {
+      
+      main{
+  /*border: 1px solid black;*/
+  width: 100%;
+  height: 85%;
+  margin: auto;
+  position: absolute;
+  top: 5%;
+  left: 0%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+ }
+ .topsection h4{
+  font-size: 14px;
+  text-align: center;
+  width: 50%;
+  padding: 5px;
+ }
+ .bottomsection p{
+  width: 80%;
+  font-size: 14px;
+  padding: 10px;
+  text-align: center;
+ }
+ .bottomsection h1{
+  font-size: 14px;
+  font-weight: 600;
+ }
+      .circle {
+        width: 40%;
+        height: 80%;
+        margin: auto;
+      }
+      .bubble {
+        width: 30px;
+        height: 30px;
+      }
+      .bubble:nth-child(1) {
+        transform: translate(0, -55px);
+      }
+      .bubble:nth-child(2) {
+        transform: translate(55px, 0);
+      }
+      .bubble:nth-child(3) {
+        transform: translate(0, 55px);
+      }
+      .bubble:nth-child(4) {
+        transform: translate(-55px, 0);
+      }
+      .bubble:nth-child(5) {
+        transform: translate(35%, -35%);
+      }
+      .bubble:nth-child(6) {
+        transform: translate(50%, -50%);
+      }
+
+      .more{
+        width: 40%;
+        padding: 20px;
+      }
+
+    }
+
 </style>
 </head>
 <body>
@@ -639,6 +668,7 @@
 
     </section>
 
+
     <section class="bottomsection">
 
       <h1>Building Dreams</h1>
@@ -649,7 +679,6 @@
         projects in web & mobile.
       </p>
       
-
     </section>
 
     
