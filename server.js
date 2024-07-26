@@ -37,6 +37,44 @@ mongoose.connect(process.env.MONGO_URI, {})
 
 
   // Auths
+// Handle form submission
+app.post('/send-email', (req, res) => {
+  const { name, email, message } = req.body;
+
+  // Set up Nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail', // You can use other email services
+    auth: {
+      user: process.env.EMAIL_USER, // Your email address
+      pass: process.env.EMAIL_PASS  // Your email password
+    }
+  });
+
+  // Email options
+  const mailOptions = {
+    from: email,
+    to: process.env.RECEIVER_EMAIL, // Your email address to receive the form data
+    subject: `Sir Champion mail From ${name}`,
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+  };
+
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Error sending email');
+    } else {
+      console.log('Email sent:', info.response);
+      /*res.send('Email sent successfully');*/
+    }
+  });
+});
+
+
+
+
+
+
 
 //user
 
