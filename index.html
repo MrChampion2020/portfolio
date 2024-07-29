@@ -194,7 +194,7 @@
  .circle {
       position: relative;
       width: 90%;
-      height: 90%;
+      height: 70%;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -341,6 +341,425 @@
       /*box-shadow: 1px 1px 4px 2px rgb(163, 162, 162);*/
       position: relative;
       top: 15%;
+      right: 5%;
+    }
+    .profilebottomleft img{
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+    }
+    .profilebottomright{
+      box-shadow: 1px 1px 4px 2px rgba(211, 210, 210, 0.445);
+      width: 40%;
+      height: 90%;
+      border-radius: 10px;
+      /*border: 1px solid rgb(0, 0, 0);*/
+      background-color: rgb(255, 255, 255);
+      position: relative;
+      top: 0%;
+      padding: 5px;
+      margin: auto;
+    }
+   .profilebottomright h1{
+    height: 60%;
+    width: 90%;
+    margin: auto;
+    font-size: 60px;
+    color: rgb(0, 0, 0);
+   }
+    
+
+    .contained {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    width: 100%;
+    height: 60%;
+    position: relative;
+    margin: auto;
+}
+
+.letter {
+    font-size: 5rem;
+    position: relative;
+    opacity: 0;
+    transition: opacity 1s, transform 5s;
+}
+
+.letter i {
+    position: absolute;
+    font-size: 2rem;
+    transition: all 2s;
+}
+
+#f i { bottom: 20%; left: 50%; transform: translateX(-50%); }
+#r i { bottom: 50%; left: 50%; transform: translateX(-50%); }
+#o i { top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); }
+#n1 i { bottom: -90%; left: 50%; transform: translateX(-50%); }
+#t i { bottom: 50%; left: 50%; transform: translateX(-50%); }
+#e i { bottom: 20%; left: 50%; transform: translateX(-50%) translateY(-50%); }
+#n2 i { bottom: 20%; left: 50%; transform: translateX(-50%); }
+#d i { top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); }
+
+.show {
+    opacity: 1;
+}
+
+#n1.show i, #n2.show i {
+    bottom: 0;
+}
+
+#o.show i, #d.show i {
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+    
+    
+    /*
+    .profilebottomright p{
+      width: 100%;
+      height: 10%;
+      text-align: left;
+      line-height: 10px;
+    }
+   /* .profilebottomright div{
+      width: 50%;
+      height: 20%;
+      border: 1px solid white;
+    }*/
+
+    #contactContent{
+      width: 70%;
+      height: 70%;
+      padding: 20px;
+      margin: auto;
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      border-radius: 20px;
+    }
+    .formarea{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contactop{
+      width: 100%;
+      height: 60%;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: row;
+      margin: auto;
+    }
+    .contactcard{
+      width: 70%;
+      height: 10%;
+      background-color: #ffffff;
+      border-radius: 20px;
+      display: flex;
+      float: column;
+      position: relative;
+      margin: auto;
+    }
+    /*.contactcardtop{
+     /* width: 100%;
+      height: 10%;
+      border: 1px solid white;
+      position: relative;*
+    }*/
+    .social {
+      margin: auto;
+      width: 90%;
+      height: 10%;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+      background-color: white;
+      /*border-bottom: 0.1px solid purple;*/
+    }
+    .social-logo {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      width: 80%;
+      position: relative;
+      margin: auto;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .social-logo a {
+      font-size: 30px;
+      cursor: pointer;
+      color: black;
+      text-decoration: none;
+      box-shadow: 1px 1px 4px 2px rgba(53, 52, 52, 0);
+    }
+    
+    .contactdesign{
+      width: 65%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      background-color: #000000;
+      border-radius: 20px;
+    }
+    .box {
+      position: relative;
+      width: 80%;
+      height: 80%;
+      border-radius:  5px;
+    }
+
+    .box div {
+      position: absolute;
+    }
+
+    /* Define the sizes and positions of the nested boxes */
+    .box div:nth-child(1) {
+      background-color: white; /* Start as white */
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .box div:nth-child(2) {
+      background-color: black; /* Start as black */
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      border-radius: 5px;
+    }
+
+    .box div:nth-child(3) {
+      background-color: white; /* Start as white */
+      width: 60%;
+      height: 60%;
+      top: 20%;
+      left: 20%;
+      border-radius: 5px;
+    }
+
+    .box div:nth-child(4) {
+      background-color: black; /* Start as black */
+      width: 40%;
+      height: 40%;
+      top: 28.4%;
+      left: 28.4%;
+      border-radius: 5px;
+    }
+
+    .box div:nth-child(5) {
+      background-color: white; /* Start as white */
+      width: 20.96%;
+      height: 20.96%;
+      top: 36.52%;
+      left: 36.52%;
+      border-radius: 5px;
+    }
+
+    .box div:nth-child(6) {
+      background-color: black; /* Start as black */
+      width: 10.768%;
+      height: 10.768%;
+      top: 41.62%;
+      left: 41.62%;
+      border-radius: 5px;
+    }
+
+    .formdata{
+      width: 35%;
+      height: 100%;
+      margin: auto;
+      padding: 10px;
+    }
+    .formdata h2{
+      font-size: 16px;
+      text-align: center;
+    }
+    .contact-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: auto;
+    }
+    .contact-form input, .contact-form textarea {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #bebebed5;
+      width: 90%;
+    }
+    .contact-form button {
+      width: 95%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: black;
+      color: white;
+      cursor: pointer;
+    }
+    .contact-form button:hover {
+      width: 95%;
+      padding: 10px;
+      border: 1px solid rgba(175, 175, 175, 0.842);
+      border-radius: 5px;
+      background-color: rgb(255, 255, 255);
+      color: rgb(0, 0, 0);
+      cursor: pointer;
+    }
+    .formdata .order{
+      padding: 10px;
+      position: relative;
+      margin: auto;
+      border: none;
+      background-color: #ffffff;
+      color: black;
+      text-align: center;
+    }
+    
+
+    .carousel {
+    position: relative;
+    width: 100%;
+    height: 80%;
+    background-color: #dddddd00;
+}
+#carousel1{
+  height: 10%;
+  width: 90%;
+}
+#carousel1 .slide{
+  height: 10%;
+  width: 80%;
+  font-size: 40px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: red;
+  font-weight: 600;
+  margin: auto;
+  text-align: left;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    opacity: 0;
+    transition: all 1s ease;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+    @media (max-width: 768px) {
+      
+      main{
+  /*border: 1px solid black;*/
+  width: 100%;
+  height: 85%;
+  margin: auto;
+  position: absolute;
+  top: 5%;
+  left: 0%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+ }
+ .topsection h4{
+  font-size: 14px;
+  text-align: center;
+  width: 50%;
+  padding: 5px;
+ }
+ .bottomsection p{
+  width: 80%;
+  font-size: 14px;
+  padding: 10px;
+  text-align: center;
+ }
+ .bottomsection h1{
+  font-size: 14px;
+  font-weight: 600;
+ }
+
+
+ /*media query for portfolio*/
+ .content {
+      padding: 10px;
+      display: none;
+      width: 100%;
+      height: 90%;
+      margin: auto;
+      transition: bottom 0.5s ease;
+      position: absolute;
+    }
+    .profiletop{
+      margin: auto;
+      width: 100%;
+      height: 45%;
+      display: flex;
+      flex-direction: row;
+    }
+    .profileright{
+      width: 45%;
+      border-radius: 30px;
+      height: 80%;
+      background-color: rgba(229, 230, 227, 0.849);
+      font-weight: 600;
+      margin-left: -8%;
+      color: rgb(0, 0, 0);
+    }
+    .profileright p{
+      font-size: 16px;
+      line-height: 20px;
+    }
+    .profileleft{
+      width: 48%;
+      border-radius: 50%;
+      height: 100%;
+      background-color: rgb(255, 255, 255);
+      position: relative;
+      height: 80%;
+      /*box-shadow: 1px 1px 4px 2px rgb(163, 162, 162);*/
+    }
+    .profileleft img{
+      object-fit: contain;
+      width: 90%;
+      height: 100%;
+    }
+    .profilebottom{
+      width: 60%;
+      height: 44%;
+      display: flex;
+      flex-direction: row;
+      margin: auto;
+    }
+    .profilebottomleft{
+      width: 40%;
+      height: 90%;
+      border-radius: 10px;
+      /*border: 1px solid rgb(0, 0, 0);*/
+      background-color: rgba(255, 255, 255, 0);
+      /*box-shadow: 1px 1px 4px 2px rgb(163, 162, 162);*/
+      position: relative;
+      top: 15%;
       right: 10%;
     }
     .profilebottomleft img{
@@ -373,34 +792,31 @@
     }*/
 
     #contactContent{
-      width: 60%;
+      width: 95%;
       height: 70%;
-      padding: 20px;
+      padding: 10px;
       margin: auto;
       display: flex;
-      flex-direction: row;
-      position: relative;
-      border-radius: 20px;
+      flex-direction: column;
+      position: absolute;
     }
     .formarea{
-      width: 70%;
+      width: 100%;
       height: 100%;
     }
     .contactop{
-      width: 100%;
-      height: 70%;
-      border-radius: 20px;
+      width: 90%;
+      height: 80%;
+      border-radius: 5px;
       display: flex;
       flex-direction: row;
       margin: auto;
     }
     .contactcard{
-      width: 50%;
-      height: 100%;
-      background-color: #000;
+      width: 90%;
+      height: 15%;
+      background-color: #ffffff;
       border-radius: 20px;
-      display: flex;
-      float: column;
       position: relative;
     }
     /*.contactcardtop{
@@ -411,8 +827,8 @@
     }*/
     .social {
       margin: auto;
-      width: 90%;
-      height: 10%;
+      width: 100%;
+      height: 100%;
       position: relative;
       border-radius: 10px;
       text-align: center;
@@ -422,183 +838,32 @@
       display: flex;
       flex-direction: row;
       height: 100%;
-      width: 80%;
+      width: 100%;
       position: relative;
       margin: auto;
       justify-content: space-around;
       align-items: center;
     }
     .social-logo a {
-      font-size: 20px;
+      font-size: 30px;
       cursor: pointer;
-      color: white;
+      color: rgb(0, 0, 0);
       text-decoration: none;
-      box-shadow: 1px 1px 4px 2px rgba(53, 52, 52, 0.445);
+      box-shadow: 1px 1px 4px 2px rgba(53, 52, 52, 0);
     }
     
     .contactdesign{
-      width: 50%;
-      height: 100%;
+      width: 60%;
+      height: 85%;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0;
+      margin: auto;
       background-color: #000000;
-      border-radius: 20px;
-    }
-    .box {
-      position: relative;
-      width: 80%;
-      height: 80%;
-    }
-
-    .box div {
-      position: absolute;
-    }
-
-    /* Define the sizes and positions of the nested boxes */
-    .box div:nth-child(1) {
-      background-color: white; /* Start as white */
-      width: 100%;
-      height: 100%;
-      border-radius: 20px;
-    }
-
-    .box div:nth-child(2) {
-      background-color: black; /* Start as black */
-      width: 80%;
-      height: 80%;
-      top: 10%;
-      left: 10%;
-      border-radius: 20px;
-    }
-
-    .box div:nth-child(3) {
-      background-color: white; /* Start as white */
-      width: 60%;
-      height: 60%;
-      top: 20%;
-      left: 20%;
-      border-radius: 20px;
-    }
-
-    .box div:nth-child(4) {
-      background-color: black; /* Start as black */
-      width: 40%;
-      height: 40%;
-      top: 28.4%;
-      left: 28.4%;
-      border-radius: 20px;
-    }
-
-    .box div:nth-child(5) {
-      background-color: white; /* Start as white */
-      width: 20.96%;
-      height: 20.96%;
-      top: 36.52%;
-      left: 36.52%;
-      border-radius: 20px;
-    }
-
-    .box div:nth-child(6) {
-      background-color: black; /* Start as black */
-      width: 10.768%;
-      height: 10.768%;
-      top: 41.62%;
-      left: 41.62%;
-      border-radius: 20px;
-    }
-
-    .formdata{
-      width: 30%;
-      height: 100%;
-      margin: auto;
-    }
-    .formdata h2{
-      font-size: 16px;
-      text-align: center;
-    }
-    .contact-form {
-      width: 80%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: auto;
-    }
-    .contact-form input, .contact-form textarea {
-      padding: 10px;
       border-radius: 5px;
-      border: 1px solid #000000;
-      width: 90%;
     }
-    .contact-form button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: black;
-      color: white;
-      cursor: pointer;
-    }
-    .contact-form button:hover {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid black;
-      border-radius: 5px;
-      background-color: rgb(255, 255, 255);
-      color: rgb(0, 0, 0);
-      cursor: pointer;
-    }
-    .formdata .order{
-      padding: 10px;
-      position: relative;
-      left: 80px;
-      border: none;
-      background-color: #ffffff;
-      color: black;
-    }
-    
-    #projectsContent{
-      width: 60%;
-      position: relative;
-      width: 100%;
-      height: 90%;
-    }
-
-
-
-    @media (max-width: 768px) {
-      
-      main{
-  /*border: 1px solid black;*/
-  width: 100%;
-  height: 85%;
-  margin: auto;
-  position: absolute;
-  top: 5%;
-  left: 0%;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
- }
- .topsection h4{
-  font-size: 14px;
-  text-align: center;
-  width: 50%;
-  padding: 5px;
- }
- .bottomsection p{
-  width: 80%;
-  font-size: 14px;
-  padding: 10px;
-  text-align: center;
- }
- .bottomsection h1{
-  font-size: 14px;
-  font-weight: 600;
- }
       .circle {
-        width: 40%;
+        width: 35%;
         height: 80%;
         margin: auto;
       }
@@ -607,16 +872,16 @@
         height: 30px;
       }
       .bubble:nth-child(1) {
-        transform: translate(0, -55px);
+        transform: translate(0, -45px);
       }
       .bubble:nth-child(2) {
-        transform: translate(55px, 0);
+        transform: translate(45px, 0);
       }
       .bubble:nth-child(3) {
-        transform: translate(0, 55px);
+        transform: translate(0, 45px);
       }
       .bubble:nth-child(4) {
-        transform: translate(-55px, 0);
+        transform: translate(-45px, 0);
       }
       .bubble:nth-child(5) {
         transform: translate(35%, -35%);
@@ -705,12 +970,7 @@
 
   <div class="profileright">
 
-    <p>Front End</p>
-    <p>Back End</p>
-    <p>Full Stack</p>
-    <p>Mern Stack</p>
-
-    
+   
 
   </div>
 </div>
@@ -720,18 +980,54 @@
 <div class="profilebottom"><!--bottom container-->
 
   <div class="profilebottomright">
- 
-    <p>Responsive Websites</p>
-    <p>E-commerce Platforms</p>
-    <p>Mobile App</p>
 
-    <div></div>
+    <h1>We
+      <br>
+      Build
+    </h1>
+    <div id="carousel1" class="carousel">
+      <div class="slide">Responsive</div>
+      <div class="slide">Secure</div>
+      <div class="slide">Fast</div>
+      <div class="slide">Cross Platform</div>
+      <div class="slide">Vast</div>
+  </div>
   </div>
 
   <div class="profilebottomleft">
 
+    <div id="carousel2" class="carousel">
+      <div class="slide">
+        <div class="contained">
+          <div id="f" class="letter">F<i class="fas fa-fish"></i></div>
+          <div id="r" class="letter">R<i class="fas fa-rain"></i></div>
+          <div id="o" class="letter">O<i class="fas fa-child"></i></div>
+          <div id="n1" class="letter">N<i class="fas fa-water"></i></div>
+          <div id="t" class="letter">T<i class="fas fa-tree"></i></div>
+          <div id="e" class="letter">E<i class="fas fa-bell"></i></div>
+          <div id="n2" class="letter">N<i class="fas fa-water"></i></div>
+          <div id="d" class="letter">D<i class="fas fa-male"></i></div>
+      </div>
+      </div>
+      <div class="slide"> <div class="contained">
+        <div id="f" class="letter">F<i class="fas fa-fish"></i></div>
+        <div id="r" class="letter">R<i class="fas fa-rain"></i></div>
+        <div id="o" class="letter">O<i class="fas fa-child"></i></div>
+        <div id="n1" class="letter">N<i class="fas fa-water"></i></div>
+        <div id="t" class="letter">T<i class="fas fa-tree"></i></div>
+        <div id="e" class="letter">E<i class="fas fa-bell"></i></div>
+        <div id="n2" class="letter">N<i class="fas fa-water"></i></div>
+        <div id="d" class="letter">D<i class="fas fa-male"></i></div>
+    </div></div>
+      <div class="slide">Slide 3B</div>
+      <div class="slide">Slide 4B</div>
+      <div class="slide">Slide 5B</div>
 
-    <img src="web.jpg" alt="">
+  </div>
+
+  <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+    <button id="pausePlayBtn">Pause</button>
 
   </div>
 </div>
@@ -751,62 +1047,63 @@
 
       <div class="contactop">
 
-        <div class="contactcard">
-
-          <div class="contactcardtop">
-
-            <div id="screen" class="screen">
-
-            </div>
-          </div>
-          <div class="social">
-
-            <div class="social-logo">
-              <a href="https://www.facebook.com/profile.php?id=61558977133876" target="_blank" class="fa-brands fa-facebook "></a>
-              <a href="https://www.instagram.com/eliteearnofficial?igsh=ZzdseGpmN3ZoYnht" target="_blank" class="fa-brands fa-instagram "></a>
-              <a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok "></a>
-              <!--<a href="https://wa.me/+2349117499173" target="_blank" class="fa-brands fa-whatsapp"></a>-->
-              <a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube "></a>
-              <a href="https://t.me/+iXU1lq5siDg0OTA0" target="_blank" class="fa-brands fa-telegram "></a>
-            </div>
-          
-          </div>
-        </div>
         <div class="contactdesign">
-
           <div class="box">
+
             <div></div>
             <div></div>
             <div></div>
             <div></div>
             <div></div>
             <div></div>
+
           </div>
-        </div>
+        </div><!--contactdesign closing-->
 
-      </div>
-  
+
+
+        <div class="formdata">
+          <h2>Send a Mail</h2>
+          <form class="contact-form" action="/send-email" method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" placeholder="Message" rows="5" required></textarea>
+            <button type="submit">Send</button>
+          </form>
+          <button class="order">Order a service</button>
+          </div>
       
+
+
+
+    </div><!--contactop closing-->
+
+
+
+
+
+      <div class="contactcard">
+        <div class="social">
+          <div class="social-logo">
+            <a href="https://www.facebook.com/profile.php?id=61558977133876" target="_blank" class="fa-brands fa-facebook "></a>
+            <a href="https://www.instagram.com/eliteearnofficial?igsh=ZzdseGpmN3ZoYnht" target="_blank" class="fa-brands fa-instagram "></a>
+            <a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok "></a>
+            <!--<a href="https://wa.me/+2349117499173" target="_blank" class="fa-brands fa-whatsapp"></a>-->
+            <a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube "></a>
+            <a href="https://t.me/+iXU1lq5siDg0OTA0" target="_blank" class="fa-brands fa-telegram "></a>
+          </div>
+        </div>  
+    </div> <!--contactcard closing-->
     
-  </div>
-  
-  
-    <div class="formdata">
-      
-    <h2>Send a Mail</h2>
-    <form class="contact-form" action="/send-email" method="POST">
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <textarea name="message" placeholder="Message" rows="5" required></textarea>
-      <button type="submit">Send</button>
-    </form>
 
-    <button class="order">Order a service</button>
-    </div>
 
-    </div>
+    </div><!--formarea closing-->
 
- </div>
+ </div><!--contactContent closing-->
+
+
+
+
 
 <!--
   <div class="content" id="projectsContent">
@@ -829,12 +1126,12 @@
 document.addEventListener('DOMContentLoaded', () => {
       const bubbles = document.querySelectorAll('.bubble');
       const positions = [
-        { transform: 'translate(0, -100px)' },
-        { transform: 'translate(100px, 0)' },
-        { transform: 'translate(0, 100px)' },
-        { transform: 'translate(-100px, 0)' },
-        { transform: 'translate(50px, -50px)' },
-        { transform: 'translate(-50px, 50px)' }
+        { transform: 'translate(0, -70px)' },
+        { transform: 'translate(70px, 0)' },
+        { transform: 'translate(0, 70px)' },
+        { transform: 'translate(-70px, 0)' },
+        { transform: 'translate(40px, -40px)' },
+        { transform: 'translate(-40px, 40px)' }
       ];
       let currentIndex = 0;
 
@@ -852,7 +1149,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const newPositionIndex = (index + currentIndex) % positions.length;
           bubble.style.transform = positions[newPositionIndex].transform;
         });
-        setTimeout(moveBubbles, 600);
+        setTimeout(moveBubbles, 1800);
       }
 
       updateBubbleSizes();
@@ -977,7 +1274,120 @@ document.addEventListener('DOMContentLoaded', () => {
           box.style.backgroundColor = box.style.backgroundColor === 'black' ? 'white' : 'black';
         }
       });
-    }, 500);
+    }, 4000);
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const elements = [
+        { id: 'f', delay: 3000 },
+        { id: 'r', delay: 1900 },
+        { id: 'o', delay: 2400 },
+        { id: 'n1', delay: 1900 },
+        { id: 't', delay: 5300 },
+        { id: 'e', delay: 3900 },
+        { id: 'n2', delay: 4300 },
+        { id: 'd', delay: 4800 }
+    ];
+
+    elements.forEach(({ id, delay }) => {
+        setTimeout(() => {
+            const element = document.getElementById(id);
+            element.classList.add('show');
+        }, delay);
+    });
+
+    setInterval(() => {
+        elements.forEach(({ id, delay }) => {
+            setTimeout(() => {
+                const element = document.getElementById(id);
+                element.classList.remove('show');
+                setTimeout(() => {
+                    element.classList.add('show');
+                }, 50);
+            }, delay);
+        });
+    }, 4000);
+});
+
+
+
+let currentIndex = 0;
+let interval;
+let isPaused = false;
+
+const slides1 = document.querySelectorAll('#carousel1 .slide');
+const slides2 = document.querySelectorAll('#carousel2 .slide');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pausePlayBtn = document.getElementById('pausePlayBtn');
+
+const showSlide = index => {
+    slides1.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    slides2.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+};
+
+const nextSlide = () => {
+    currentIndex = (currentIndex + 1) % slides1.length;
+    showSlide(currentIndex);
+};
+
+const prevSlide = () => {
+    currentIndex = (currentIndex - 1 + slides1.length) % slides1.length;
+    showSlide(currentIndex);
+};
+
+const startAutoSlide = () => {
+    interval = setInterval(nextSlide, 4000);
+};
+
+const pauseAutoSlide = () => {
+    clearInterval(interval);
+};
+
+pausePlayBtn.addEventListener('click', () => {
+    if (isPaused) {
+        startAutoSlide();
+        pausePlayBtn.textContent = 'Pause';
+    } else {
+        pauseAutoSlide();
+        pausePlayBtn.textContent = 'Play';
+    }
+    isPaused = !isPaused;
+});
+
+prevBtn.addEventListener('click', prevSlide);
+nextBtn.addEventListener('click', nextSlide);
+
+let touchStartX = 0;
+
+const handleTouchStart = e => {
+    touchStartX = e.changedTouches[0].screenX;
+};
+
+const handleTouchEnd = e => {
+    const touchEndX = e.changedTouches[0].screenX;
+    if (touchStartX - touchEndX > 50) {
+        nextSlide();
+    } else if (touchEndX - touchStartX > 50) {
+        prevSlide();
+    }
+};
+
+document.addEventListener('touchstart', handleTouchStart);
+document.addEventListener('touchend', handleTouchEnd);
+
+showSlide(currentIndex);
+startAutoSlide();
+
+
 </script>
 </script>
 </body>
