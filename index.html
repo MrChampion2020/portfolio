@@ -9,6 +9,88 @@
   <link rel="icon" href="profile.png" type="image/jpg" style="border-radius: 50%; ">
 
 <style>
+
+.contact-panel{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 80%;
+            height: 50%;
+            margin: auto;
+
+          }
+
+          .contact-panel h1{
+            color: #000000;
+            text-transform: uppercase;
+          }
+
+          .under-line{
+            width: 30%;
+            height: 5px;
+            margin-top: -10px;
+            border-radius: 40px;
+            background-color: red;
+          }
+
+          
+           .heading{
+          /*  line-height: 90%;
+            height: 15%;
+            overflow: hidden;*/
+            animation-name: slideinLeft;
+            animation-duration: 2s;
+            animation-delay: 3s;
+            animation-timing-function: ease-in; 
+            animation-iteration-count: infinite;
+            animation-direction: normal;   
+
+            
+          transform: translateY(-100px);
+               }
+
+        @keyframes slideinLeft {
+            from{
+              transform: translateY(-100px);
+            }
+
+            to{
+              transform:  translateY(0);
+            }
+        }
+
+        .rotate{
+          animation-name: rotate;
+          animation-delay: 3s;
+          animation-duration: 2s;
+          animation-timing-function: ease;
+          animation-iteration-count: infinite;
+          
+          transform-origin: center; 
+        }
+
+        @keyframes rotate {
+          0%{
+            transform: rotate(20deg);
+            background-color: blue;
+          }
+          15%{
+            background-color: red;
+          }
+          25%{
+            background-color: yellow;
+          }
+          45%{
+            background-color: black;
+          }
+          100%{
+            transform: rotate(360deg);
+            background-color: green;
+          }
+        }
+
+        
  main{
   /*border: 1px solid black;*/
   width: 60%;
@@ -153,16 +235,76 @@
     .screen:hover{
       color: white;
     }
-    @media (max-width: 768px) {
+    @media screen and (orientation: portrait) and (max-width: 768px) {
       .device {
         width: 400px;
         height: 600px;
       }
       .screen {
-        font-size: 18px;
+        font-size: 14px;
         width: 90%;
         height: 50%;
       }
+
+      
+.contact-panel{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 80%;
+            height: 30%;
+            margin: auto;
+
+          }
+
+          .contact-panel h1{
+            color: #000000;
+            text-transform: uppercase;
+            font-size: 16px;
+          }
+
+          .under-line{
+            width: 20%;
+            height: 5px;
+            margin-top: -5px;
+            border-radius: 40px;
+            background-color: red;
+          }
+
+          
+           .heading{
+            animation-name: slideinLeft;
+            animation-duration: 2s;
+            animation-delay: 3s;
+            animation-timing-function: ease-in; 
+            animation-iteration-count: infinite;
+            animation-direction: normal;   
+
+            
+          transform: translateY(-20px);
+               }
+
+        @keyframes slideinLeft {
+            from{
+              transform: translateY(-20px);
+            }
+
+            to{
+              transform:  translateY(0);
+            }
+        }
+
+        .rotate{
+          animation-name: rotate;
+          animation-delay: 3s;
+          animation-duration: 2s;
+          animation-timing-function: ease;
+          animation-iteration-count: infinite;
+          
+          transform-origin: center; 
+        }
+
     }
 
 
@@ -174,17 +316,17 @@
   line-height: 30px;
  }
  .more{
-  width: 10%;
-  height: 5%;
+  width: 6%;
+  height: 7%;
   color: black;
   border: 1px solid black;
   margin: auto;
   background-color: white;
-  font-weight: 700;
+  border-radius: 5px;
  }
  .more:hover{
-  width: 10%;
-  height: 5%;
+  width: 6%;
+  height: 7%;
   color: rgb(255, 255, 255);
   border: 1px solid black;
   margin: auto;
@@ -301,10 +443,10 @@
       flex-direction: row;
     }
     .profileright{
-      width: 35%;
-      border-radius: 30px;
+      width: 48%;
+      border-radius: 50%;
       height: 100%;
-      background-color: rgb(245, 244, 244);
+      background-color: rgba(243, 243, 243, 0.596);
       margin-left: -10%;
       color: rgb(0, 0, 0);
     }
@@ -326,33 +468,37 @@
       height: 100%;
     }
     .profilebottom{
-      width: 60%;
-      height: 44%;
+      width: 80%;
+      height: 40%;
       display: flex;
       flex-direction: row;
       margin: auto;
     }
+
     .profilebottomleft{
-      width: 40%;
-      height: 90%;
-      border-radius: 10px;
+      width: 50%;
+      height: 100%;
+      border-radius: 5px;
       /*border: 1px solid rgb(0, 0, 0);*/
-      background-color: rgba(255, 255, 255, 0);
+      background-color: rgb(255, 255, 255);
       /*box-shadow: 1px 1px 4px 2px rgb(163, 162, 162);*/
       position: relative;
       top: 15%;
-      right: 5%;
+      right: 10%;
     }
-    .profilebottomleft img{
-      object-fit: contain;
+   .profilebottomleft .carousel{
       width: 100%;
       height: 100%;
+    }
+    .profilebottomleft .carousel .slide .contained .img img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       border-radius: 30px;
     }
     .profilebottomright{
-      box-shadow: 1px 1px 4px 2px rgba(211, 210, 210, 0.445);
-      width: 40%;
-      height: 90%;
+      width: 35%;
+      height: 80%;
       border-radius: 10px;
       /*border: 1px solid rgb(0, 0, 0);*/
       background-color: rgb(255, 255, 255);
@@ -362,22 +508,32 @@
       margin: auto;
     }
    .profilebottomright h1{
-    height: 60%;
+    height: 65%;
     width: 90%;
     margin: auto;
     font-size: 60px;
     color: rgb(0, 0, 0);
    }
-    
-
     .contained {
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
     width: 100%;
-    height: 60%;
+    height: 100%;
     position: relative;
     margin: auto;
+    color: rgb(230, 159, 8);
+}
+.contained .img{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.img img{
+  object-fit: contain;
+  width: 100%;
+  height: 120%;
+  border-radius: 30px;
 }
 
 .letter {
@@ -385,22 +541,25 @@
     position: relative;
     opacity: 0;
     transition: opacity 1s, transform 5s;
+    font-weight: 900;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .letter i {
     position: absolute;
     font-size: 2rem;
     transition: all 2s;
+   
 }
 
-#f i { bottom: 20%; left: 50%; transform: translateX(-50%); }
-#r i { bottom: 50%; left: 50%; transform: translateX(-50%); }
-#o i { top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); }
-#n1 i { bottom: -90%; left: 50%; transform: translateX(-50%); }
-#t i { bottom: 50%; left: 50%; transform: translateX(-50%); }
-#e i { bottom: 20%; left: 50%; transform: translateX(-50%) translateY(-50%); }
-#n2 i { bottom: 20%; left: 50%; transform: translateX(-50%); }
-#d i { top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); }
+#f i { bottom: 20%; left: 50%; transform: translateX(-50%); color: palegoldenrod; }
+#r i { bottom: 10%; left: 50%; transform: translateX(-50%); color: rgb(213, 245, 148);}
+#o i { top: 0; left: 50%; transform: translateX(-50%) translateY(-100%); color: rgb(204, 200, 200); }
+#n1 i { bottom: 20%; left: 50%; transform: translateX(-50%); color: rgb(57, 181, 238);}
+#t i { bottom: 50%; left: 50%; transform: translateX(-50%); color: rgb(28, 87, 5);}
+#e i { bottom: 20%; left: 50%; transform: translateX(-50%) translateY(-50%); color: rgb(201, 197, 153);}
+#n2 i { bottom: 20%; left: 50%; transform: translateX(-50%); color: rgb(71, 151, 216);}
+#d i { top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); color: rgb(87, 87, 85);}
 
 .show {
     opacity: 1;
@@ -415,22 +574,67 @@
     transform: translateX(-50%) translateY(-50%);
 }
     
-    
-    /*
-    .profilebottomright p{
-      width: 100%;
-      height: 10%;
-      text-align: left;
-      line-height: 10px;
-    }
-   /* .profilebottomright div{
-      width: 50%;
-      height: 20%;
-      border: 1px solid white;
-    }*/
+
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 80%;
+    background-color: #dddddd00;
+}
+#carousel1{
+  height: 6%;
+  width: 90%;
+}
+#carousel1 .slide h1{
+  height: 100%;
+  width: 90%;
+  font-size: 40px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: red;
+  font-weight: 600;
+  margin: auto;
+  text-align: left;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    opacity: 0;
+    transition: all 1s ease;
+}
+
+.slide.active {
+    opacity: 1;
+}
+.bottomtext{
+  margin-top: 4%;
+  color: #10ff58;
+}
+.bottomtext span{
+  padding: 10px;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0);
+}    
+  
+
+
 
     #contactContent{
-      width: 70%;
+      width: 80%;
       height: 70%;
       padding: 20px;
       margin: auto;
@@ -573,7 +777,7 @@
     }
 
     .formdata{
-      width: 35%;
+      width: 60%;
       height: 100%;
       margin: auto;
       padding: 10px;
@@ -592,11 +796,11 @@
     .contact-form input, .contact-form textarea {
       padding: 10px;
       border-radius: 5px;
-      border: 1px solid #bebebed5;
+      border: 1px solid #000000d5;
       width: 90%;
     }
     .contact-form button {
-      width: 95%;
+      width: 93%;
       padding: 10px;
       border: none;
       border-radius: 5px;
@@ -605,7 +809,7 @@
       cursor: pointer;
     }
     .contact-form button:hover {
-      width: 95%;
+      width: 93%;
       padding: 10px;
       border: 1px solid rgba(175, 175, 175, 0.842);
       border-radius: 5px;
@@ -622,53 +826,9 @@
       color: black;
       text-align: center;
     }
-    
 
-    .carousel {
-    position: relative;
-    width: 100%;
-    height: 80%;
-    background-color: #dddddd00;
-}
-#carousel1{
-  height: 10%;
-  width: 90%;
-}
-#carousel1 .slide{
-  height: 10%;
-  width: 80%;
-  font-size: 40px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  color: red;
-  font-weight: 600;
-  margin: auto;
-  text-align: left;
-}
 
-.slide {
-    position: absolute;
-    width: 100%;
-    height: 80%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    opacity: 0;
-    transition: all 1s ease;
-}
-
-.slide.active {
-    opacity: 1;
-}
-
-button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-    @media (max-width: 768px) {
+    @media screen and (orientation: portrait) and (max-width: 768px) {
       
       main{
   /*border: 1px solid black;*/
@@ -745,52 +905,64 @@ button {
       height: 100%;
     }
     .profilebottom{
-      width: 60%;
-      height: 44%;
+      width: 100%;
+      height: 45%;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       margin: auto;
     }
     .profilebottomleft{
-      width: 40%;
-      height: 90%;
+      width: 100%;
+      height: 50%;
       border-radius: 10px;
       /*border: 1px solid rgb(0, 0, 0);*/
       background-color: rgba(255, 255, 255, 0);
       /*box-shadow: 1px 1px 4px 2px rgb(163, 162, 162);*/
       position: relative;
-      top: 15%;
-      right: 10%;
+      top: 5%;
+      right: 5%;
     }
-    .profilebottomleft img{
-      object-fit: contain;
+    .profilebottomleft .carousel{
       width: 100%;
       height: 100%;
       border-radius: 30px;
     }
+    .profilebottomleft .carousel .slide .contained .img img{
+      width: 100%;
+      object-fit: contain;
+    }
     .profilebottomright{
-      box-shadow: 1px 1px 4px 2px rgba(211, 210, 210, 0.445);
-      width: 45%;
-      height: 90%;
+      width: 90%;
+      height: 40%;
       border-radius: 10px;
       color: rgb(0, 0, 0);
-      /*border: 1px solid rgb(0, 0, 0);*/
-      background-color: rgb(255, 255, 255);
+      border: none;
       position: relative;
-      top: 5%;
+      top: 1%;
+      padding: 5px;
     }
-    .profilebottomright p{
+    .profilebottomright h1{
       width: 100%;
-      height: 10%;
+      height: 65%;
       text-align: left;
-      line-height: 10px;
+      line-height: 20px;
+      font-size: 30px;
+    
     }
-   /* .profilebottomright div{
-      width: 50%;
-      height: 20%;
-      border: 1px solid white;
-    }*/
-
+    #carousel1{
+  height: 30%;
+  width: 80%;
+}
+#carousel1 .slide h1{
+  height: 100%;
+  width: 90%;
+  font-size: 25px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: red;
+  font-weight: 600;
+  margin: auto;
+  text-align: left;
+}
     #contactContent{
       width: 95%;
       height: 70%;
@@ -805,11 +977,11 @@ button {
       height: 100%;
     }
     .contactop{
-      width: 90%;
-      height: 80%;
+      width: 100%;
+      height: 90%;
       border-radius: 5px;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       margin: auto;
     }
     .contactcard{
@@ -818,6 +990,33 @@ button {
       background-color: #ffffff;
       border-radius: 20px;
       position: relative;
+      top: 10%;
+      margin: auto;
+    }
+    .contact-form input, .contact-form textarea {
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #000000d5;
+      color: #000;
+      width: 95%;
+    }
+    .contact-form button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: black;
+      color: white;
+      cursor: pointer;
+    }
+    .contact-form button:hover {
+      width: 100%;
+      padding: 20px;
+      border: 1px solid rgba(175, 175, 175, 0.842);
+      border-radius: 5px;
+      background-color: rgb(255, 255, 255);
+      color: rgb(0, 0, 0);
+      cursor: pointer;
     }
     /*.contactcardtop{
      /* width: 100%;
@@ -827,7 +1026,7 @@ button {
     }*/
     .social {
       margin: auto;
-      width: 100%;
+      width: 70%;
       height: 100%;
       position: relative;
       border-radius: 10px;
@@ -845,7 +1044,7 @@ button {
       align-items: center;
     }
     .social-logo a {
-      font-size: 30px;
+      font-size: 20px;
       cursor: pointer;
       color: rgb(0, 0, 0);
       text-decoration: none;
@@ -853,7 +1052,7 @@ button {
     }
     
     .contactdesign{
-      width: 60%;
+      width: 80%;
       height: 85%;
       display: flex;
       justify-content: center;
@@ -949,7 +1148,7 @@ button {
     
 
   </div>
-  <button class="more" id="moreButton">More</button>
+  <button class="more" id="moreButton"><i class="fa-solid fa-angles-down"></i></button>
  </main>
 
  
@@ -970,7 +1169,7 @@ button {
 
   <div class="profileright">
 
-   
+    <div class="screen" id="screened" style="padding: 90px;"></div>
 
   </div>
 </div>
@@ -986,11 +1185,11 @@ button {
       Build
     </h1>
     <div id="carousel1" class="carousel">
-      <div class="slide">Responsive</div>
-      <div class="slide">Secure</div>
-      <div class="slide">Fast</div>
-      <div class="slide">Cross Platform</div>
-      <div class="slide">Vast</div>
+      <div class="slide"><h1 style="color: #0d3e4d;">Responsive</h1></div>
+      <div class="slide"><h1 style="color: #991187;">FullStack</h1></div>
+      <div class="slide"><h1 style="color: #208cd3;">Secured BackEnd</h1></div>
+      <div class="slide"><h1 style="color: #31880e;">Cross Platform</h1></div>
+      <div class="slide"><h1 style="color: #342036;">Website</h1></div>
   </div>
   </div>
 
@@ -998,9 +1197,9 @@ button {
 
     <div id="carousel2" class="carousel">
       <div class="slide">
-        <div class="contained">
+        <!--<div class="contained">
           <div id="f" class="letter">F<i class="fas fa-fish"></i></div>
-          <div id="r" class="letter">R<i class="fas fa-rain"></i></div>
+          <div id="r" class="letter">R<i class="fa-solid fa-frog"></i></div>
           <div id="o" class="letter">O<i class="fas fa-child"></i></div>
           <div id="n1" class="letter">N<i class="fas fa-water"></i></div>
           <div id="t" class="letter">T<i class="fas fa-tree"></i></div>
@@ -1008,26 +1207,53 @@ button {
           <div id="n2" class="letter">N<i class="fas fa-water"></i></div>
           <div id="d" class="letter">D<i class="fas fa-male"></i></div>
       </div>
+      <div class="bottomtext">
+      <span><i class="fa-brands fa-html5"></i></span>
+      <span><i class="fa-brands fa-css3-alt"></i></span>
+      <span><i class="fa-brands fa-js"></i></span>
+      <span><i class="fa-brands fa-react"></i></span>
+      
+      </div>-->
+
+
+      <div class="contained">
+        <div class="img"><img src="fronend.jpg" alt=""> </div>
+    </div>
       </div>
-      <div class="slide"> <div class="contained">
-        <div id="f" class="letter">F<i class="fas fa-fish"></i></div>
-        <div id="r" class="letter">R<i class="fas fa-rain"></i></div>
-        <div id="o" class="letter">O<i class="fas fa-child"></i></div>
-        <div id="n1" class="letter">N<i class="fas fa-water"></i></div>
-        <div id="t" class="letter">T<i class="fas fa-tree"></i></div>
-        <div id="e" class="letter">E<i class="fas fa-bell"></i></div>
-        <div id="n2" class="letter">N<i class="fas fa-water"></i></div>
-        <div id="d" class="letter">D<i class="fas fa-male"></i></div>
-    </div></div>
-      <div class="slide">Slide 3B</div>
-      <div class="slide">Slide 4B</div>
-      <div class="slide">Slide 5B</div>
+
+      <div class="slide"> 
+        <div class="contained">
+        <div class="img"><img src="fullstack.png" alt=""> </div>
+    </div>
+  </div>
+
+      <div class="slide">
+        <div class="contained">
+
+          <div class="img"><img src="backend.png" alt=""> </div>
+      </div>
+      </div>
+
+      <div class="slide"><div class="contained">
+        
+        <div class="img"><img src="mobile.png" alt=""> </div>
+
+    </div>
+  </div>
+
+
+      <div class="slide"><div class="contained">
+    
+        <div class="img"><img src="website.jpg" alt=""> </div>
+
+    </div>
+  </div>
 
   </div>
 
-  <button id="prevBtn">Previous</button>
-    <button id="nextBtn">Next</button>
-    <button id="pausePlayBtn">Pause</button>
+  <button id="prevBtn"><i class="fa-solid fa-angles-left"></i></button>
+    <button id="nextBtn"><i class="fa-solid fa-angles-right"></i></button>
+    <button id="pausePlayBtn"><i class="fa-solid fa-pause"></i></button>
 
   </div>
 </div>
@@ -1046,8 +1272,14 @@ button {
 
 
       <div class="contactop">
+        
+       
+        <div class="contact-panel">
+          <h1 class="heading">contact me</h1>
+          <div class="under-line rotate"></div>
+        </div>
 
-        <div class="contactdesign">
+        <!-- <div class="contactdesign">
           <div class="box">
 
             <div></div>
@@ -1058,12 +1290,13 @@ button {
             <div></div>
 
           </div>
-        </div><!--contactdesign closing-->
+        </div>
+        contactdesign closing -->
 
 
 
         <div class="formdata">
-          <h2>Send a Mail</h2>
+          <h2><!--Send a Mail--></h2>
           <form class="contact-form" action="/send-email" method="POST">
             <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
@@ -1085,12 +1318,12 @@ button {
       <div class="contactcard">
         <div class="social">
           <div class="social-logo">
-            <a href="https://www.facebook.com/profile.php?id=61558977133876" target="_blank" class="fa-brands fa-facebook "></a>
-            <a href="https://www.instagram.com/eliteearnofficial?igsh=ZzdseGpmN3ZoYnht" target="_blank" class="fa-brands fa-instagram "></a>
-            <a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok "></a>
-            <!--<a href="https://wa.me/+2349117499173" target="_blank" class="fa-brands fa-whatsapp"></a>-->
-            <a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube "></a>
-            <a href="https://t.me/+iXU1lq5siDg0OTA0" target="_blank" class="fa-brands fa-telegram "></a>
+            <a href="https://www.facebook.com/profile.php?id=6" target="_blank" class="fa-brands fa-facebook "></a>
+            <a href="https://www.instagram.com/sirchampio_n?igsh=YzljYk10Dg3Zg==|" target="_blank" class="fa-brands fa-instagram "></a>
+            <!--<a href="https://www.tiktok.com/@eliteearn.officia" target="_blank" class="fa-brands fa-tiktok "></a>-->
+            <a href="https://wa.me/+2349030155327" target="_blank" class="fa-brands fa-whatsapp"></a>
+            <!--<a href="https://www.youtube.com/c/@EliteEarnOfficial" target="_blank" class="fa-brands fa-youtube "></a>-->
+            <a href="https://t.me/Sirchampion" target="_blank" class="fa-brands fa-telegram "></a>
           </div>
         </div>  
     </div> <!--contactcard closing-->
@@ -1160,15 +1393,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('DOMContentLoaded', () => {
       const screenElement = document.getElementById('screen');
+      const screenElements = document.getElementById('screened');
       const text = "I am delighted to be a part of your dream project";
       let index = 0;
 
       function typeWriter() {
         if (index < text.length) {
           screenElement.textContent += text.charAt(index);
+          screenElements.textContent += text.charAt(index);
           index++;
         } else {
           screenElement.textContent = '';
+          screenElements.textContent = '';
+
           index = 0;
         }
         setTimeout(typeWriter, 200);
@@ -1261,7 +1498,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('projectsContent').style.display = 'none';
         });
 */
-
+/*
     const boxes = document.querySelectorAll('.box div');
 
     setInterval(() => {
@@ -1275,7 +1512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }, 4000);
-
+*/
 
 
 
@@ -1324,7 +1561,6 @@ const slides2 = document.querySelectorAll('#carousel2 .slide');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pausePlayBtn = document.getElementById('pausePlayBtn');
-
 const showSlide = index => {
     slides1.forEach((slide, i) => {
         slide.classList.toggle('active', i === index);
@@ -1345,7 +1581,7 @@ const prevSlide = () => {
 };
 
 const startAutoSlide = () => {
-    interval = setInterval(nextSlide, 4000);
+    interval = setInterval(nextSlide, 5000);
 };
 
 const pauseAutoSlide = () => {
@@ -1355,10 +1591,10 @@ const pauseAutoSlide = () => {
 pausePlayBtn.addEventListener('click', () => {
     if (isPaused) {
         startAutoSlide();
-        pausePlayBtn.textContent = 'Pause';
+        pausePlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
     } else {
         pauseAutoSlide();
-        pausePlayBtn.textContent = 'Play';
+        pausePlayBtn.innerHTML = '<i class="fas fa-play"></i>';
     }
     isPaused = !isPaused;
 });
