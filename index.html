@@ -261,7 +261,8 @@
           .contact-panel h1{
             color: #000000;
             text-transform: uppercase;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 600;
           }
 
           .under-line{
@@ -621,16 +622,27 @@
   padding: 10px;
 }
 
-button {
+.playbacks {
+  width: 50%;
+  height: 5%;
+  position: absolute;
+  padding: 20px;
+  bottom: 10%;
+   
+}   
+.playbacks button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+} 
+  .playbacks button i{
     margin: 5px;
-    padding: 10px 20px;
+    padding: 5px;
     font-size: 1rem;
     cursor: pointer;
     border: none;
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0);
-}    
-  
+    color: #080505;
+    background-color: #ffffff00;
+  }
 
 
 
@@ -879,10 +891,10 @@ button {
       flex-direction: row;
     }
     .profileright{
-      width: 45%;
-      border-radius: 30px;
+      width: 48%;
+      border-radius: 50%;
       height: 80%;
-      background-color: rgba(229, 230, 227, 0.849);
+      background-color: rgba(240, 240, 240, 0.849);
       font-weight: 600;
       margin-left: -8%;
       color: rgb(0, 0, 0);
@@ -946,8 +958,8 @@ button {
       width: 100%;
       height: 65%;
       text-align: left;
-      line-height: 20px;
-      font-size: 30px;
+      line-height: 30px;
+      font-size: 25px;
     
     }
     #carousel1{
@@ -964,6 +976,30 @@ button {
   margin: auto;
   text-align: left;
 }
+
+.playbacks {
+  width: 50%;
+  height: 5%;
+  position: absolute;
+  bottom: 5%;
+  margin: auto;
+  padding: 20px;
+   
+}   
+.playbacks button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+} 
+  .playbacks button i{
+    margin: 0px;
+    padding: 2px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    color: #080505;
+    background-color: #ffffff00;
+  }
+
     #contactContent{
       width: 95%;
       height: 70vh;
@@ -1251,12 +1287,13 @@ button {
     </div>
   </div>
 
+  <div class="playbacks"> 
+    <button id="prevBtn"><i class="fa-solid fa-angles-left"></i></button>
+      <button id="nextBtn"><i class="fa-solid fa-angles-right"></i></button>
+      <button id="pausePlayBtn"><i class="fa-solid fa-pause"></i></button>
+     </div>
   </div>
-
-  <button id="prevBtn"><i class="fa-solid fa-angles-left"></i></button>
-    <button id="nextBtn"><i class="fa-solid fa-angles-right"></i></button>
-    <button id="pausePlayBtn"><i class="fa-solid fa-pause"></i></button>
-
+ 
   </div>
 </div>
 
